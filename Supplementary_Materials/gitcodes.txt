@@ -1,3 +1,6 @@
+Make Your Own Package
+https://thucnc.medium.com/how-to-publish-your-own-python-package-to-pypi-4318868210f9
+
 CTPF (Collaborative Topic Poisson Factorization)
 Paper: Content-based recommendations with poisson factorization (Gopalan, P.K., Charlin, L. and Blei, D., 2014).
 GitHub: https://github.com/david-cortes/ctpfrec ==> mainfile https://github.com/david-cortes/ctpfrec/blob/master/ctpfrec/__init__.py
