@@ -1,0 +1,30 @@
+CTPF (Collaborative Topic Poisson Factorization)
+Paper: Content-based recommendations with poisson factorization (Gopalan, P.K., Charlin, L. and Blei, D., 2014).
+GitHub: https://github.com/david-cortes/ctpfrec
+Documentation: https://ctpfrec.readthedocs.io/en/latest/)
+
+Hierarchical Poisson Factorization
+Paper: Scalable Recommendation with Hierarchical Poisson Factorization (P. Gopalan, 2015).
+GitHub: https://github.com/david-cortes/hpfrec
+
+Poisson Factorization
+GitHub: https://github.com/david-cortes/poismf
+
+Collective Matrix Factorization
+GitHub: https://github.com/david-cortes/cmfrec
+
+#============================================================================
+
+Python Topic Model
+Github: https://github.com/dongwookim-ml/python-topic-model
+
+Jupyters Training
+https://github.com/RaffayHusayn/Collaborative-Filtering/blob/master/CollaborativeFiltering.ipynb
+
+Recommender System Papers
+#https://github.com/hegongshan/Recommender-Systems-Paper#collaborative-filtering
+
+For More - Check hashtags on github
+#collaborative-filtering
+#topic-modeling
+#recommender-system
