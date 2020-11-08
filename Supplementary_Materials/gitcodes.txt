@@ -1,6 +1,6 @@
 CTPF (Collaborative Topic Poisson Factorization)
 Paper: Content-based recommendations with poisson factorization (Gopalan, P.K., Charlin, L. and Blei, D., 2014).
-GitHub: https://github.com/david-cortes/ctpfrec
+GitHub: https://github.com/david-cortes/ctpfrec ==> mainfile https://github.com/david-cortes/ctpfrec/blob/master/ctpfrec/__init__.py
 Documentation: https://ctpfrec.readthedocs.io/en/latest/)
 
 Hierarchical Poisson Factorization
