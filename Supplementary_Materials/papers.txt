@@ -1,2 +1,8 @@
 METU https://www.researchgate.net/publication/333429437_A_Content_Boosted_Hybrid_Recommender_System
 MF Techniques for Recommendation Systems https://datajobs.com/data-science-repo/Recommender-Systems-[Netflix].pdf
+PMF - Probabistic Matrix Factorization https://papers.nips.cc/paper/2007/file/d7322ed717dedf1eb4e6e52a37ea7bcd-Paper.pdf
+Generalized PMF for Collaborative Filtering https://www-users.cs.umn.edu/~baner029/papers/10/gpmf.pdf
+Tag-informed CTP https://www.sciencedirect.com/science/article/pii/S0950705120303816#b15
+CTR  with Social Matrix Factorization for Recommendation Systems https://arxiv.org/pdf/1206.4684.pdf
+CTR with online vs bayesian approach https://scholar.google.com/scholar_lookup?title=Collaborative%20topic%20regression%20for%20online%20recommender%20systems%3A%20an%20online%20and%20bayesian%20approach&publication_year=2017&author=C.%20Liu&author=T.%20Jin&author=S.C.%20Hoi&author=P.%20Zhao&author=J.%20Sun
+Deep latent factor model for CF https://www.sciencedirect.com/science/article/pii/S0165168419304190#bib0010
