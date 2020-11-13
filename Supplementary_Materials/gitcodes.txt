@@ -7,10 +7,16 @@ https://www.evl.uic.edu/spiff/fear/thesis/index.html
 Make Your Own Package
 https://thucnc.medium.com/how-to-publish-your-own-python-package-to-pypi-4318868210f9
 
-CTPF (Collaborative Topic Poisson Factorization)
+=>> CTPF (Collaborative Topic Poisson Factorization)
 Paper: Content-based recommendations with poisson factorization (Gopalan, P.K., Charlin, L. and Blei, D., 2014).
 GitHub: https://github.com/david-cortes/ctpfrec ==> mainfile https://github.com/david-cortes/ctpfrec/blob/master/ctpfrec/__init__.py
 Documentation: https://ctpfrec.readthedocs.io/en/latest/
+
+=>> Surprise Python Library
+Paper: https://joss.theoj.org/papers/10.21105/joss.02174.pdf
+Github: https://github.com/NicolasHug/Surprise
+Review: https://github.com/openjournals/joss-reviews/issues/2174
+Documentation: https://surprise.readthedocs.io/en/stable/getting_started.html
 
 Hierarchical Poisson Factorization
 Paper: Scalable Recommendation with Hierarchical Poisson Factorization (P. Gopalan, 2015).
