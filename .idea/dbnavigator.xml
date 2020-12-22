@@ -2,20 +2,20 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
     <export-instructions>
       <create-header value="true" />
-      <quote-values-containing-separator value="true" />
+      <quote-values-containing-separator value="false" />
       <quote-all-values value="false" />
-      <value-separator value="" />
-      <file-name value="" />
-      <file-location value="" />
+      <value-separator value="," />
+      <file-name value="A_MMOVIES.csv" />
+      <file-location value="$USER_HOME$/Desktop" />
       <scope value="GLOBAL" />
       <destination value="FILE" />
-      <format value="EXCEL" />
+      <format value="CSV" />
       <charset value="UTF-8" />
     </export-instructions>
   </component>
@@ -23,10 +23,50 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="57786265-6778-402c-a0e6-c5f9aa99774f">
+        <schema name="AHMADLI" object-types="table, package function, package type, view, synonym, materialized view, type" />
+        <schema name="PUBLIC" object-types="table, sequence, view, function, synonym, package, materialized view, type" />
+        <schema name="RULEML" object-types="table, view, synonym, materialized view" />
+        <schema name="SYS" object-types="table, view, synonym, materialized view, type" />
+      </connection>
+    </loaded-nodes>
+  </component>
+  <component name="DBNavigator.Project.DatabaseConsoleManager">
+    <connection id="57786265-6778-402c-a0e6-c5f9aa99774f">
+      <console name="MovieLensDB" type="STANDARD" schema="AHMADLI" session="Main" />
+      <console name="test_console" type="STANDARD" schema="AHMADLI" session="Main"><![CDATA[SELECT * FROM IMDB;
+SELECT * FROM IMDB;
+SELECT * FROM USER_SYNONYMS;
+SELECT * FROM ALL_SYNONYMS;
+--DROP synonym syn_name;
+
+-- My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
+--create synonym A_MRATINGS for ruleml.MRATINGS;
+select count(*) from A_MMOVIES;]]></console>
+    </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
+  </component>
+  <component name="DBNavigator.Project.DatabaseSessionManager">
+    <connection id="57786265-6778-402c-a0e6-c5f9aa99774f">
+      <session name="test" id="a6ee8948-e1ab-4227-a9de-d39531b7d2f7" />
+    </connection>
+  </component>
+  <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="57786265-6778-402c-a0e6-c5f9aa99774f" dataset="RULEML.MUSERS" active-filter-id="c22b1cf9-0292-4e45-98b2-817f47a7ae03">
+      <filter id="c22b1cf9-0292-4e45-98b2-817f47a7ae03" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="57786265-6778-402c-a0e6-c5f9aa99774f" dataset="RULEML.IMDB" active-filter-id="423a9dbd-0e16-4351-8390-d299ee4c2b39">
+      <filter id="423a9dbd-0e16-4351-8390-d299ee4c2b39" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="57786265-6778-402c-a0e6-c5f9aa99774f" dataset="RULEML.TW_TRAINING" active-filter-id="4d7ad1ca-b8fa-4b1c-949f-8299e0b1b91c">
+      <filter id="4d7ad1ca-b8fa-4b1c-949f-8299e0b1b91c" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
+    <filter-actions connection-id="57786265-6778-402c-a0e6-c5f9aa99774f" dataset="RULEML.DBP_KODY" active-filter-id="cb762c26-4c20-498b-b923-f36776d071d2">
+      <filter id="cb762c26-4c20-498b-b923-f36776d071d2" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -50,7 +90,88 @@
     <recently-used-interfaces />
   </component>
   <component name="DBNavigator.Project.Settings">
-    <connections />
+    <connections>
+      <connection id="57786265-6778-402c-a0e6-c5f9aa99774f" active="true">
+        <database>
+          <name value="MovieLensDB" />
+          <description value="Access to Mr.Kopecky's DB" />
+          <database-type value="ORACLE" />
+          <config-type value="CUSTOM" />
+          <database-version value="11.2" />
+          <driver-source value="BUILTIN" />
+          <driver-library value="" />
+          <driver value="" />
+          <url value="jdbc:oracle:thin:@tirpitz.ms.mff.cuni.cz:1511:jedenact" />
+          <type value="USER_PASSWORD" />
+          <user value="ahmadli" />
+          <deprecated-pwd value="YXlkaW4yMDY=" />
+        </database>
+        <properties>
+          <auto-commit value="false" />
+        </properties>
+        <ssh-settings>
+          <active value="false" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
+        </ssh-settings>
+        <ssl-settings>
+          <active value="false" />
+          <certificate-authority-file value="" />
+          <client-certificate-file value="" />
+          <client-key-file value="" />
+        </ssl-settings>
+        <details>
+          <charset value="UTF-8" />
+          <session-management value="true" />
+          <ddl-file-binding value="true" />
+          <database-logging value="false" />
+          <connect-automatically value="true" />
+          <restore-workspace value="true" />
+          <restore-workspace-deep value="true" />
+          <environment-type value="default" />
+          <idle-time-to-disconnect value="30" />
+          <idle-time-to-disconnect-pool value="5" />
+          <credential-expiry-time value="10" />
+          <max-connection-pool-size value="7" />
+          <alternative-statement-delimiter value="" />
+        </details>
+        <object-filters hide-empty-schemas="false" hide-pseudo-columns="false">
+          <object-type-filter use-master-settings="true">
+            <object-type name="SCHEMA" enabled="true" />
+            <object-type name="USER" enabled="true" />
+            <object-type name="ROLE" enabled="true" />
+            <object-type name="PRIVILEGE" enabled="true" />
+            <object-type name="CHARSET" enabled="true" />
+            <object-type name="TABLE" enabled="true" />
+            <object-type name="VIEW" enabled="true" />
+            <object-type name="MATERIALIZED_VIEW" enabled="true" />
+            <object-type name="NESTED_TABLE" enabled="true" />
+            <object-type name="COLUMN" enabled="true" />
+            <object-type name="INDEX" enabled="true" />
+            <object-type name="CONSTRAINT" enabled="true" />
+            <object-type name="DATASET_TRIGGER" enabled="true" />
+            <object-type name="DATABASE_TRIGGER" enabled="true" />
+            <object-type name="SYNONYM" enabled="true" />
+            <object-type name="SEQUENCE" enabled="true" />
+            <object-type name="PROCEDURE" enabled="true" />
+            <object-type name="FUNCTION" enabled="true" />
+            <object-type name="PACKAGE" enabled="true" />
+            <object-type name="TYPE" enabled="true" />
+            <object-type name="TYPE_ATTRIBUTE" enabled="true" />
+            <object-type name="ARGUMENT" enabled="true" />
+            <object-type name="DIMENSION" enabled="true" />
+            <object-type name="CLUSTER" enabled="true" />
+            <object-type name="DBLINK" enabled="true" />
+          </object-type-filter>
+          <object-name-filters />
+        </object-filters>
+      </connection>
+    </connections>
     <browser-settings>
       <general>
         <display-mode value="TABBED" />
@@ -160,7 +281,7 @@
         <data-length-threshold value="250" />
       </values-actions-popup>
       <general>
-        <fetch-block-size value="100" />
+        <fetch-block-size value="500" />
         <fetch-timeout value="30" />
         <trim-whitespaces value="true" />
         <convert-empty-strings-to-null value="true" />
