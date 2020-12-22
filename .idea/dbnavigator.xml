@@ -25,7 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="57786265-6778-402c-a0e6-c5f9aa99774f">
-        <schema name="AHMADLI" object-types="table, package function, package type, view, synonym, materialized view, type" />
+        <schema name="AHMADLI" object-types="type function, table, package function, package type, sequence, view, function, synonym, package, materialized view, type" />
         <schema name="PUBLIC" object-types="table, sequence, view, function, synonym, package, materialized view, type" />
         <schema name="RULEML" object-types="table, view, synonym, materialized view" />
         <schema name="SYS" object-types="table, view, synonym, materialized view, type" />
@@ -43,7 +43,9 @@ SELECT * FROM ALL_SYNONYMS;
 
 -- My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
 --create synonym A_MRATINGS for ruleml.MRATINGS;
-select count(*) from A_MMOVIES;]]></console>
+select ACTORS from IMDB;
+select ACTORS from IMDB WHERE ROWNUM <= 50;
+--select ACTORS from IMDB FETCH NEXT 1 ROWS ONLY;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">

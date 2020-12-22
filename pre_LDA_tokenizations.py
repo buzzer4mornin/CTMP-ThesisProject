@@ -18,19 +18,14 @@ train, test = dataset.data, dataset.data
 [M]     - number of unique terms in document. 
 [count] - how many times each term appeared in the document.
 [term]  - integer which indexes the term; it is not a string.
+
+Assuming Movie Descriptions will be stored as string in Oracle Database
+
+
+
 """
 
 
-
-
-#TODO: NLTK vs Spacy
-sp = spacy.load('en_core_web_sm')
-
-my_text = train.copy()
-for i in range(2):
-    my_text += train
-
-my_text = ''.join(my_text)
 
 def nltk_tokenize(corpus):
     """
@@ -49,7 +44,17 @@ def nltk_tokenize(corpus):
     print("word/voc shrinkage", int(len(word_tokens)/len(voc)))
     print("NLTK time:", time.time() - start)
     exit()
+    # 20-60 seconds interval
 
+
+#TODO: NLTK vs Spacy
+sp = spacy.load('en_core_web_sm')
+
+my_text = train.copy()
+for i in range(2):
+    my_text += train
+
+my_text = ''.join(my_text)
 nltk_tokenize(my_text)
 
 
