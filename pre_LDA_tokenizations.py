@@ -1,4 +1,5 @@
 import time
+import os
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -6,6 +7,7 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.datasets import fetch_20newsgroups
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, RegexpTokenizer
+from gensim import corpora
 import numpy as np
 sp = spacy.load('en_core_web_sm')
 
@@ -38,27 +40,18 @@ def compare_regex(reg_file1, reg_file2):
 
 def nltk_token_vocab(desc, regex=None):
     start = time.time()
+    stop_words = set(stopwords.words('english'))
     print("Movie descriptions size:", len(desc))
 
-    #TODO: Implement index-frequency
-    # check [https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html]
-    #for d in desc:
-    #    print(word_tokenize(d))
-    #ss = [word_tokenize(i) for i in desc]  # 2nd: list(map(word_tokenize, train2))
-    #print(ss)
-    #from gensim import corpora
-    #dictionary = corpora.Dictionary(texts)
-
-    stop_words = set(stopwords.words('english'))
+    # Clean all_word_tokes, leave only vocab
     all_desc = ' '.join(desc).lower()
     all_word_tokens = word_tokenize(all_desc) if regex is None else RegexpTokenizer(regex).tokenize(all_desc)
     all_word_tokens = [w for w in all_word_tokens if not w in stop_words]
 
-
-    #TODO: Start without Lemmatization/Stemming
-    #TODO: Sort Vocabulary
-    #Create Vocabulary textfile
-    vocab = set(list(all_word_tokens))
+    # Create Vocabulary textfile
+    # DONE: regex draft + sorted vocabulary
+    # TODO: try optional Lemmatization/Stemming
+    vocab = sorted(set(list(all_word_tokens)))
     with open("vocabulary.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
             f.write(word)
@@ -67,35 +60,59 @@ def nltk_token_vocab(desc, regex=None):
     # 20-60 seconds total execution time
     print("word_tokens size:", len(all_word_tokens))
     print("vocab size:", len(vocab))
-    print("word/voc shrinkage:", round(len(all_word_tokens)/len(vocab)))
-    print("NLTK time: {:.1f} seconds".format(time.time() - start))
+    print("word/voc shrinkage: {:.1f}".format(len(all_word_tokens)/len(vocab)))
+    print("NLTK time: {:.2f} seconds".format(time.time() - start))
+
+    # Separate dictionaries for each descriptions
+    # check [https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html]
+    # TODO: Optimize index searching part etc
+    if os.path.exists("result.txt"):
+        os.remove("result.txt")
+    for d in desc:
+        d = d.lower()
+        words = word_tokenize(d) if regex is None else RegexpTokenizer(regex).tokenize(d)
+        words = [w for w in words if not w in stop_words]
+        dict = {}
+        for i in words:
+            try:
+                dict[vocab.index(i)] += 1
+            except KeyError:
+                dict[vocab.index(i)] = 1
+        unique = str(len(dict.keys()))
+        if unique == "0":
+            continue
+        map_counts = str(dict).replace("{", "").replace("}", "").replace(" ", "").replace(",", " ")
+        with open("result.txt", 'a', encoding='utf-8') as f:
+            f.write(unique)
+            f.write(" ")
+            f.write(map_counts)
+            f.write("\n")
 
     return all_word_tokens, vocab
 
 
 
-"""
-NLTK version
-"""
+# ========================================== NLTK version ==============================================================
 my_text = train.copy()
-my_text = my_text[200:1000] # subselecting only [:2] descriptions
-_example = ["This is a foo_bar sentence. #$^&*@hello_world.123", "Aydin's solution, agil's, is his number of 100s 70s, 50 "]
+for i in range(2):
+    my_text += train
+my_text = my_text[0:200] # subselecting only [:2] descriptions
+_example1 = ["This is a foo_bar this sentence sentence. But also this sentence #$^&*@hello_world.123", "Aydin's solution, agil's solution agil , is his number of 100s 70s, 50 "]
+_example2 = ["*Contains spoilers due to me having to describe some film techniques, so read at your own risk!*<br /><br />I loved this film. The use of tinting in some of the scenes makes it seem like an old photograph come to life. I also enjoyed the projection of people on a back screen. For instance, in one scene, Leopold calls his wife and she is projected behind him rather than in a typical split screen. Her face is huge in the back and Leo's is in the foreground.<br /><br />One of the best uses of this is when the young boys kill the Ravensteins on the train, a scene shot in an almost political poster style, with facial close ups. It reminded me of Battleship Potemkin, that intense constant style coupled with the spray of red to convey tons of horror without much gore. Same with the scene when Katharina finds her father dead in the bathtub...you can only see the red water on the side. It is one of the things I love about Von Trier, his understatement of horror, which ends up making it all the more creepy.<br /><br />The use of text in the film was unique, like when Leo's character is pushed by the word, 'Werewolf.' I have never seen anything like that in a film.<br /><br />The use of black comedy in this film was well done. Ernst-Hugo Järegård is great as Leo's uncle. It brings up the snickers I got from his role in the Kingdom (Riget.) This humor makes the plotline of absurd anal retentiveness of train conductors against the terrible backdrop of WW2 and all the chaos, easier to take. It reminds me of Riget in the way the hospital administrator is trying to maintain a normalcy at the end of part one when everything is going crazy. It shows that some people are truly oblivious to the awful things happening around them. Yet some people, like Leo, are tuned in, but do nothing positive about it.<br /><br />The voice over, done expertly well by Max von Sydow, is amusing too. It draws you into the story and makes you jump into Leo's head, which at times is a scary place to be.<br /><br />The movie brings up the point that one is a coward if they don't choose a side. I see the same idea used in Dancer in the Dark, where Bjork's character doesn't speak up for herself and ends up being her own destruction. Actually, at one time, Von Trier seemed anti-woman to me, by making Breaking the Waves and Dancer, but now I know his male characters don't fare well either! I found myself at the same place during the end of Dancer, when you seriously want the main character to rethink their actions, but of course, they never do!"]
+_example3 = ["Place is near restaurant, near the corner"]
+
 #TODO: combine both regex
-reg = r'[^\W_]+|[^\W_\s]+' # handles underscores, but cant handle less than 3
-reg = r'\w{3,}'            # handles less than 3, but cant handle underscore
-#_, vocab = nltk_token_vocab(my_text, regex=reg)
+reg1 = r'[^\W_]+|[^\W_\s]+' # handles underscores, but cant handle less than 3
+reg2 = r'\w{3,}'            # handles less than 3, but cant handle underscore
+_, vocab = nltk_token_vocab(my_text, regex=reg2)
 
 
-
-
-"""
-Compare regular expression formulas
-"""
+#Compare regular expression formulas
 #compare_regex("vocab_regex1.txt", "vocab_regex2.txt")
 
 
 
-
+# ========================================= SpaCy version ==============================================================
 #TODO: SpaCy version
 '''start = time.time()
 train2 = train.copy()
