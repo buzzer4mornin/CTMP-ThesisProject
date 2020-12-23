@@ -8,6 +8,8 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.datasets import fetch_20newsgroups
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, RegexpTokenizer
+# Change to Current File Directory
+os.chdir(os.path.dirname(__file__))
 
 """
 [M] [term_1]:[count] [term_2]:[count] ...  [term_N]:[count]
