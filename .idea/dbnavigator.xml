@@ -25,10 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="57786265-6778-402c-a0e6-c5f9aa99774f">
-        <schema name="AHMADLI" object-types="table, sequence, view, function, synonym, package, materialized view, type" />
-        <schema name="PUBLIC" object-types="table, sequence, view, function, synonym, package, materialized view, type" />
-        <schema name="RULEML" object-types="table, view, synonym, materialized view" />
-        <schema name="SYS" object-types="view, synonym, materialized view, type" />
+        <schema name="RULEML" object-types="materialized view, synonym, table, view" />
       </connection>
     </loaded-nodes>
   </component>
