@@ -29,7 +29,7 @@ def compare_regex(reg_file1, reg_file2):
         for word in non:
             f.write(word)
 
-def nltk_token_vocab(desc, regex=None):
+def vocabulary(desc, regex=None):
     start = time.time()
     stop_words = set(stopwords.words('english'))
     print("Movie descriptions size:", len(desc))
@@ -108,7 +108,7 @@ _example3 = ["Place is near restaurant, near the corner"]
 #TODO: combine both regex
 reg1 = r'[^\W_]+|[^\W_\s]+' # handles underscores, but cant handle less than 3
 reg2 = r'\w{3,}'            # handles less than 3, but cant handle underscore
-vocab = nltk_token_vocab(my_text, regex=reg2)
+vocab = vocabulary(my_text, regex=reg2)
 input_LDA(vocab, my_text, regex=reg2)
 
 #Compare RegEx formulas
