@@ -73,8 +73,9 @@ def input_LDA(vocab, desc, regex=None):
         d = d.lower()
         words = word_tokenize(d) if regex is None else RegexpTokenizer(regex).tokenize(d)
         words = [w for w in words if not w in stop_words]
-        dict = {}
         vocab_dict = {i:j for i, j in zip(vocab, range(len(vocab)))}
+
+        dict = {}
         for i in words:
             try:
                 dict[vocab_dict[i]] += 1
