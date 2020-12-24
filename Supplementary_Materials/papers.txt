@@ -2,9 +2,10 @@
 Hybrid Recommender Systems A Systematic Literature Review https://arxiv.org/pdf/1901.03888v1.pdf
 Recommender Systems Papers Overview Survey https://isg.beel.org/pubs/2016%20IJDL%20---%20Research%20Paper%20Recommender%20Systems%20--%20A%20Literature%20Survey%20(preprint).pdf
 #=======================================================================================================================
-cant download A hybrid approach of topic model and matrix factorization based on two-step recommendation framework
+Understanding Variational Inference for Beginners https://blog.evjang.com/2016/08/variational-bayes.html
 #=======================================================================================================================
-
+Topic Models by Blei http://www.cs.columbia.edu/~blei/papers/BleiLafferty2009.pdf
+#=======================================================================================================================
 METU https://www.researchgate.net/publication/333429437_A_Content_Boosted_Hybrid_Recommender_System
 Adaptive Collaborative Topic Modeling http://www2.agroparistech.fr/ufr-info/membres/cornuejols/Papers/PUBLIES/2018-RecSys-adaptive-collaborative-topic.pdf
 MF Techniques for Recommendation Systems https://datajobs.com/data-science-repo/Recommender-Systems-[Netflix].pdf

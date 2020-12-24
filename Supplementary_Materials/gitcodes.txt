@@ -29,16 +29,15 @@ Collective Matrix Factorization
 GitHub: https://github.com/david-cortes/cmfrec
 
 #============================================================================
-
 Python Topic Model
 Github: https://github.com/dongwookim-ml/python-topic-model
 
 Jupyters Training
 https://github.com/RaffayHusayn/Collaborative-Filtering/blob/master/CollaborativeFiltering.ipynb
 
+#============================================================================
 Recommender System Papers
 #https://github.com/hegongshan/Recommender-Systems-Paper#collaborative-filtering
-
 
 For More - Check hashtags on github
 #collaborative-filtering
