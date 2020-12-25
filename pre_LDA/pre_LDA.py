@@ -70,19 +70,16 @@ def get_input_LDA(vocabulary, descriptions, regex=None):
     """
     # TODO: Optimize index searching part etc
     start = time.time()
-
     if os.path.exists("input_LDA.txt"):
         os.remove("input_LDA.txt")
 
-
     #TODO write separate def for below section??
     vocab_with_index = {v_word: v_index for v_word, v_index in zip(vocabulary, range(len(vocabulary)))}
+    stop_words = set(stopwords.words('english'))
     for d in descriptions:
         d = d.lower()
-        stop_words = set(stopwords.words('english'))
         words_tokens = word_tokenize(d) if regex is None else RegexpTokenizer(regex).tokenize(d)
         words_tokens = [w for w in words_tokens if w not in stop_words]
-
 
         word_counts = {}
         for w in words_tokens:
