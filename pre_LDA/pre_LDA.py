@@ -8,7 +8,6 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.datasets import fetch_20newsgroups
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, RegexpTokenizer
-
 # Change to Current File Directory
 os.chdir(os.path.dirname(__file__))
 
@@ -22,7 +21,6 @@ os.chdir(os.path.dirname(__file__))
 DB Row Counts: [MOVIES - 27,278] [USERS - 138,493] [RATINGS - 20,000,263]
 """
 
-
 def compare_regex(reg_file1, reg_file2):
     with open(reg_file1, "r") as f1, open(reg_file2, "r") as f2:
         voc1 = f1.readlines()
@@ -33,7 +31,6 @@ def compare_regex(reg_file1, reg_file2):
     with open("_difference.txt", 'w', encoding='utf-8') as f:
         for word in non:
             f.write(word)
-
 
 def get_vocabulary(descriptions, regex=None):
     """
@@ -54,8 +51,8 @@ def get_vocabulary(descriptions, regex=None):
     vocab = sorted(set(list(all_tokens)))
     with open("vocabulary.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
-            f.write(word)
-            f.write("\n")
+            f.write(word + "\n")
+
 
     # 20-60 seconds total execution time
     print("word_tokens size:", len(all_tokens))
@@ -64,7 +61,6 @@ def get_vocabulary(descriptions, regex=None):
     print("NLTK time: {:.2f} seconds".format(time.time() - start))
     print("-*-*-*-")
     return vocab
-
 
 def get_input_LDA(vocabulary, descriptions, regex=None):
     """
@@ -97,7 +93,6 @@ def get_input_LDA(vocabulary, descriptions, regex=None):
     print("Prep time of input_LDA.txt: {:.2f} seconds".format(end - start))
     print("-*-*-*-")
 
-
 # ========================================== NLTK version ==============================================================
 # Grab a sample Dataset
 dataset = fetch_20newsgroups(shuffle=True, remove=('headers', 'footers', 'quotes'))
@@ -118,6 +113,7 @@ reg1 = r'[^\W_]+|[^\W_\s]+'  # handles underscores, but cant handle less than 3
 reg2 = r'\w{3,}'  # handles less than 3, but cant handle underscore
 my_vocabulary = get_vocabulary(my_text, regex=reg2)
 get_input_LDA(my_vocabulary, my_text, regex=reg2)
+
 
 # Compare RegEx formulas
 # compare_regex("vocab_regex1.txt", "vocab_regex2.txt")
