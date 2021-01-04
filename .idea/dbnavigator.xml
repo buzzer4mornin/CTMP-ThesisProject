@@ -25,28 +25,30 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="57786265-6778-402c-a0e6-c5f9aa99774f">
-        <schema name="AHMADLI" object-types="materialized view, table" />
-        <schema name="PUBLIC" object-types="table" />
-        <schema name="RULEML" object-types="materialized view, table, synonym, view" />
+        <schema name="AHMADLI" object-types="function, type function, type, view, package type, synonym, table, sequence, materialized view, package function, package" />
+        <schema name="PUBLIC" object-types="function, type, view, synonym, table, sequence, materialized view, package" />
+        <schema name="RULEML" object-types="view, column, synonym, table, materialized view" />
+        <schema name="SYS" object-types="type, view, synonym, table, materialized view" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="57786265-6778-402c-a0e6-c5f9aa99774f">
       <console name="MovieLensDB" type="STANDARD" schema="AHMADLI" session="Main" />
-      <console name="test_console" type="STANDARD" schema="AHMADLI" session="Main">SELECT * FROM IMDB;
+      <console name="test_console" type="STANDARD" schema="AHMADLI" session="Main"><![CDATA[SELECT * FROM IMDB;
 SELECT * FROM IMDB;
 SELECT * FROM USER_SYNONYMS;
 SELECT * FROM ALL_SYNONYMS;
 --DROP synonym syn_name;
 
--- My synonyms -&gt; A_MMOVIES, A_MUSERS, A_MRATINGS
+-- My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
 --create synonym A_MRATINGS for ruleml.MRATINGS;
 
 select count(*) from A_MRATINGS;
+select USERID, MOVIEID, RATING from A_MRATINGS where rownum <=10000;
 select ACTORS from IMDB;
-select ACTORS from IMDB WHERE ROWNUM &lt;= 50;
---select ACTORS from IMDB FETCH NEXT 1 ROWS ONLY;</console>
+select ACTORS from IMDB WHERE ROWNUM <= 50;
+--select ACTORS from IMDB FETCH NEXT 1 ROWS ONLY;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
