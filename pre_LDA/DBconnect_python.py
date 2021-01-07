@@ -37,10 +37,12 @@ try:
     # df.columns = ["Actors"]'''
 
     # -- 2nd Query --  [Get Ratings table]
-    '''# cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS WHERE ROWNUM <=10000")
-    # db.commit()
-    # df = pd.DataFrame(cur.fetchall())
-    # df.columns = ["USERID", "MOVIEID", "RATING"]'''
+    '''cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
+    db.commit()
+    df = pd.DataFrame(cur.fetchall())
+    df.columns = ["USERID", "MOVIEID", "RATING"]
+    df["RATING"] = df['RATING'].apply(lambda x: 1 if x >= 4 else 0)
+    df.to_pickle(str(os.path.dirname(os.path.abspath(__file__))) + '/rating_df')'''
 
     # -- 3rd Query --  [Get XML table from IMDB]
     '''cur.execute(
@@ -71,3 +73,5 @@ else:
     # Close all when done
     if cur: cur.close()
     if db: db.close()
+
+
