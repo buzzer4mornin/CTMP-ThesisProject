@@ -101,6 +101,9 @@ SELECT e.XML.getClobval() AS coXML FROM IMDB e where TT = 'tt3591516']]></consol
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
   </component>
+  <component name="DBNavigator.Project.FileConnectionMappingManager">
+    <mapping file-url="file://$PROJECT_DIR$/pre_LDA/oracle_commands.sql" connection-id="57786265-6778-402c-a0e6-c5f9aa99774f" session-id="MAIN" current-schema="AHMADLI" />
+  </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
     <execution-history>
