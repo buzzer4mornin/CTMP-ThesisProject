@@ -1,13 +1,14 @@
-import time
 import os
-import spacy
+import time
+
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.decomposition import LatentDirichletAllocation
-from sklearn.datasets import fetch_20newsgroups
+import spacy
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, RegexpTokenizer
+from nltk.tokenize import RegexpTokenizer, word_tokenize
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.decomposition import LatentDirichletAllocation
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
 # Change to Current File Directory
 os.chdir(os.path.dirname(__file__))
 
