@@ -30,13 +30,14 @@ try:
     db = cx.connect(*db_credentials, dsn=dsnStr)
     cur = db.cursor()
 
-    # -- 1st Query --  [Get Actors table]
-    '''# cur.execute("select ACTORS from IMDB WHERE ROWNUM <= 50")
-    # db.commit()
-    # df = pd.DataFrame(cur.fetchall())
-    # df.columns = ["Actors"]'''
+    # -- 1st Query --  [Get USER table]
+    '''cur.execute("select USERID from A_MUSERS")
+    db.commit()
+    df = pd.DataFrame(cur.fetchall())
+    df.columns = ["USERID"]
+    df.to_pickle(str(os.path.dirname(os.path.abspath(__file__))) + '/user_df')'''
 
-    # -- 2nd Query --  [Get Ratings table]
+    # -- 2nd Query --  [Get RATING table]
     '''cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
     db.commit()
     df = pd.DataFrame(cur.fetchall())
@@ -44,7 +45,7 @@ try:
     df["RATING"] = df['RATING'].apply(lambda x: 1 if x >= 4 else 0)
     df.to_pickle(str(os.path.dirname(os.path.abspath(__file__))) + '/rating_df')'''
 
-    # -- 3rd Query --  [Get XML table from IMDB]
+    # -- 3rd Query --  [Get MOVIE table] (parse XML plot from IMDB)
     '''cur.execute(
         "SELECT e.TT, e.XML.getClobval() AS coXML, A_MMOVIES.MOVIEID  FROM IMDB e inner join A_MMOVIES on e.TT = A_MMOVIES.TT")
     db.commit()
@@ -67,7 +68,10 @@ try:
     print("Table Created successful")
 
 except cx.DatabaseError as e:
-    print("ERROR", e, "| or check VPN connection!")
+    if str(e).startswith("ORA-24454"):
+        print("ERROR check VPN connection!")
+    else:
+        print("ERROR", e,)
 
 else:
     # Close all when done
