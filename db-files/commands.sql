@@ -1,12 +1,9 @@
-SELECT * FROM IMDB;
-SELECT * FROM IMDB;
 SELECT * FROM USER_SYNONYMS;
 SELECT * FROM ALL_SYNONYMS;
 --DROP synonym syn_name;
+--CREATE synonym A_MRATINGS for ruleml.MRATINGS;
+-- !! My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
 
--- !! CREATING synonym --
--- My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
---create synonym A_MRATINGS for ruleml.MRATINGS;
 
 -------------------------------------------------  BASICS ---------------------------------------------------------------
 select * from A_MRATINGS;

@@ -25,25 +25,21 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="57786265-6778-402c-a0e6-c5f9aa99774f">
-        <schema name="AHMADLI" object-types="sequence, package type, type, view, materialized view, function, type function, table, package, synonym, package function" />
-        <schema name="IMDB" object-types="sequence, type, view, materialized view, function, table, package, synonym" />
-        <schema name="PUBLIC" object-types="sequence, type, view, materialized view, function, table, package, synonym" />
-        <schema name="RULEML" object-types="view, materialized view, column, table, synonym" />
-        <schema name="SYS" object-types="type, view, materialized view, table, synonym" />
+        <schema name="RULEML" object-types="materialized view, table, view" />
       </connection>
     </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="57786265-6778-402c-a0e6-c5f9aa99774f">
       <console name="MovieLensDB" type="STANDARD" schema="AHMADLI" session="Main" />
-      <console name="test_console" type="STANDARD" schema="AHMADLI" session="Main"><![CDATA[SELECT * FROM IMDB;
+      <console name="test_console" type="STANDARD" schema="AHMADLI" session="Main">SELECT * FROM IMDB;
 SELECT * FROM IMDB;
 SELECT * FROM USER_SYNONYMS;
 SELECT * FROM ALL_SYNONYMS;
 --DROP synonym syn_name;
 
 -- !! CREATING synonym -- 
--- My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
+-- My synonyms -&gt; A_MMOVIES, A_MUSERS, A_MRATINGS
 --create synonym A_MRATINGS for ruleml.MRATINGS;
  
 -------------------------------------------------  BASICS ---------------------------------------------------------------
@@ -57,7 +53,7 @@ select USERID from A_MUSERS;
 
 -- !! 2nd Query --
 select count(*) from A_MRATINGS;
-select USERID, MOVIEID, RATING from A_MRATINGS where rownum <=10000;
+select USERID, MOVIEID, RATING from A_MRATINGS where rownum &lt;=10000;
 
 -- !! 3rd Query --
 select * from IMDB;
@@ -66,13 +62,13 @@ select A_MMOVIES.TT, MOVIEID, XML from A_MMOVIES inner join IMDB on A_MMOVIES.TT
 
 -------------------------------------------- XML Handling of 3rd Query -------------------------------------------------
 -- !! Not Runnable in Python (because of SET long 5000 - no worries, we already got CLOB from below query)
-SET long 5000 SELECT e.XML.getClobval() AS coXML FROM IMDB e where rownum <=6
+SET long 5000 SELECT e.XML.getClobval() AS coXML FROM IMDB e where rownum &lt;=6
 
 -- !! Runnable in Python (got XMLs as CLOB objects) 
-SELECT e.TT, e.XML.getClobval() AS coXML, A_MMOVIES.MOVIEID  FROM IMDB e inner join A_MMOVIES on e.TT = A_MMOVIES.TT where rownum <= 100
+SELECT e.TT, e.XML.getClobval() AS coXML, A_MMOVIES.MOVIEID  FROM IMDB e inner join A_MMOVIES on e.TT = A_MMOVIES.TT where rownum &lt;= 100
 
 -- !! Runnable: short version of above query
-SELECT e.XML.getClobval() AS coXML FROM IMDB e where TT = 'tt3591516']]></console>
+SELECT e.XML.getClobval() AS coXML FROM IMDB e where TT = 'tt3591516'</console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
@@ -99,9 +95,6 @@ SELECT e.XML.getClobval() AS coXML FROM IMDB e where TT = 'tt3591516']]></consol
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
-  </component>
-  <component name="DBNavigator.Project.FileConnectionMappingManager">
-    <mapping file-url="file://$PROJECT_DIR$/pre_LDA/oracle_commands.sql" connection-id="57786265-6778-402c-a0e6-c5f9aa99774f" session-id="MAIN" current-schema="AHMADLI" />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
