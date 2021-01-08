@@ -2,24 +2,22 @@ import os
 import time
 import numpy as np
 import pandas as pd
-import spacy
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer, word_tokenize
 from sklearn.datasets import fetch_20newsgroups
-from sklearn.decomposition import LatentDirichletAllocation
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 # Change to Current File Directory
 os.chdir(os.path.dirname(__file__))
 
 # TODO: rename word -> term in code
+# TODO: update row counts below
 """
 [M] [term_1]:[count] [term_2]:[count] ...  [term_N]:[count]
 [M]     - number of unique terms in plot. 
 [count] - how many times each term appeared in the plot.
 [term]  - integer which indexes the term; it is not a string.
 
-DB Row Counts: [MOVIES - 27,278] [USERS - 138,493] [RATINGS - 20,000,263]
+DB Row Counts: [MOVIES - 27,278] [USERS - 138,493] [RATINGS - 20,000,263] 
 """
 
 
@@ -37,6 +35,8 @@ def compare_regex(reg_file1, reg_file2):
 
 def get_vocabulary(plots, regex=None):
     """ Create and return vocabulary out of descriptions """
+    if os.path.exists("vocab.txt"):
+        os.remove("vocab.txt")
     start = time.time()
     stop_words = set(stopwords.words('english'))
     print("Total # of plots [or # of movies] :", len(plots))
@@ -57,40 +57,37 @@ def get_vocabulary(plots, regex=None):
             if not weird(word):
                 f.write(word + "\n")
     print("Terms/Vocab shrinkage: {:.1f}".format(len(all_terms) / len(vocab)))
-    print("Execution time: {:.2f} seconds".format(time.time() - start))
+    print('Execution time for "vocab.txt": {:.2f} seconds'.format(time.time() - start))
     print("-*-*-*-")
     return vocab
 
 
-def get_input_LDA(vocabulary, descriptions, regex=None):
-    """
-    Create input text file for LDA
-    """
-    # TODO: Optimize index searching part etc
+def get_input(vocab, plots, regex=None):
+    """ Create input text file for LDA """
     if os.path.exists("input.txt"):
         os.remove("input.txt")
     # TODO write separate def for below section??
     start = time.time()
-    vocab_index = {v_word: v_index for v_word, v_index in zip(vocabulary, range(len(vocabulary)))}
+    term_vs_index = {v_term: v_index for v_term, v_index in zip(vocab, range(len(vocab)))}
     stop_words = set(stopwords.words('english'))
-    for d in descriptions:
-        d = d.lower()
-        words_tokens = word_tokenize(d) if regex is None else RegexpTokenizer(regex).tokenize(d)
-        words_tokens = [w for w in words_tokens if w not in stop_words]
-        word_counts = {}
-        for w in words_tokens:
+    for plt in plots:
+        plt = plt.lower()
+        terms = word_tokenize(plt) if regex is None else RegexpTokenizer(regex).tokenize(plt)
+        terms = [t for t in terms if t not in stop_words]
+        term_counts = {}
+        for t in terms:
             try:
-                word_counts[vocab_index[w]] += 1
+                term_counts[term_vs_index[t]] += 1
             except KeyError:
-                word_counts[vocab_index[w]] = 1
-        unique_count = len(word_counts.keys())
-        if unique_count == 0:
+                term_counts[term_vs_index[t]] = 1
+        unique_terms = len(term_counts.keys())
+        if unique_terms == 0:
             continue
-        word_counts = str(word_counts).replace("{", "").replace("}", "").replace(" ", "").replace(",", " ")
+        term_counts = str(term_counts).replace("{", "").replace("}", "").replace(" ", "").replace(",", " ")
         with open("input.txt", 'a', encoding='utf-8') as f:
-            f.write(str(unique_count) + " " + word_counts + "\n")
+            f.write(str(unique_terms) + " " + term_counts + "\n")
     end = time.time()
-    print("Prep time of input.txt: {:.2f} seconds".format(end - start))
+    print('Execution time for "input.txt": {:.2f} seconds'.format(end - start))
     print("-*-*-*-")
 
 
@@ -105,7 +102,7 @@ if __name__ == '__main__':
         reg1 = r'[^\W_]+|[^\W_\s]+'  # handles underscores, but cant handle less than 3
         reg2 = r'\w{3,}'  # ^[0-9]+$ handles less than 3, but cant handle underscore
         vocab = get_vocabulary(movie_plt, regex=reg2)
-        # get_input_LDA(vocab, movie_plt, regex=reg2)
+        get_input(vocab, movie_plt, regex=reg2)
 
         # Compare RegEx formulas
         # compare_regex("vocab_regex1.txt", "vocab_regex2.txt")
@@ -130,7 +127,7 @@ if __name__ == '__main__':
         reg1 = r'[^\W_]+|[^\W_\s]+'  # handles underscores, but cant handle less than 3
         reg2 = r'\w{3,} +|^\d+$ '  # ^[0-9]+$ handles less than 3, but cant handle underscore
         my_vocabulary = get_vocabulary(my_text, regex=reg2)
-        get_input_LDA(my_vocabulary, my_text, regex=reg2)
+        get_input(my_vocabulary, my_text, regex=reg2)
 
         # Compare RegEx formulas
         # compare_regex("vocab_regex1.txt", "vocab_regex2.txt")
