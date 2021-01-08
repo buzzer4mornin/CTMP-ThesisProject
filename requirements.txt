@@ -20,12 +20,14 @@ pytz==2020.4
 regex==2020.11.13
 requests==2.25.1
 scikit-learn==0.23.2
+scikit-surprise==1.1.1
 scipy==1.5.4
 six==1.15.0
 smart-open==4.0.1
 spacy==2.3.5
 sqlnet==0.1
 srsly==1.0.5
+surprise==0.1
 thinc==7.4.5
 threadpoolctl==2.1.0
 tqdm==4.54.1
