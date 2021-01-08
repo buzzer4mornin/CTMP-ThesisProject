@@ -1,0 +1,48 @@
+Github for Python
+https://www.linkedin.com/posts/stevenouri_innovation-artificialintelligence-datascience-activity-6732242435931541504-v8CB
+
+How To Roll Thesis
+https://www.evl.uic.edu/spiff/fear/thesis/index.html
+
+Make Your Own Package
+https://thucnc.medium.com/how-to-publish-your-own-python-package-to-pypi-4318868210f9
+
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+=>> CTPF (Collaborative Topic Poisson Factorization)
+Paper: Content-based recommendations with poisson factorization (Gopalan, P.K., Charlin, L. and Blei, D., 2014).
+GitHub: https://github.com/david-cortes/ctpfrec ==> mainfile https://github.com/david-cortes/ctpfrec/blob/master/ctpfrec/__init__.py
+Documentation: https://ctpfrec.readthedocs.io/en/latest/
+
+Hierarchical Poisson Factorization
+Paper: Scalable Recommendation with Hierarchical Poisson Factorization (P. Gopalan, 2015).
+GitHub: https://github.com/david-cortes/hpfrec
+
+Poisson Factorization
+GitHub: https://github.com/david-cortes/poismf
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+=>> Surprise Python Library
+Paper: https://joss.theoj.org/papers/10.21105/joss.02174.pdf
+Github: https://github.com/NicolasHug/Surprise
+Review: https://github.com/openjournals/joss-reviews/issues/2174
+Documentation: https://surprise.readthedocs.io/en/stable/getting_started.html
+
+Collective Matrix Factorization
+GitHub: https://github.com/david-cortes/cmfrec
+
+#============================================================================
+Python Topic Model
+Github: https://github.com/dongwookim-ml/python-topic-model
+
+Jupyters Training
+https://github.com/RaffayHusayn/Collaborative-Filtering/blob/master/CollaborativeFiltering.ipynb
+
+#============================================================================
+Recommender System Papers
+#https://github.com/hegongshan/Recommender-Systems-Paper#collaborative-filtering
+
+For More - Check hashtags on github
+#collaborative-filtering
+#topic-modeling
+#recommender-system
