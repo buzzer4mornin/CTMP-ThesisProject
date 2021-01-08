@@ -9,6 +9,11 @@ SELECT * FROM ALL_SYNONYMS;
 --create synonym A_MRATINGS for ruleml.MRATINGS;
 
 
+-------------------------------------------------  BASICS ---------------------------------------------------------------
+select * from A_MRATINGS;
+select * from A_MMOVIES;
+select * from A_MUSERS;
+
 -------------------------------------------------  QUERY ---------------------------------------------------------------
 -- !! 1st Query --
 select ACTORS from IMDB;
