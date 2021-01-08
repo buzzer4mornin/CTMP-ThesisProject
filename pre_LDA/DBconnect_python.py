@@ -58,7 +58,7 @@ try:
         print(i)
     df = pd.DataFrame(df)
     df.columns = ["TT", "MOVIEPLOT", "MOVIEID"]
-    df.to_pickle(str(os.path.dirname(os.path.abspath(__file__))) + '/plot_df')'''
+    df.to_pickle(str(os.path.dirname(os.path.abspath(__file__))) + '/movie_df')'''
 
     # Another way to Query
     # for row in cur.execute("select ACTORS from IMDB"):
