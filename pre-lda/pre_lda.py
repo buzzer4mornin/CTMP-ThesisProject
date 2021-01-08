@@ -51,11 +51,11 @@ def get_vocabulary(plots, regex=None):
     # TODO: try optional Lemmatization/Stemming
     vocab = sorted(set(list(all_terms)))
     print("Vocabulary size of all plots: {}".format(len(vocab)))
-    weird = lambda s: any(i.isdigit() or i == "_" for i in s)
+    ##### weird = lambda s: any(i.isdigit() or i == "_" for i in s)
     with open("vocab.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
-            if not weird(word):
-                f.write(word + "\n")
+        #####    if not weird(word):
+            f.write(word + "\n")
     print("Terms/Vocab shrinkage: {:.1f}".format(len(all_terms) / len(vocab)))
     print('Execution time for "vocab.txt": {:.2f} seconds'.format(time.time() - start))
     print("-*-*-*-")
