@@ -51,6 +51,7 @@ def get_vocabulary(plots, regex=None):
     # TODO: try optional Lemmatization/Stemming
     vocab = sorted(set(list(all_terms)))
     print("Vocabulary size of all plots: {}".format(len(vocab)))
+    #TODO: INCORPORATE vocab filtering along with input.txt compatibility by [if lower than vocab boundary --> pass]
     ##### weird = lambda s: any(i.isdigit() or i == "_" for i in s)
     with open("vocab.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
