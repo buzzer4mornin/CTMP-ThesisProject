@@ -42,6 +42,7 @@ def get_vocabulary(plots, regex=None):
 
     # Get all terms in all plots. Deduct stop-words from it.
     all_plots = ' '.join(plots).lower()
+    all_plots = all_plots.replace("&amp;quot;", "") # ++++
     all_terms = word_tokenize(all_plots) if regex is None else RegexpTokenizer(regex).tokenize(all_plots)
     all_terms = [w for w in all_terms if w not in stop_words]
 
@@ -74,6 +75,10 @@ def get_input(vocab, plots, regex=None):
     stop_words = set(stopwords.words('english'))
     for plt in plots:
         plt = plt.lower()
+        try:
+            plt = plt.replace("&amp;quot;", "")
+        except:
+            pass
         terms = word_tokenize(plt) if regex is None else RegexpTokenizer(regex).tokenize(plt)
         terms = [t for t in terms if t not in stop_words]
         term_counts = {}
