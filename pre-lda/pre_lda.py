@@ -1,9 +1,8 @@
 import os
 import time
-import numpy as np
 import pandas as pd
 from nltk.corpus import stopwords
-from nltk.tokenize import RegexpTokenizer, word_tokenize
+from nltk.tokenize import RegexpTokenizer
 from sklearn.datasets import fetch_20newsgroups
 import re
 
@@ -22,18 +21,6 @@ DB Row Counts: [MOVIES - 27,278] [USERS - 138,493] [RATINGS - 20,000,263]
 """
 
 
-def compare_regex(reg_file1, reg_file2):
-    with open(reg_file1, "r") as f1, open(reg_file2, "r") as f2:
-        voc1 = f1.readlines()
-        voc2 = f2.readlines()
-    non = []
-    for word in voc2:
-        if word not in voc1: non.append(word)
-    with open("_difference.txt", 'w', encoding='utf-8') as f:
-        for word in non:
-            f.write(word)
-
-
 def get_vocabulary(plots, regex=None):
     """ Create and return vocabulary out of descriptions """
     if os.path.exists("vocab.txt"):
@@ -44,8 +31,8 @@ def get_vocabulary(plots, regex=None):
     # Get all terms in all plots. Deduct stop-words from it.
     all_plots = ' '.join(plots).lower()
     all_plots = all_plots.replace("&amp;quot;", "")  # remove amp;quot
-    all_plots = re.sub("\S*\d\S*", "", all_plots).strip()  # remove words with numbers
-    all_terms = word_tokenize(all_plots) if regex is None else RegexpTokenizer(regex).tokenize(all_plots)
+    all_plots = re.sub(r"\S*\d\S*", "", all_plots).strip()  # remove words with numbers
+    all_terms = RegexpTokenizer(r'\w{3,}').tokenize(all_plots)  # tokenize -> then remove words of length < 3
     all_terms = [w for w in all_terms if w not in stop_words and "_" not in w]  # remove words with underscore
 
     # Create Vocabulary textfile
@@ -64,7 +51,7 @@ def get_vocabulary(plots, regex=None):
     return vocab
 
 
-def get_input(vocab, plots, regex=None):
+def get_input(vocab, plots):
     """ Create input text file for LDA """
     if os.path.exists("input.txt"):
         os.remove("input.txt")
@@ -76,10 +63,10 @@ def get_input(vocab, plots, regex=None):
         plt = plt.lower()
         try:
             plt = plt.replace("&amp;quot;", "")  # remove amp;quot
-            plt = re.sub("\S*\d\S*", "", plt).strip()  # remove words with numbers
+            plt = re.sub(r"\S*\d\S*", "", plt).strip()  # remove words with numbers
         except:
             print("ERROR in handling [&amp;quot] or [numbers]")
-        terms = word_tokenize(plt) if regex is None else RegexpTokenizer(regex).tokenize(plt)
+        terms = RegexpTokenizer(r'\w{3,}').tokenize(plt)  # tokenize -> then remove words of length < 3
         terms = [t for t in terms if t not in stop_words and "_" not in t]  # remove words with underscore
         term_counts = {}
         for t in terms:
@@ -106,13 +93,9 @@ if __name__ == '__main__':
         movie_plt = movie_df["MOVIEPLOT"].tolist()
 
         # Run Experiment
-        reg1 = r'[^\W_]+|[^\W_\s]+'  # handles underscores, but cant handle less than 3
-        reg2 = r'\w{3,}'  # ^[0-9]+$ handles less than 3, but cant handle underscore
-        vocab = get_vocabulary(movie_plt, regex=reg2)
-        get_input(vocab, movie_plt, regex=reg2)
+        vocab = get_vocabulary(movie_plt)
+        get_input(vocab, movie_plt)
 
-        # Compare RegEx formulas
-        # compare_regex("vocab_regex1.txt", "vocab_regex2.txt")
 
     else:
         # Grab a sample Dataset
@@ -130,11 +113,6 @@ if __name__ == '__main__':
             "*Contains spoilers due to me having to describe some film techniques, so read at your own risk!*<br /><br />I loved this film. The use of tinting in some of the scenes makes it seem like an old photograph come to life. I also enjoyed the projection of people on a back screen. For instance, in one scene, Leopold calls his wife and she is projected behind him rather than in a typical split screen. Her face is huge in the back and Leo's is in the foreground.<br /><br />One of the best uses of this is when the young boys kill the Ravensteins on the train, a scene shot in an almost political poster style, with facial close ups. It reminded me of Battleship Potemkin, that intense constant style coupled with the spray of red to convey tons of horror without much gore. Same with the scene when Katharina finds her father dead in the bathtub...you can only see the red water on the side. It is one of the things I love about Von Trier, his understatement of horror, which ends up making it all the more creepy.<br /><br />The use of text in the film was unique, like when Leo's character is pushed by the word, 'Werewolf.' I have never seen anything like that in a film.<br /><br />The use of black comedy in this film was well done. Ernst-Hugo Järegård is great as Leo's uncle. It brings up the snickers I got from his role in the Kingdom (Riget.) This humor makes the plotline of absurd anal retentiveness of train conductors against the terrible backdrop of WW2 and all the chaos, easier to take. It reminds me of Riget in the way the hospital administrator is trying to maintain a normalcy at the end of part one when everything is going crazy. It shows that some people are truly oblivious to the awful things happening around them. Yet some people, like Leo, are tuned in, but do nothing positive about it.<br /><br />The voice over, done expertly well by Max von Sydow, is amusing too. It draws you into the story and makes you jump into Leo's head, which at times is a scary place to be.<br /><br />The movie brings up the point that one is a coward if they don't choose a side. I see the same idea used in Dancer in the Dark, where Bjork's character doesn't speak up for herself and ends up being her own destruction. Actually, at one time, Von Trier seemed anti-woman to me, by making Breaking the Waves and Dancer, but now I know his male characters don't fare well either! I found myself at the same place during the end of Dancer, when you seriously want the main character to rethink their actions, but of course, they never do!"]
         _example3 = ["Place is near restaurant, near the corner"]
 
-        # TODO: combine both regex
-        reg1 = r'[^\W_]+|[^\W_\s]+'  # handles underscores, but cant handle less than 3
-        reg2 = r'\w{3,} +|^\d+$ '  # ^[0-9]+$ handles less than 3, but cant handle underscore
-        my_vocabulary = get_vocabulary(my_text, regex=reg2)
-        get_input(my_vocabulary, my_text, regex=reg2)
-
-        # Compare RegEx formulas
-        # compare_regex("vocab_regex1.txt", "vocab_regex2.txt")
+        # Run Experiment
+        my_vocabulary = get_vocabulary(my_text)
+        get_input(my_vocabulary, my_text)
