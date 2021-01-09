@@ -5,6 +5,7 @@ import pandas as pd
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer, word_tokenize
 from sklearn.datasets import fetch_20newsgroups
+import re
 
 # Change to Current File Directory
 os.chdir(os.path.dirname(__file__))
@@ -42,18 +43,16 @@ def get_vocabulary(plots, regex=None):
 
     # Get all terms in all plots. Deduct stop-words from it.
     all_plots = ' '.join(plots).lower()
-    all_plots = all_plots.replace("&amp;quot;", "") # ++++
+    all_plots = all_plots.replace("&amp;quot;", "")  # remove amp;quot
+    all_plots = re.sub("\S*\d\S*", "", all_plots).strip()  # remove words with numbers
     all_terms = word_tokenize(all_plots) if regex is None else RegexpTokenizer(regex).tokenize(all_plots)
-    all_terms = [w for w in all_terms if w not in stop_words]
+    all_terms = [w for w in all_terms if w not in stop_words and "_" not in w]  # remove words with underscore
 
     # Create Vocabulary textfile
     # TODO: try optional Lemmatization/Stemming
-    #TODO: INCORPORATE vocab filtering along with input.txt compatibility by [if lower than vocab boundary --> pass]
     vocab = sorted(set(list(all_terms)))
-    ##### weird = lambda s: any(i.isdigit() or i == "_" for i in s)
     with open("vocab.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
-        #####    if not weird(word):
             f.write(word + "\n")
 
     print("Total # of plots [or # of movies] :", len(plots))
@@ -76,11 +75,12 @@ def get_input(vocab, plots, regex=None):
     for plt in plots:
         plt = plt.lower()
         try:
-            plt = plt.replace("&amp;quot;", "")
+            plt = plt.replace("&amp;quot;", "")  # remove amp;quot
+            plt = re.sub("\S*\d\S*", "", plt).strip()  # remove words with numbers
         except:
-            pass
+            print("ERROR in handling [&amp;quot] or [numbers]")
         terms = word_tokenize(plt) if regex is None else RegexpTokenizer(regex).tokenize(plt)
-        terms = [t for t in terms if t not in stop_words]
+        terms = [t for t in terms if t not in stop_words and "_" not in t]  # remove words with underscore
         term_counts = {}
         for t in terms:
             try:
