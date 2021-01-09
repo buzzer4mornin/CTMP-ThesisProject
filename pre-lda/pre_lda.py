@@ -39,24 +39,25 @@ def get_vocabulary(plots, regex=None):
         os.remove("vocab.txt")
     start = time.time()
     stop_words = set(stopwords.words('english'))
-    print("Total # of plots [or # of movies] :", len(plots))
 
     # Get all terms in all plots. Deduct stop-words from it.
     all_plots = ' '.join(plots).lower()
     all_terms = word_tokenize(all_plots) if regex is None else RegexpTokenizer(regex).tokenize(all_plots)
     all_terms = [w for w in all_terms if w not in stop_words]
-    print("Total # of terms in all plots: ", len(all_terms))
 
     # Create Vocabulary textfile
     # TODO: try optional Lemmatization/Stemming
-    vocab = sorted(set(list(all_terms)))
-    print("Vocabulary size of all plots: {}".format(len(vocab)))
     #TODO: INCORPORATE vocab filtering along with input.txt compatibility by [if lower than vocab boundary --> pass]
+    vocab = sorted(set(list(all_terms)))
     ##### weird = lambda s: any(i.isdigit() or i == "_" for i in s)
     with open("vocab.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
         #####    if not weird(word):
             f.write(word + "\n")
+
+    print("Total # of plots [or # of movies] :", len(plots))
+    print("Total # of terms in all plots: ", len(all_terms))
+    print("Vocabulary size of all plots: {}".format(len(vocab)))
     print("Terms/Vocab shrinkage: {:.1f}".format(len(all_terms) / len(vocab)))
     print('Execution time for "vocab.txt": {:.2f} seconds'.format(time.time() - start))
     print("-*-*-*-")
