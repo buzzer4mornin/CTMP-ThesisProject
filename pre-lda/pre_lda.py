@@ -21,7 +21,7 @@ DB Row Counts: [MOVIES - 27,278] [USERS - 138,493] [RATINGS - 20,000,263]
 """
 
 
-def get_vocabulary(plots, regex=None):
+def get_vocabulary(plots):
     """ Create and return vocabulary out of descriptions """
     if os.path.exists("vocab.txt"):
         os.remove("vocab.txt")
@@ -36,18 +36,16 @@ def get_vocabulary(plots, regex=None):
     all_terms = [w for w in all_terms if w not in stop_words and "_" not in w]  # remove words with underscore
 
     # Create Vocabulary textfile
-    # TODO: try optional Lemmatization/Stemming
     vocab = sorted(set(list(all_terms)))
     with open("vocab.txt", 'w', encoding='utf-8') as f:
         for word in vocab:
             f.write(word + "\n")
-
     print("Total # of plots [or # of movies] :", len(plots))
     print("Total # of terms in all plots: ", len(all_terms))
     print("Vocabulary size of all plots: {}".format(len(vocab)))
     print("Terms/Vocab shrinkage: {:.1f}".format(len(all_terms) / len(vocab)))
-    print('Execution time for "vocab.txt": {:.2f} seconds'.format(time.time() - start))
-    print("-*-*-*-")
+    print('Execution time: {:.2f} seconds'.format(time.time() - start))
+    print('-*-*-* Successfully Created "vocab.txt" *-*-*- \n')
     return vocab
 
 
@@ -81,8 +79,8 @@ def get_input(vocab, plots):
         with open("input.txt", 'a', encoding='utf-8') as f:
             f.write(str(unique_terms) + " " + term_counts + "\n")
     end = time.time()
-    print('Execution time for "input.txt": {:.2f} seconds'.format(end - start))
-    print("-*-*-*-")
+    print("Execution time: {:.2f} seconds".format(end - start))
+    print('-*-*-* Successfully Created "input.txt" *-*-*-')
 
 
 if __name__ == '__main__':
@@ -95,7 +93,6 @@ if __name__ == '__main__':
         # Run Experiment
         vocab = get_vocabulary(movie_plt)
         get_input(vocab, movie_plt)
-
 
     else:
         # Grab a sample Dataset
