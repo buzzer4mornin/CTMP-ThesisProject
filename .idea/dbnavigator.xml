@@ -25,7 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="57786265-6778-402c-a0e6-c5f9aa99774f">
-        <schema name="RULEML" object-types="table, materialized view, view, synonym" />
+        <schema name="RULEML" object-types="synonym, table" />
       </connection>
     </loaded-nodes>
   </component>

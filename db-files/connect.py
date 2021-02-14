@@ -34,21 +34,21 @@ try:
     db = cx.connect(*db_credentials, dsn=dsnStr)
     cur = db.cursor()
 
-    # -- 1st Query --  [Get USER table]
+    # -- 1st Query --  [Get USER table] [UNCOMMENT to run]
     '''cur.execute("select USERID from A_MUSERS")
     db.commit()
     df = pd.DataFrame(cur.fetchall())
     df.columns = ["USERID"]
     df.to_pickle(currdir + '/df_user')'''
 
-    # -- 2nd Query --  [Get RATING table]
+    # -- 2nd Query --  [Get RATING table] [UNCOMMENT to run]
     '''cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
     db.commit()
     df = pd.DataFrame(cur.fetchall())
     df.columns = ["USERID", "MOVIEID", "RATING"]
     df.to_pickle(currdir + '/df_rating')'''
 
-    # -- 3rd Query --  [Get MOVIE table] (parse XML plot from IMDB)
+    # -- 3rd Query --  [Get MOVIE table] (parse XML plot from IMDB) [UNCOMMENT to run]
     '''cur.execute(
         "SELECT e.TT, e.XML.getClobval() AS coXML, A_MMOVIES.MOVIEID  FROM IMDB e inner join A_MMOVIES on e.TT = A_MMOVIES.TT")
     db.commit()
