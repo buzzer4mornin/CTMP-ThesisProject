@@ -126,6 +126,9 @@ class MyCTMP:
 
     def e_step(self, wordids, wordcts):
         """ Does e step. Updates theta, mu, pfi, shp, rte for all documents and users"""
+        # NEW div
+        div = np.copy((self.shp / self.rte).sum(axis=0))
+
         # UPDATE phi, shp, rte
         for u in range(self.user_size):
             movies_for_u = self.rating_GroupForUser[u]  # get movies liked by user u
@@ -134,9 +137,9 @@ class MyCTMP:
 
             # if user didnt like any movie CHECK CORRECTNESS
             if len(movies_for_u) == 0:
-                self.shp[u, :] = 0.3  # float(self.e)
-                self.rte[u, :] = self.f + self.mu.sum(axis=0)
-                print(f" **** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
+                #self.shp[u, :] = 0.3  # float(self.e)
+                #self.rte[u, :] = 0.3 + self.mu.sum(axis=0)
+                #print(f" **** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
                 continue
 
             temp = np.exp(np.log(self.mu[[movies_for_u], :]) + special.psi(self.shp[u, :]) - np.log(self.rte[u, :]))
@@ -148,7 +151,7 @@ class MyCTMP:
             print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
 
         # UPDATE theta, mu
-        div = (self.shp / self.rte).sum(axis=0)
+        # div = (self.shp / self.rte).sum(axis=0)
         for d in range(self.num_docs):
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
