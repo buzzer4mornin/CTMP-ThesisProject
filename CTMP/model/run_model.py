@@ -77,10 +77,7 @@ def main():
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
     rating_GroupForUser, rating_GroupForMovie = utilities.get_rating_group(rating_file)
-    # for key in rating_GroupForMovie:
-    #    if len(rating_GroupForMovie[key]) > 10000:
-    #        print(rating_GroupForMovie[key])
-    #exit()
+
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')
