@@ -14,21 +14,28 @@ import utilities
 
 
 # RUN --> python ./model/run_model.py ctmp original
+# RUN --> python ./model/run_model.py lda original
+
+# RUN --> python ./model/run_model.py ctmp reduced
 # RUN --> python ./model/run_model.py lda reduced
+
+# RUN --> python ./model/run_model.py ctmp diminished
+# RUN --> python ./model/run_model.py lda diminished
+
 # TODO: when writing settings.txt into "/model" directory, correct some floats into int (e.g, num_topics, user_size...)
 
 def main():
-    if len(sys.argv) != 3 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced"]:
-        print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [original or reduced]")
+    if len(sys.argv) != 3 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced", "diminished"]:
+        print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [original, reduced or diminished]")
         exit()
 
     # Get environment variables
     which_model = sys.argv[1]
     which_size = sys.argv[2]
 
-    docs_file = "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt"
-    rating_file = "./input-data/df_rating" if which_size == "original" else "./input-data/df_rating_REDUCED"
-    setting_file = "./input-data/settings.txt" if which_size == "original" else "./input-data/settings_REDUCED.txt"
+    docs_file = "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt" if which_size == "reduced" else "./input-data/docs_DIMINISHED.txt"
+    rating_file = "./input-data/df_rating" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
+    setting_file = "./input-data/settings.txt" if which_size == "original" else "./input-data/settings_REDUCED.txt" if which_size == "reduced" else "./input-data/settings_DIMINISHED.txt"
     output_folder = "./output-data/"
 
     # Create model folder if it doesn't exist

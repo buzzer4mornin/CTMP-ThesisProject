@@ -29,12 +29,13 @@ class MyLDA:
         theta_norm = self.theta.sum(axis=1)
         self.theta /= theta_norm[:, np.newaxis]
 
-    def run_EM(self, wordids, wordcts):
+    def run_EM(self, wordids, wordcts, GLOB_ITER):
         """ Click to read more
 
         First does an E step on given wordids and wordcts to update theta,
         then uses the result to update betas in M step.
         """
+        self.GLOB_ITER = GLOB_ITER
 
         # E - expectation step
         self.e_step(wordids, wordcts)
@@ -47,7 +48,7 @@ class MyLDA:
         for d in range(self.num_docs):
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
-            print(f" ** UPDATE theta over {d+1}/{self.num_docs} documents ** ")
+            print(f" ** UPDATE theta over {d+1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
 
     def update_theta(self, ids, cts, d):
         """ Click to read more
