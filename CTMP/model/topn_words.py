@@ -2,7 +2,11 @@
 import sys
 import math
 
-# run in terminal --> python ./model/topn_words.py reduced
+# ------------ RUN in terminal ------------
+# --> python ./model/topn_words.py original
+# --> python ./model/topn_words.py reduced
+# --> python ./model/topn_words.py diminished
+
 # blei topics: http://www.cs.columbia.edu/~blei/lda-c/ap-topics.pdf
 
 
@@ -24,12 +28,12 @@ def print_topics(vocab_file, nwords, result_file):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2 or sys.argv[1] not in ["original", "reduced"]:
-        print("WRONG USAGE! TRY --> python ./model/topn_words.py [original or reduced]")
+    if len(sys.argv) != 2 or sys.argv[1] not in ["original", "reduced", "diminished"]:
+        print("WRONG USAGE! TRY --> python ./model/topn_words.py [original, reduced or diminished]")
         exit()
 
     which_size = sys.argv[1]
-    vocab_file = "./input-data/vocab.txt" if which_size == "original" else "./input-data/vocab_REDUCED.txt"
+    vocab_file = "./input-data/vocab.txt" if which_size == "original" else "./input-data/vocab_REDUCED.txt" if which_size == "reduced" else "./input-data/vocab_DIMINISHED.txt"
     list_tops = "./output-data/list_tops.txt"
     result_file = "./output-data/topn_output.txt"
     print_topics(vocab_file, list_tops, result_file)

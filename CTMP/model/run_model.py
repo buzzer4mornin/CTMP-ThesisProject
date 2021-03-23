@@ -12,15 +12,15 @@ from LDA import MyLDA
 sys.path.insert(0, './common')
 import utilities
 
+# ------------ RUN in terminal ------------
+# --> python ./model/run_model.py ctmp original
+# --> python ./model/run_model.py lda original
 
-# RUN --> python ./model/run_model.py ctmp original
-# RUN --> python ./model/run_model.py lda original
+# --> python ./model/run_model.py ctmp reduced
+# --> python ./model/run_model.py lda reduced
 
-# RUN --> python ./model/run_model.py ctmp reduced
-# RUN --> python ./model/run_model.py lda reduced
-
-# RUN --> python ./model/run_model.py ctmp diminished
-# RUN --> python ./model/run_model.py lda diminished
+# --> python ./model/run_model.py ctmp diminished
+# --> python ./model/run_model.py lda diminished
 
 # TODO: when writing settings.txt into "/model" directory, correct some floats into int (e.g, num_topics, user_size...)
 
