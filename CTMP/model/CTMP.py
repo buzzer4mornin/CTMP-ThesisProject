@@ -151,13 +151,14 @@ class MyCTMP:
             print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
 
         # UPDATE theta, mu
-        # div = (self.shp / self.rte).sum(axis=0)
+        # norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
         for d in range(self.num_docs):
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
 
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
+            print(sum(mud))
             # print("----")
             # print(np.argmax(mud))
             # print(np.argmax(thetad))
@@ -179,10 +180,10 @@ class MyCTMP:
         if len(mu_users) == 0:
             mu = np.copy(self.theta[d, :])
         else:
-            '''# for k in range(self.num_topics):
+            #for k in range(self.num_topics):
             #    temp = -1 * norm_mu[k] + self.lamb * self.theta[d, k]
-            #    delta = temp ** 2 + 4 * self.lamb * rating_phi
-            #    mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)'''
+            #    delta = temp ** 2 + 4 * self.lamb * rating_phi[k]
+            #    mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)
             for k in range(self.num_topics):
                 mu[k] = rating_phi[k] / norm_mu[k]
         return mu
