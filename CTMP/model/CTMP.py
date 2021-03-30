@@ -30,10 +30,18 @@ class MyCTMP:
         self.iter_infer = iter_infer
 
         # Get initial beta(topics) which was produced by LDA
-        self.beta = np.load('./input-data/CTMP_initial_beta.npy')
+        self.beta = np.load('./input-data/initial_beta.npy')
 
         # Get initial theta(topic proportions) which was produced by LDA
-        self.theta = np.load('./input-data/CTMP_initial_theta.npy')
+        # Theta is very sparse, so we decide to use smoothing to avoid having extreme sparse theta,
+        # therefore increase other proportions a bit
+        self.theta = np.load('./input-data/initial_theta.npy')
+        ones_theta = np.argmax(self.theta, axis=1)
+        self.theta = np.random.uniform(low=0.005, high=0.015, size=(5, 10))
+        for i in range(self.theta.shape[0]):
+            self.theta[i][ones_theta[i]] = random.uniform(0.9, 0.95)
+        norm = self.theta.sum(axis=1)
+        self.theta /= norm[:, np.newaxis]
 
         # Initialize mu (topic offsets)
         self.mu = np.copy(self.theta)  # + np.random.normal(0, self.lamb, self.theta.shape)
@@ -44,32 +52,6 @@ class MyCTMP:
         # Initialize shp, rte (user's variational parameters)
         self.shp = np.ones((self.user_size, self.num_topics)) * self.e
         self.rte = np.ones((self.user_size, self.num_topics)) * self.f
-        # INIT shp, rte
-        # self.shp, self.rte = self.get_shp_rte()
-        # self.shp = np.load("./input-data/CTMP_initial_shp.npy")
-        # self.rte = np.load("./input-data/CTMP_initial_rte.npy")
-
-    '''def get_shp_rte(self):
-        # init
-        shp = np.empty(shape=(self.user_size, self.num_topics))
-        rte = np.empty(shape=(self.user_size, self.num_topics))
-
-        for u in range(self.user_size):
-            movies_for_u = self.rating_GroupForUser[u]
-            phi_block = self.phi[u // 1000]
-            usr = u % 1000
-
-            if len(movies_for_u) == 0:
-                shp[u, :] = 0.3  # float(self.e)
-                rte[u, :] = self.f + self.mu.sum(axis=0)
-                continue
-
-            temp = np.copy(phi_block[usr, [movies_for_u], :])
-            shp[u, :] = self.e + np.sum(temp[0], axis=0)
-            rte[u, :] = self.f + self.mu.sum(axis=0)
-
-            print(f" ** INIT shp, rte over {u + 1}/{self.user_size} users ** ")
-        return shp, rte'''
 
     def get_phi(self):
         """ Click to read description
@@ -86,9 +68,7 @@ class MyCTMP:
         # Initiate matrix
         phi_matrices = list()
 
-        # Create small chunks of 3D matrix and add them into list
-        # Phi of user_ids in interval - [0, 137999] for ORIGINAL
-        # Phi of user_ids in interval - [0, 999] for REDUCED
+        # Create small 3D matrices and add them into list
         thousand_block_size = self.user_size // 1000
         phi = np.empty(shape=(1000, self.num_docs, self.num_topics))
         for i in range(1000):
@@ -96,9 +76,7 @@ class MyCTMP:
         for i in range(thousand_block_size):
             phi_matrices.append(phi)
 
-        # Create remaining chunk of 3D matrix and add it into list
-        # Phi of user_ids in interval - [138000, 138493] for ORIGINAL
-        # Phi of user_ids in interval - [1000, 1915] for REDUCED
+        # Create last remaining 3D matrix and add it into list
         remaining_block_size = self.user_size % 1000
         phi = np.empty(shape=(remaining_block_size, self.num_docs, self.num_topics))
         for i in range(remaining_block_size):
@@ -133,9 +111,6 @@ class MyCTMP:
 
             # if user didnt like any movie, then dont update anything, continue!
             if len(movies_for_u) == 0:
-                #self.shp[u, :] = 0.3  # float(self.e)
-                #self.rte[u, :] = 0.3 + self.mu.sum(axis=0)
-                #print(f" **** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
                 continue
 
             # compute Φuj then normalize it
@@ -158,8 +133,8 @@ class MyCTMP:
 
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
-            print(sum(mud))
             # print("----")
+            print(sum(mud))
             # print(np.argmax(mud))
             # print(np.argmax(thetad))
             # print("----")
@@ -180,12 +155,12 @@ class MyCTMP:
         if len(mu_users) == 0:
             mu = np.copy(self.theta[d, :])
         else:
-            #for k in range(self.num_topics):
-            #    temp = -1 * norm_mu[k] + self.lamb * self.theta[d, k]
-            #    delta = temp ** 2 + 4 * self.lamb * rating_phi[k]
-            #    mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)
             for k in range(self.num_topics):
-                mu[k] = rating_phi[k] / norm_mu[k]
+                temp = -1 * norm_mu[k] + self.lamb * self.theta[d, k]
+                delta = temp ** 2 + 4 * self.lamb * rating_phi[k] # added [k] to rating_phi.
+                mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)
+            # for k in range(self.num_topics):
+            #    mu[k] = rating_phi[k] / norm_mu[k]
         return mu
 
     def update_theta(self, ids, cts, d):
