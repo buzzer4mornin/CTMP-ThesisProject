@@ -74,17 +74,13 @@ class MyCTMP:
     def get_phi(self):
         """ Click to read description
 
-        As we know Φ(phi) has shape of (user_size X num_docs X num_topics)
+        As we know Φ(phi) has shape of (user_size, num_docs, num_topics)
         which is 3D matrix of shape=(138493, 25900, 50) for ORIGINAL || (1915, 639, 50) for REDUCED
 
-        For ORIGINAL data, it is not possible(memory-wise) to have a numpy array of shape=(138493, 25900, 50)
-        Therefore, we cut the whole 3D matrix into small chunks of 3D matrix and put them into list - phi_matrices()
+        For ORIGINAL data, it is not possible(memory-wise) to store 3D matrix of shape=(138493, 25900, 50) into single numpy array.
+        Therefore, we cut the whole 3D matrix into small chunks of 3D matrix and put them into list and set it as our self.phi
         """
 
-        # Randomly generate 2D matrix block
-        # block_2D = np.random.rand(self.num_docs, self.num_topics) + 1e-10
-        # block_2D_norm = block_2D.sum(axis=1)
-        # block_2D /= block_2D_norm[:, np.newaxis]
         block_2D = np.zeros(shape=(self.num_docs, self.num_topics))
 
         # Initiate matrix
@@ -126,27 +122,31 @@ class MyCTMP:
 
     def e_step(self, wordids, wordcts):
         """ Does e step. Updates theta, mu, pfi, shp, rte for all documents and users"""
-        # NEW div
-        div = np.copy((self.shp / self.rte).sum(axis=0))
+        # Normalization denominator for mu
+        norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
 
         # UPDATE phi, shp, rte
         for u in range(self.user_size):
-            movies_for_u = self.rating_GroupForUser[u]  # get movies liked by user u
-            phi_block = self.phi[u // 1000]  # access the needed small chunk of phi by list index
-            usr = u % 1000  # get user for that small chunk of phi
+            movies_for_u = self.rating_GroupForUser[u]  # list of movie ids liked by user u
+            phi_block = self.phi[u // 1000]             # access needed 3D matrix of phi list by index
+            usr = u % 1000                              # convert user id into interval 0-1000
 
-            # if user didnt like any movie CHECK CORRECTNESS
+            # if user didnt like any movie, then dont update anything, continue!
             if len(movies_for_u) == 0:
                 #self.shp[u, :] = 0.3  # float(self.e)
                 #self.rte[u, :] = 0.3 + self.mu.sum(axis=0)
                 #print(f" **** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
                 continue
 
-            temp = np.exp(np.log(self.mu[[movies_for_u], :]) + special.psi(self.shp[u, :]) - np.log(self.rte[u, :]))
-            temp_sum = np.copy(temp)[0].sum(axis=1)
-            temp_norm = np.copy(temp) / temp_sum[:, np.newaxis]
-            phi_block[usr, [movies_for_u], :] = temp_norm
-            self.shp[u, :] = self.e + temp_norm[0].sum(axis=0)
+            # compute Φuj then normalize it
+            phi_uj = np.exp(np.log(self.mu[[movies_for_u], :]) + special.psi(self.shp[u, :]) - np.log(self.rte[u, :]))
+            phi_uj_sum = np.copy(phi_uj)[0].sum(axis=1)
+            phi_uj_norm = np.copy(phi_uj) / phi_uj_sum[:, np.newaxis]
+            # update user's phi in phi_block with newly computed phi_uj_sum
+            phi_block[usr, [movies_for_u], :] = phi_uj_norm
+
+            # update user's shp and rte
+            self.shp[u, :] = self.e + phi_uj_norm[0].sum(axis=0)
             self.rte[u, :] = self.f + self.mu.sum(axis=0)
             print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
 
@@ -156,43 +156,35 @@ class MyCTMP:
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
 
-            mud = self.update_mu(div, d)
+            mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
+            # print("----")
+            # print(np.argmax(mud))
+            # print(np.argmax(thetad))
+            # print("----")
             print(f" ** UPDATE theta, mu over {d + 1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
 
-    def update_mu(self, div, d):
+    def update_mu(self, norm_mu, d):
         # initiate new mu
         mu = np.empty(self.num_topics)
         mu_users = self.rating_GroupForMovie[d]
 
-        def _get_rating_phi(x):
+        def get_phi(x):
             phi_ = self.phi[x // 1000]
             usr = x % 1000
-            return np.sum(phi_[usr, d, :])
+            return phi_[usr, d, :]  # **previously** np.sum()
 
-        rating_phi = sum(map(_get_rating_phi, mu_users))
-        # rating_phi = float(len(mu_users))  # ALTERNATIVELY! but check if it is must -> sum(phi)==1
+        rating_phi = sum(map(get_phi, mu_users))
 
-        if rating_phi == 0:
-            # TODO: is this approach enough?
+        if len(mu_users) == 0:
             mu = np.copy(self.theta[d, :])
         else:
-            # for k in range(self.num_topics):
-            #    temp = -1 * div[k] + self.lamb * self.theta[d, k]
+            '''# for k in range(self.num_topics):
+            #    temp = -1 * norm_mu[k] + self.lamb * self.theta[d, k]
             #    delta = temp ** 2 + 4 * self.lamb * rating_phi
-            #    mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)
-            #    if mu[k] > 100:
-            #        print(rating_phi)
-            #        print(temp)
-            #        print(delta)
-            #        exit()
+            #    mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)'''
             for k in range(self.num_topics):
-                mu[k] = rating_phi / div[k]
-                #if mu[k] > 100:
-                #    print(mu[k])
-                #    print(rating_phi)
-                #    print(div[k])
-                #    exit()
+                mu[k] = rating_phi[k] / norm_mu[k]
         return mu
 
     def update_theta(self, ids, cts, d):
