@@ -36,12 +36,12 @@ class MyCTMP:
         # Theta is very sparse, so we decide to use smoothing to avoid having extreme sparse theta,
         # therefore increase other proportions a bit
         self.theta = np.load('./input-data/initial_theta.npy')
-        ones_theta = np.argmax(self.theta, axis=1)
+        '''ones_theta = np.argmax(self.theta, axis=1)
         self.theta = np.random.uniform(low=0.005, high=0.015, size=(5, 10))
         for i in range(self.theta.shape[0]):
             self.theta[i][ones_theta[i]] = random.uniform(0.9, 0.95)
         norm = self.theta.sum(axis=1)
-        self.theta /= norm[:, np.newaxis]
+        self.theta /= norm[:, np.newaxis]'''
 
         # Initialize mu (topic offsets)
         self.mu = np.copy(self.theta)  # + np.random.normal(0, self.lamb, self.theta.shape)
