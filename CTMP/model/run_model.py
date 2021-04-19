@@ -6,6 +6,7 @@ import shutil
 import sys
 import time
 import numpy as np
+import pandas as pd
 from CTMP import MyCTMP
 from LDA import MyLDA
 
@@ -85,6 +86,13 @@ def main():
     #         c += 1
     #     if c == 20:
     #         exit()'''
+
+    print("likes", len(rating_GroupForUser[4]))
+    user_id = 4
+    ratings = np.array(pd.read_pickle(rating_file))
+    users = ratings[:, 0]
+    total_rated = np.count_nonzero(users == user_id)
+    exit()
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')
