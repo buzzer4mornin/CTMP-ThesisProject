@@ -30,12 +30,12 @@ class MyCTMP:
         self.iter_infer = iter_infer
 
         # Get initial beta(topics) which was produced by LDA
-        self.beta = np.load('./input-data/initial_beta.npy')
+        self.beta = np.load('./input-data/CTMP_initial_beta.npy')
 
         # Get initial theta(topic proportions) which was produced by LDA
         # Theta is very sparse, so we decide to use smoothing to avoid having extreme sparse theta,
         # therefore increase other proportions a bit
-        self.theta = np.load('./input-data/initial_theta.npy')
+        self.theta = np.load('./input-data/CTMP_ initial_theta.npy')
         '''ones_theta = np.argmax(self.theta, axis=1)
         self.theta = np.random.uniform(low=0.005, high=0.015, size=(5, 10))
         for i in range(self.theta.shape[0]):
@@ -134,7 +134,7 @@ class MyCTMP:
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
             # print("----")
-            print(sum(mud))
+            # print(sum(mud))
             # print(np.argmax(mud))
             # print(np.argmax(thetad))
             # print("----")
@@ -157,7 +157,7 @@ class MyCTMP:
         else:
             for k in range(self.num_topics):
                 temp = -1 * norm_mu[k] + self.lamb * self.theta[d, k]
-                delta = temp ** 2 + 4 * self.lamb * rating_phi[k] # added [k] to rating_phi.
+                delta = temp ** 2 + 4 * self.lamb * rating_phi[k]  # added [k] to rating_phi.
                 mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)
             # for k in range(self.num_topics):
             #    mu[k] = rating_phi[k] / norm_mu[k]
