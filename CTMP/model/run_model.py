@@ -86,12 +86,7 @@ def main():
     #         c += 1
     #     if c == 20:
     #         exit()'''
-
-    print("likes", len(rating_GroupForUser[4]))
-    user_id = 4
-    ratings = np.array(pd.read_pickle(rating_file))
-    users = ratings[:, 0]
-    total_rated = np.count_nonzero(users == user_id)
+    print(rating_GroupForMovie[6602])
     exit()
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
