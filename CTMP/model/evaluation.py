@@ -1,21 +1,14 @@
 import pickle
 import argparse
-import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-# TODO:
-# assert in out both matrix predictions
-
-# ============================================= Read Data ==============================================================
-# with open("../saved-outputs/phi.pkl", "rb") as f:
-#    phi = pickle.load(f)
-
 parser = argparse.ArgumentParser()
-parser.add_argument("--test_size", default=10000, type=int, help="Size of test set")
+parser.add_argument("--test_size", default=200, type=int, help="Size of test set")
+parser.add_argument("--cv", default=5, type=int, help="Cross-validate with given number of folds")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='both', type=str, help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--pred_type", default='in-matrix', type=str, help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
 parser.add_argument("--seed", default=11, type=int, help="Random seed.")
 
 
@@ -41,12 +34,7 @@ class Evaluation:
         # Generate test set
         self.test_set = self.generate_test_set()
 
-        # Sum of Recalls and Precisions
-        # For both in_matrix and out-of-matrix prediction
-        self.recalls_in_matrix, self.precisions_in_matrix = 0, 0
-        self.recalls_out_of_matrix, self.precisions_out_of_matrix = 0, 0
-
-        # Average Recalls and Precisions over all users of test set
+        # Average Recalls and Precisions over all users of test set across the Top-M
         # For both in_matrix and out-of-matrix prediction
         self.avg_recalls_in_matrix, self.avg_precisions_in_matrix = [], []
         self.avg_recalls_out_of_matrix, self.avg_precisions_out_of_matrix = [], []
@@ -54,7 +42,7 @@ class Evaluation:
         self.avg_recall_precision()
 
     def group_items(self) -> list:
-        # number of noncold items - 20,323 (out of 25,900)
+        """Number of cold items - 5,577/25,900 || Number of noncold items - 20,323/25,900"""
         cold_items = []
         noncold_items = []
         for movie_id in range(len(self.rating_GroupForMovie)):
@@ -79,8 +67,8 @@ class Evaluation:
 
     def predict_in_matrix(self, user_id, top_m) -> None:
         """Compute in-matrix recall and precision for a given user, then add them to the sum"""
-        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)  # move to another, pass as argument
-        actual = self.rating_GroupForUser[user_id]  # move to another, pass as argument
+        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+        actual = self.rating_GroupForUser[user_id]
         sorted_ratings = np.argsort(-ratings)
         predicted_top_M = np.setdiff1d(sorted_ratings, self.cold_items, assume_unique=True)[:top_m]
         top_m_correct = np.sum(np.in1d(predicted_top_M, actual) * 1)
@@ -89,8 +77,8 @@ class Evaluation:
 
     def predict_out_of_matrix(self, user_id, top_m) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
-        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)  # move to another, pass as argument
-        actual = self.rating_GroupForUser[user_id]  # move to another, pass as argument
+        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+        actual = self.rating_GroupForUser[user_id]
         predicted_top_M = np.argsort(-ratings)[:top_m]
         top_m_correct = np.sum(np.in1d(predicted_top_M, actual) * 1)
         self.recalls_out_of_matrix += (top_m_correct / len(self.rating_GroupForUser[user_id]))
