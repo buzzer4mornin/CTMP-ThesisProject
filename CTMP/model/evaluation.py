@@ -2,13 +2,17 @@ import pickle
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+from math import floor
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--test_size", default=200, type=int, help="Size of test set")
 parser.add_argument("--cv", default=5, type=int, help="Cross-validate with given number of folds")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='in-matrix', type=str, help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--pred_type", default='in-matrix', type=str,
+                    help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--test_proportion", default=0.2, type=float,
+                    help="How much proportion of the data to be used for testing the model")
 parser.add_argument("--seed", default=11, type=int, help="Random seed.")
 
 
@@ -24,6 +28,12 @@ class Evaluation:
         with open("../saved-outputs/rating_GroupForMovie.pkl", "rb") as f:
             self.rating_GroupForMovie = pickle.load(f)
 
+        # self.ratings = np.load("../saved-outputs/df_rating", allow_pickle=True)
+        self.rating_GroupForUser_TRAIN, self.rating_GroupForUser_TEST = self.train_test_split()
+        # TODO:
+        # 1) train run_model.py CTMP on self.rating_GroupForUser_TRAIN
+        # 2) edit this script: replace self.rating_GroupForUser with self.rating_GroupForUser_TEST ???
+
         self.mu = np.load("../saved-outputs/mu.npy")
         self.shp = np.load("../saved-outputs/shp.npy")
         self.rte = np.load("../saved-outputs/rte.npy")
@@ -35,11 +45,30 @@ class Evaluation:
         self.test_set = self.generate_test_set()
 
         # Average Recalls and Precisions over all users of test set across the Top-M
-        # For both in_matrix and out-of-matrix prediction
         self.avg_recalls_in_matrix, self.avg_precisions_in_matrix = [], []
         self.avg_recalls_out_of_matrix, self.avg_precisions_out_of_matrix = [], []
         # Update them accordingly
         self.avg_recall_precision()
+
+    def train_test_split(self):
+        # Draft method
+        # Using random permutation, returns 0.2 proportion of ratings as test set, remaning 0.8 as training set
+        train, test = dict(), dict()
+        generator = np.random.RandomState(args.seed)
+        for key in list(self.rating_GroupForUser.keys()):
+            if len(self.rating_GroupForUser[key]) < 6:
+                del self.rating_GroupForUser[key]
+            else:
+                self.rating_GroupForUser[key] = list(self.rating_GroupForUser[key])
+                permutation = generator.permutation(len(self.rating_GroupForUser[key]))
+                split_point = floor(len(permutation) * args.test_proportion)
+                test_indices = sorted(permutation[:split_point], reverse=True)
+                test_set = []
+                for i in test_indices:
+                    test_set.append(self.rating_GroupForUser[key].pop(i))
+                train[key] = np.array(test_set)
+                test[key] = np.array(self.rating_GroupForUser[key])
+        return train, test
 
     def group_items(self) -> list:
         """Number of cold items - 5,577/25,900 || Number of noncold items - 20,323/25,900"""

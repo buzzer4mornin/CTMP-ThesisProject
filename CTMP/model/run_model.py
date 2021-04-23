@@ -85,9 +85,14 @@ def main():
     #         print(k)
     #         c += 1
     #     if c == 20:
-    #         exit()'''
-    print(rating_GroupForMovie[6602])
-    exit()
+    #         exit()
+    #c = 0
+    #for i in range(len(rating_GroupForUser)):
+    #    if len(rating_GroupForUser[i]) >= 5:
+    #        c += 1
+    #print(c)
+    #exit()'''
+
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')
