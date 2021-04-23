@@ -133,11 +133,7 @@ class MyCTMP:
 
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
-            # print("----")
-            # print(sum(mud))
-            # print(np.argmax(mud))
-            # print(np.argmax(thetad))
-            # print("----")
+
             print(f" ** UPDATE theta, mu over {d + 1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
 
     def update_mu(self, norm_mu, d):
