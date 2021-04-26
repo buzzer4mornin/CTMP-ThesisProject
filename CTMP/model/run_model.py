@@ -8,6 +8,8 @@ import time
 import numpy as np
 import pandas as pd
 from math import floor
+
+
 from CTMP import MyCTMP
 from LDA import MyLDA
 
@@ -15,25 +17,27 @@ sys.path.insert(0, './common')
 import utilities
 
 # ------------ RUN in terminal ------------
-# --> python ./model/run_model.py ctmp original
-# --> python ./model/run_model.py lda original
+# --> python ./model/run_model.py ctmp original 5
+# --> python ./model/run_model.py lda original 5
 
-# --> python ./model/run_model.py ctmp reduced
-# --> python ./model/run_model.py lda reduced
+# --> python ./model/run_model.py ctmp reduced 5
+# --> python ./model/run_model.py lda reduced 5
 
-# --> python ./model/run_model.py ctmp diminished
-# --> python ./model/run_model.py lda diminished
+# --> python ./model/run_model.py ctmp diminished 5
+# --> python ./model/run_model.py lda diminished 5
 
 # TODO: when writing settings.txt into "/model" directory, correct some floats into int (e.g, num_topics, user_size...)
+# TODO: convert sys.argv into ArgParser
 
 def main():
-    if len(sys.argv) != 3 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced", "diminished"]:
+    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced", "diminished"]:
         print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [original, reduced or diminished]")
         exit()
 
     # Get environment variables
     which_model = sys.argv[1]
     which_size = sys.argv[2]
+    k_cross_val = int(sys.argv[3])
 
     docs_file = "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt" if which_size == "reduced" else "./input-data/docs_DIMINISHED.txt"
     rating_file = "./input-data/df_rating_UPDATED" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
@@ -78,33 +82,7 @@ def main():
     
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
-    rating_GroupForUser, rating_GroupForMovie = utilities.get_rating_group(rating_file)
-    '''random_seed = 42
-    test_proportion = 0.2
-    dropout_threshold = 6
-    a = len(rating_GroupForUser)
-    def train_test_split(random_seed, test_proportion, dropout_threshold):
-        train, test = dict(), dict()
-        generator = np.random.RandomState(random_seed)
-        removed_keys = []
-        for key in list(rating_GroupForUser.keys()):
-            if len(rating_GroupForUser[key]) < dropout_threshold:
-                removed_keys.append(key)
-                del rating_GroupForUser[key]
-            else:
-                rating_GroupForUser[key] = list(rating_GroupForUser[key])
-                permutation = generator.permutation(len(rating_GroupForUser[key]))
-                split_point = floor(len(permutation) * test_proportion)
-                test_indices = sorted(permutation[:split_point], reverse=True)
-                test_set = []
-                for i in test_indices:
-                    test_set.append(rating_GroupForUser[key].pop(i))
-                train[key] = np.array(test_set)
-                test[key] = np.array(rating_GroupForUser[key])
-        return train, test
-
-    rating_GroupForUser_TRAIN, rating_GroupForUser_TEST = train_test_split(random_seed, test_proportion, dropout_threshold)
-    exit()'''
+    rating_GroupForUser, rating_GroupForMovie = utilities.get_rating_group(rating_file, k_cross_val)
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":

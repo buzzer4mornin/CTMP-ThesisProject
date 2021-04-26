@@ -3,7 +3,7 @@ import numpy as np
 import numpy_indexed
 import pandas as pd
 import pickle
-
+from sklearn.model_selection import StratifiedKFold
 
 def read_data(filename):
     wordids = list()
@@ -118,23 +118,30 @@ def write_file(model_folder, list_tops, algo):
                 pickle.dump(getattr(algo, i), f, protocol=4)
 
 
-def get_rating_group(rating_group_file):
+def get_rating_group(rating_group_file, k_cv):
+    skf = StratifiedKFold(n_splits=k_cv, shuffle=True, random_state=42)
     ratings = np.array(pd.read_pickle(rating_group_file))
+
+    # TODO: CLEAN DATA overall when generating df_rating_UPDATED!!! Delete those users rated less than 5 movies
+    # Because it prints warning when we run k_cv=5 to split data
+
     # --------------------------------------------------
+    '''# sort array by users - for stratified split
+    ratings_one = ratings_one[np.argsort(ratings_one[:, 0])]
+    sorted_users = ratings_one[:, 0]'''
     # TODO: extract ratings=1 only
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
+    users = ratings_one[:, 0]
+    ratings_one, users = pd.DataFrame(ratings_one), pd.DataFrame(users)
 
-    # sort array by users - for stratified split
-    ratings_one = ratings_one[np.argsort(ratings_one[:, 0])]
-    sorted_users = ratings_one[:,0]
-
-    from sklearn.model_selection import KFold
-
-    print(sorted_users)
-    print(pd.Series(range(len(sorted_users))).groupby(sorted_users, sort=False).apply(list).tolist()[0])
+    for train_index, test_index in skf.split(ratings_one, users):
+        ratings_one_train = ratings_one.loc[train_index, :]
+        ratings_one_test = ratings_one.loc[test_index, :]
+        break
+    print(np.array(ratings_one).shape[0], np.array(ratings_one_train).shape[0] + np.array(ratings_one_test).shape[0])
     exit()
-
     #--------------------------------------------------
+
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     all_mov_ids = np.unique(ratings[:, 1])
     all_usr_ids = np.unique(ratings[:, 0])
