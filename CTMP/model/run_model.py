@@ -7,6 +7,7 @@ import sys
 import time
 import numpy as np
 import pandas as pd
+from math import floor
 from CTMP import MyCTMP
 from LDA import MyLDA
 
@@ -35,7 +36,7 @@ def main():
     which_size = sys.argv[2]
 
     docs_file = "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt" if which_size == "reduced" else "./input-data/docs_DIMINISHED.txt"
-    rating_file = "./input-data/df_rating" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
+    rating_file = "./input-data/df_rating_UPDATED" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
     setting_file = "./input-data/settings.txt" if which_size == "original" else "./input-data/settings_REDUCED.txt" if which_size == "reduced" else "./input-data/settings_DIMINISHED.txt"
     output_folder = "./output-data/"
 
@@ -78,20 +79,32 @@ def main():
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
     rating_GroupForUser, rating_GroupForMovie = utilities.get_rating_group(rating_file)
-    '''#print(rating_GroupForUser[4])
-    # c = 0
-    # for k in sorted(rating_GroupForUser, key=lambda k: len(rating_GroupForUser[k]), reverse=False):
-    #     if len(rating_GroupForUser[k]) == 20:
-    #         print(k)
-    #         c += 1
-    #     if c == 20:
-    #         exit()
-    #c = 0
-    #for i in range(len(rating_GroupForUser)):
-    #    if len(rating_GroupForUser[i]) >= 5:
-    #        c += 1
-    #print(c)
-    #exit()'''
+    '''random_seed = 42
+    test_proportion = 0.2
+    dropout_threshold = 6
+    a = len(rating_GroupForUser)
+    def train_test_split(random_seed, test_proportion, dropout_threshold):
+        train, test = dict(), dict()
+        generator = np.random.RandomState(random_seed)
+        removed_keys = []
+        for key in list(rating_GroupForUser.keys()):
+            if len(rating_GroupForUser[key]) < dropout_threshold:
+                removed_keys.append(key)
+                del rating_GroupForUser[key]
+            else:
+                rating_GroupForUser[key] = list(rating_GroupForUser[key])
+                permutation = generator.permutation(len(rating_GroupForUser[key]))
+                split_point = floor(len(permutation) * test_proportion)
+                test_indices = sorted(permutation[:split_point], reverse=True)
+                test_set = []
+                for i in test_indices:
+                    test_set.append(rating_GroupForUser[key].pop(i))
+                train[key] = np.array(test_set)
+                test[key] = np.array(rating_GroupForUser[key])
+        return train, test
+
+    rating_GroupForUser_TRAIN, rating_GroupForUser_TEST = train_test_split(random_seed, test_proportion, dropout_threshold)
+    exit()'''
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":

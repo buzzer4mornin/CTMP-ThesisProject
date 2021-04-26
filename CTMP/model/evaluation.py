@@ -9,12 +9,10 @@ parser.add_argument("--test_size", default=200, type=int, help="Size of test set
 parser.add_argument("--cv", default=5, type=int, help="Cross-validate with given number of folds")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='in-matrix', type=str,
-                    help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
-parser.add_argument("--test_proportion", default=0.2, type=float,
-                    help="How much proportion of the data to be used for testing the model")
-parser.add_argument("--seed", default=11, type=int, help="Random seed.")
-
+parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--test_proportion", default=0.2, type=float, help="How much proportion of the data to be used for testing the model")
+parser.add_argument("--seed", default=42, type=int, help="Random seed.")
+parser.add_argument("--folder", default="0.3-100", type=str, help="Folder to take saved outputs from")
 
 class Evaluation:
     def __init__(self, args):
@@ -22,21 +20,24 @@ class Evaluation:
         np.random.seed(args.seed)
 
         # Read data
-        with open("../saved-outputs/rating_GroupForUser.pkl", "rb") as f:
+        with open(f"../{args.folder}/rating_GroupForUser.pkl", "rb") as f:
             self.rating_GroupForUser = pickle.load(f)
 
-        with open("../saved-outputs/rating_GroupForMovie.pkl", "rb") as f:
+        with open(f"../{args.folder}/rating_GroupForMovie.pkl", "rb") as f:
             self.rating_GroupForMovie = pickle.load(f)
 
         # self.ratings = np.load("../saved-outputs/df_rating", allow_pickle=True)
-        self.rating_GroupForUser_TRAIN, self.rating_GroupForUser_TEST = self.train_test_split()
+        # self.rating_GroupForUser_TRAIN, self.rating_GroupForUser_TEST = self.train_test_split()
         # TODO:
-        # 1) train run_model.py CTMP on self.rating_GroupForUser_TRAIN
-        # 2) edit this script: replace self.rating_GroupForUser with self.rating_GroupForUser_TEST ???
+        # 1) first run df_rating_UPDATED for training with e=f=0.003 to check the correctness --> CORRECT!
+        # 2) run run df_rating_UPDATED for training with e=f=0.3 --> RESULT IS BAD, 0.3 doesnt work, 0.003 works
+        # 3) modify rating_GroupForMovie into TRAIN, TEST accordingly
+        # 4) train run_model.py CTMP on self.rating_GroupForUser_TRAIN
+        # 5) edit this script: replace self.rating_GroupForUser with self.rating_GroupForUser_TEST ???
 
-        self.mu = np.load("../saved-outputs/mu.npy")
-        self.shp = np.load("../saved-outputs/shp.npy")
-        self.rte = np.load("../saved-outputs/rte.npy")
+        self.mu = np.load(f"../{args.folder}/mu.npy")
+        self.shp = np.load(f"../{args.folder}/shp.npy")
+        self.rte = np.load(f"../{args.folder}/rte.npy")
 
         # Group items separately
         self.cold_items, self.noncold_items = self.group_items()

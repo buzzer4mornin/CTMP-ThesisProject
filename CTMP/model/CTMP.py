@@ -35,7 +35,7 @@ class MyCTMP:
         # Get initial theta(topic proportions) which was produced by LDA
         # Theta is very sparse, so we decide to use smoothing to avoid having extreme sparse theta,
         # therefore increase other proportions a bit
-        self.theta = np.load('./input-data/CTMP_ initial_theta.npy')
+        self.theta = np.load('./input-data/CTMP_initial_theta.npy')
         '''ones_theta = np.argmax(self.theta, axis=1)
         self.theta = np.random.uniform(low=0.005, high=0.015, size=(5, 10))
         for i in range(self.theta.shape[0]):

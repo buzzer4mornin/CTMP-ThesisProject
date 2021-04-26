@@ -120,6 +120,21 @@ def write_file(model_folder, list_tops, algo):
 
 def get_rating_group(rating_group_file):
     ratings = np.array(pd.read_pickle(rating_group_file))
+    # --------------------------------------------------
+    # TODO: extract ratings=1 only
+    ratings_one = ratings[np.where(ratings[:, 2] == 1)]
+
+    # sort array by users - for stratified split
+    ratings_one = ratings_one[np.argsort(ratings_one[:, 0])]
+    sorted_users = ratings_one[:,0]
+
+    from sklearn.model_selection import KFold
+
+    print(sorted_users)
+    print(pd.Series(range(len(sorted_users))).groupby(sorted_users, sort=False).apply(list).tolist()[0])
+    exit()
+
+    #--------------------------------------------------
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     all_mov_ids = np.unique(ratings[:, 1])
     all_usr_ids = np.unique(ratings[:, 0])
