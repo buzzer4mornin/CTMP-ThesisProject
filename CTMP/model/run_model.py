@@ -5,16 +5,17 @@ import os
 import shutil
 import sys
 import time
+import pickle
 import numpy as np
 import pandas as pd
 from math import floor
-
 
 from CTMP import MyCTMP
 from LDA import MyLDA
 
 sys.path.insert(0, './common')
 import utilities
+
 
 # ------------ RUN in terminal ------------
 # --> python ./model/run_model.py ctmp original 5
@@ -30,7 +31,8 @@ import utilities
 # TODO: convert sys.argv into ArgParser
 
 def main():
-    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced", "diminished"]:
+    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced",
+                                                                                       "diminished"]:
         print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [original, reduced or diminished]")
         exit()
 
@@ -82,12 +84,35 @@ def main():
     
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
-    rating_GroupForUser, rating_GroupForMovie = utilities.get_rating_group(rating_file, k_cross_val)
+
+    # rating_GroupForUser_train, rating_GroupForMovie_train, \
+    # rating_GroupForUser_test, rating_GroupForMovie_test = utilities.get_rating_group(rating_file, k_cross_val)
+    #
+    # with open(f"rating_GroupForUser_train.pkl", "wb") as f:
+    #     pickle.dump(rating_GroupForUser_train, f)
+    # with open(f"rating_GroupForMovie_train.pkl", "wb") as f:
+    #     pickle.dump(rating_GroupForMovie_train, f)
+    # with open(f"rating_GroupForUser_test.pkl", "wb") as f:
+    #     pickle.dump(rating_GroupForUser_test, f)
+    # with open(f"rating_GroupForMovie_test.pkl", "wb") as f:
+    #     pickle.dump(rating_GroupForMovie_test, f)
+
+    rating_GroupForUser_train = pickle.load(open("./input-data/rating_GroupForUser_train.pkl", "rb"))
+    rating_GroupForMovie_train = pickle.load(open("./input-data/rating_GroupForMovie_train.pkl", "rb"))
+    rating_GroupForUser_test = pickle.load(open("./input-data/rating_GroupForUser_test.pkl", "rb"))
+    rating_GroupForMovie_test = pickle.load(open("./input-data/rating_GroupForMovie_test.pkl", "rb"))
+
+    # c_1 = 0
+    # for key in rating_GroupForMovie_train:
+    #     c_1 += len(rating_GroupForMovie_train[key])
+    # c_2 = 0
+    # for key in rating_GroupForMovie_test:
+    #     c_2 += len(rating_GroupForMovie_test[key])
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')
-        algo = MyCTMP(rating_GroupForUser, rating_GroupForMovie,
+        algo = MyCTMP(rating_GroupForUser_train, rating_GroupForMovie_train,
                       ddict['num_docs'], ddict['num_terms'], ddict['num_topics'],
                       ddict["user_size"], ddict["lamb"], ddict["e"], ddict["f"], ddict['alpha'],
                       ddict['iter_infer'])

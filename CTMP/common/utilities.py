@@ -4,6 +4,8 @@ import numpy_indexed
 import pandas as pd
 import pickle
 from sklearn.model_selection import StratifiedKFold
+import warnings
+warnings.filterwarnings("ignore")
 
 def read_data(filename):
     wordids = list()
@@ -122,45 +124,56 @@ def get_rating_group(rating_group_file, k_cv):
     skf = StratifiedKFold(n_splits=k_cv, shuffle=True, random_state=42)
     ratings = np.array(pd.read_pickle(rating_group_file))
 
-    # TODO: CLEAN DATA overall when generating df_rating_UPDATED!!! Delete those users rated less than 5 movies
-    # Because it prints warning when we run k_cv=5 to split data
-
-    # --------------------------------------------------
+    #TODO: After doing above, then run below to get 1 fold of kfold, and then train on that fold
     '''# sort array by users - for stratified split
     ratings_one = ratings_one[np.argsort(ratings_one[:, 0])]
     sorted_users = ratings_one[:, 0]'''
-    # TODO: extract ratings=1 only
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     users = ratings_one[:, 0]
     ratings_one, users = pd.DataFrame(ratings_one), pd.DataFrame(users)
 
     for train_index, test_index in skf.split(ratings_one, users):
-        ratings_one_train = ratings_one.loc[train_index, :]
-        ratings_one_test = ratings_one.loc[test_index, :]
+        ratings_one_train = np.array(ratings_one.loc[train_index, :])
+        ratings_one_test = np.array(ratings_one.loc[test_index, :])
         break
-    print(np.array(ratings_one).shape[0], np.array(ratings_one_train).shape[0] + np.array(ratings_one_test).shape[0])
-    exit()
-    #--------------------------------------------------
 
-    ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     all_mov_ids = np.unique(ratings[:, 1])
     all_usr_ids = np.unique(ratings[:, 0])
-    temp = ratings_one[:, [0, 1]]
 
+    # --------------- TRAIN ---------------
+    temp = ratings_one_train[:, [0, 1]]
     # Creating GroupForUser dictionary
     temp_sorted = temp[np.argsort(temp[:, 0])]
     usr_id = np.unique(temp_sorted[:, 0])
     mov_id = numpy_indexed.group_by(temp_sorted[:, 0]).split(temp_sorted[:, 1])
-    rating_GroupForUser = dict(zip(usr_id, mov_id))
+    rating_GroupForUser_train = dict(zip(usr_id, mov_id))
     diff = np.setdiff1d(all_usr_ids, usr_id)
-    for i in diff: rating_GroupForUser[i] = []
+    for i in diff: rating_GroupForUser_train[i] = []
 
     # Creating GroupForMovie dictionary
     temp_sorted = temp[np.argsort(temp[:, 1])]
     mov_id = np.unique(temp_sorted[:, 1])
     usr_id = numpy_indexed.group_by(temp_sorted[:, 1]).split(temp_sorted[:, 0])
-    rating_GroupForMovie = dict(zip(mov_id, usr_id))
+    rating_GroupForMovie_train = dict(zip(mov_id, usr_id))
     diff = np.setdiff1d(all_mov_ids, mov_id)
-    for i in diff: rating_GroupForMovie[i] = []
+    for i in diff: rating_GroupForMovie_train[i] = []
 
-    return rating_GroupForUser, rating_GroupForMovie
+    # --------------- TEST ---------------
+    temp = ratings_one_test[:, [0, 1]]
+    # Creating GroupForUser dictionary
+    temp_sorted = temp[np.argsort(temp[:, 0])]
+    usr_id = np.unique(temp_sorted[:, 0])
+    mov_id = numpy_indexed.group_by(temp_sorted[:, 0]).split(temp_sorted[:, 1])
+    rating_GroupForUser_test = dict(zip(usr_id, mov_id))
+    diff = np.setdiff1d(all_usr_ids, usr_id)
+    for i in diff: rating_GroupForUser_test[i] = []
+
+    # Creating GroupForMovie dictionary
+    temp_sorted = temp[np.argsort(temp[:, 1])]
+    mov_id = np.unique(temp_sorted[:, 1])
+    usr_id = numpy_indexed.group_by(temp_sorted[:, 1]).split(temp_sorted[:, 0])
+    rating_GroupForMovie_test = dict(zip(mov_id, usr_id))
+    diff = np.setdiff1d(all_mov_ids, mov_id)
+    for i in diff: rating_GroupForMovie_test[i] = []
+
+    return rating_GroupForUser_train, rating_GroupForMovie_train, rating_GroupForUser_test, rating_GroupForMovie_test
