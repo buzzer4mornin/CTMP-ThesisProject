@@ -11,7 +11,7 @@ currdir = str(os.path.dirname(os.path.abspath(__file__)))
 
 def get_credentials() -> list:
     c = []
-    with open('../credentials.txt') as f:
+    with open('./credentials.txt') as f:
         for line in f.readlines():
             try:
                 # fetching username and password
@@ -42,11 +42,11 @@ try:
     df.to_pickle(currdir + '/df_user')'''
 
     # -- 2nd Query --  [Get RATING table] [UNCOMMENT to run]
-    '''cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
+    cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
     db.commit()
     df = pd.DataFrame(cur.fetchall())
     df.columns = ["USERID", "MOVIEID", "RATING"]
-    df.to_pickle(currdir + '/df_rating')'''
+    df.to_pickle(currdir + '/df_rating')
 
     # -- 3rd Query --  [Get MOVIE table] (parse XML plot from IMDB) [UNCOMMENT to run]
     '''cur.execute(
