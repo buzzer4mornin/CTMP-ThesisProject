@@ -104,6 +104,7 @@ class MyCTMP:
         norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
 
         # UPDATE phi, shp, rte
+        s = time.time()
         for u in range(self.user_size):
             movies_for_u = self.rating_GroupForUser[u]  # list of movie ids liked by user u
             phi_block = self.phi[u // 1000]             # access needed 3D matrix of phi list by index
@@ -123,18 +124,22 @@ class MyCTMP:
             # update user's shp and rte
             self.shp[u, :] = self.e + phi_uj_norm[0].sum(axis=0)
             self.rte[u, :] = self.f + self.mu.sum(axis=0)
-            print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
+            # print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
+        e = time.time()
+        print("Users update:", e-s)
 
         # UPDATE theta, mu
         # norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
+        s = time.time()
         for d in range(self.num_docs):
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
 
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
-
-            print(f" ** UPDATE theta, mu over {d + 1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
+            # print(f" ** UPDATE theta, mu over {d + 1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
+        e = time.time()
+        print("Docs update:", e - s)
 
     def update_mu(self, norm_mu, d):
         # initiate new mu

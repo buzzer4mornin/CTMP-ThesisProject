@@ -125,9 +125,6 @@ def get_rating_group(rating_group_file, k_cv):
     ratings = np.array(pd.read_pickle(rating_group_file))
 
     #TODO: After doing above, then run below to get 1 fold of kfold, and then train on that fold
-    '''# sort array by users - for stratified split
-    ratings_one = ratings_one[np.argsort(ratings_one[:, 0])]
-    sorted_users = ratings_one[:, 0]'''
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     users = ratings_one[:, 0]
     ratings_one, users = pd.DataFrame(ratings_one), pd.DataFrame(users)
