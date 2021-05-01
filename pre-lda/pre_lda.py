@@ -81,7 +81,7 @@ def get_input_docs(vocab, plots):
 
 
 if __name__ == '__main__':
-    movie_df = pd.read_pickle("../db-files/df_movie_UPDATED")
+    movie_df = pd.read_pickle("../db-files/processed-files/df_movie_UPDATED")
     movie_plt = movie_df["MOVIEPLOT"].tolist()
 
     # Run Experiment

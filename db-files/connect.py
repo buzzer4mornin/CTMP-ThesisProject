@@ -42,11 +42,11 @@ try:
     df.to_pickle(currdir + '/df_user')'''
 
     # -- 2nd Query --  [Get RATING table] [UNCOMMENT to run]
-    cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
+    '''cur.execute("select USERID, MOVIEID, RATING from A_MRATINGS")
     db.commit()
     df = pd.DataFrame(cur.fetchall())
     df.columns = ["USERID", "MOVIEID", "RATING"]
-    df.to_pickle(currdir + '/df_rating')
+    df.to_pickle(currdir + '/df_rating')'''
 
     # -- 3rd Query --  [Get MOVIE table] (parse XML plot from IMDB) [UNCOMMENT to run]
     '''cur.execute(

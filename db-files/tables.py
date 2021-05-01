@@ -27,11 +27,11 @@ df_rating_CLEANED : 19994181 rows, each is unique random movie_id + user_id comb
 print("\n********************* DATA CLEANER *********************")
 
 # ======== Load df_user ========
-user_df = pd.read_pickle("df_user")
+user_df = pd.read_pickle("./original-files/df_user")
 
 
 # ======== Load df_movie =========
-movie_df = pd.read_pickle("df_movie")
+movie_df = pd.read_pickle("./original-files/df_movie")
 
 
 # Count of Movies without Plots ==> [870 / ~27k]
@@ -43,7 +43,7 @@ movie_df = movie_df[movie_df.MOVIEPLOT != 'N/A']
 
 
 # ======== Load df_rating ========
-rating_df = pd.read_pickle("df_rating")
+rating_df = pd.read_pickle("./original-files/df_rating")
 rating_df["RATING"] = rating_df["RATING"].apply(lambda x: 1 if x >= 4 else 0)
 # print(rating_df.head())
 

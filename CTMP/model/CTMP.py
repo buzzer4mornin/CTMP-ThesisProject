@@ -5,7 +5,7 @@ import numpy as np
 from sys import getsizeof
 from scipy import special
 import random
-
+from numba import jit
 
 class MyCTMP:
     def __init__(self, rating_GroupForUser, rating_GroupForMovie,
@@ -33,15 +33,7 @@ class MyCTMP:
         self.beta = np.load('./input-data/CTMP_initial_beta.npy')
 
         # Get initial theta(topic proportions) which was produced by LDA
-        # Theta is very sparse, so we decide to use smoothing to avoid having extreme sparse theta,
-        # therefore increase other proportions a bit
         self.theta = np.load('./input-data/CTMP_initial_theta.npy')
-        '''ones_theta = np.argmax(self.theta, axis=1)
-        self.theta = np.random.uniform(low=0.005, high=0.015, size=(5, 10))
-        for i in range(self.theta.shape[0]):
-            self.theta[i][ones_theta[i]] = random.uniform(0.9, 0.95)
-        norm = self.theta.sum(axis=1)
-        self.theta /= norm[:, np.newaxis]'''
 
         # Initialize mu (topic offsets)
         self.mu = np.copy(self.theta)  # + np.random.normal(0, self.lamb, self.theta.shape)
@@ -96,8 +88,9 @@ class MyCTMP:
         # E - expectation step
         self.e_step(wordids, wordcts)
         # M - maximization step
-        self.m_step(wordids, wordcts)
+        #self.m_step(wordids, wordcts)
 
+    @jit
     def e_step(self, wordids, wordcts):
         """ Does e step. Updates theta, mu, pfi, shp, rte for all documents and users"""
         # Normalization denominator for mu
@@ -106,18 +99,18 @@ class MyCTMP:
         # UPDATE phi, shp, rte
         s = time.time()
         for u in range(self.user_size):
+            if len(self.rating_GroupForUser[u]) == 0:
+                # if user didnt like any movie, then dont update anything, continue!
+                continue
+
             movies_for_u = self.rating_GroupForUser[u]  # list of movie ids liked by user u
             phi_block = self.phi[u // 1000]             # access needed 3D matrix of phi list by index
             usr = u % 1000                              # convert user id into interval 0-1000
 
-            # if user didnt like any movie, then dont update anything, continue!
-            if len(movies_for_u) == 0:
-                continue
-
             # compute Φuj then normalize it
             phi_uj = np.exp(np.log(self.mu[[movies_for_u], :]) + special.psi(self.shp[u, :]) - np.log(self.rte[u, :]))
-            phi_uj_sum = np.copy(phi_uj)[0].sum(axis=1)
-            phi_uj_norm = np.copy(phi_uj) / phi_uj_sum[:, np.newaxis]
+            phi_uj_sum = phi_uj[0].sum(axis=1)
+            phi_uj_norm = phi_uj / phi_uj_sum[:, np.newaxis]
             # update user's phi in phi_block with newly computed phi_uj_sum
             phi_block[usr, [movies_for_u], :] = phi_uj_norm
 

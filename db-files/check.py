@@ -7,7 +7,7 @@ from sklearn.model_selection import StratifiedKFold
 import warnings
 warnings.filterwarnings("ignore")
 
-
+ratings = np.array(np.load("./original-files/df_rating", allow_pickle=True))
 ratings = np.array(np.load("./df_rating_saved", allow_pickle=True))
 ratings_one = ratings[np.where(ratings[:, 2] == 1)]
 
