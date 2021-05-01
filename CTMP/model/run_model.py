@@ -1,15 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
+
 import shutil
 import sys
 import time
 import pickle
-import numpy as np
 import pandas as pd
 from math import floor
-
+import os
 from CTMP import MyCTMP
 from LDA import MyLDA
 
@@ -139,6 +138,14 @@ def main():
 
     exit()'''
 
+    for train, test in zip(train_folds, test_folds):
+        rating_GroupForUser_train = train[0]
+        rating_GroupForUser_test = test[0]
+
+        rating_GroupForMovie_train = train[1]
+        rating_GroupForMovie_test = test[1]
+
+        break
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')

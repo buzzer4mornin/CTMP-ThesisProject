@@ -5,7 +5,7 @@ import numpy as np
 from sys import getsizeof
 from scipy import special
 import random
-from numba import jit
+
 
 class MyCTMP:
     def __init__(self, rating_GroupForUser, rating_GroupForMovie,
@@ -88,15 +88,14 @@ class MyCTMP:
         # E - expectation step
         self.e_step(wordids, wordcts)
         # M - maximization step
-        #self.m_step(wordids, wordcts)
+        self.m_step(wordids, wordcts)
 
-    @jit
     def e_step(self, wordids, wordcts):
         """ Does e step. Updates theta, mu, pfi, shp, rte for all documents and users"""
         # Normalization denominator for mu
         norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
 
-        # UPDATE phi, shp, rte
+        # # --->> UPDATE phi, shp, rte
         s = time.time()
         for u in range(self.user_size):
             if len(self.rating_GroupForUser[u]) == 0:
@@ -109,8 +108,8 @@ class MyCTMP:
 
             # compute Φuj then normalize it
             phi_uj = np.exp(np.log(self.mu[[movies_for_u], :]) + special.psi(self.shp[u, :]) - np.log(self.rte[u, :]))
-            phi_uj_sum = phi_uj[0].sum(axis=1)
-            phi_uj_norm = phi_uj / phi_uj_sum[:, np.newaxis]
+            phi_uj_sum = np.copy(phi_uj)[0].sum(axis=1)                     # DELETE np.copy and test
+            phi_uj_norm = np.copy(phi_uj) / phi_uj_sum[:, np.newaxis]       # DELETE np.copy and test
             # update user's phi in phi_block with newly computed phi_uj_sum
             phi_block[usr, [movies_for_u], :] = phi_uj_norm
 
@@ -119,9 +118,9 @@ class MyCTMP:
             self.rte[u, :] = self.f + self.mu.sum(axis=0)
             # print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
         e = time.time()
-        print("Users update:", e-s)
+        print("users time:", e-s)
 
-        # UPDATE theta, mu3
+        # --->> UPDATE theta, mu
         d_s = time.time()
         a = 0
         for d in range(self.num_docs):
@@ -137,8 +136,8 @@ class MyCTMP:
             me = time.time()
             a += (me - ms) / ((me - ms) + (te - ts))
         d_e = time.time()
-        print("doc time:", d_e - d_s)
-        print("avg movie proportion:", a / self.num_docs)
+        print("docs time:", d_e - d_s)
+        print("avg mu proportion on docs time:", a / self.num_docs)
 
     def update_mu(self, norm_mu, d):
         # initiate new mu
@@ -194,14 +193,15 @@ class MyCTMP:
         T_upper = [0, 1]
 
         for t in range(1, self.iter_infer):
-            # ======== Lower ==========
+            # ======== G's ========== 10%
+            G_1 = (np.dot(beta, cts / x) + (self.alpha - 1) / theta) / p
+            G_2 = (-1 * self.lamb * (theta - mu)) / (1 - p)
+
+            # ======== Lower ========== 15%
             if np.random.rand() < p:
                 T_lower[0] += 1
             else:
                 T_lower[1] += 1
-
-            G_1 = (np.dot(beta, cts / x) + (self.alpha - 1) / theta) / p
-            G_2 = (-1 * self.lamb * (theta - mu)) / (1 - p)
 
             ft_lower = T_lower[0] * G_1 + T_lower[1] * G_2
             index_lower = np.argmax(ft_lower)
@@ -210,7 +210,7 @@ class MyCTMP:
             theta_lower *= 1 - alpha
             theta_lower[index_lower] += alpha
 
-            # ======== Upper ==========
+            # ======== Upper ========== 15%
             if np.random.rand() < p:
                 T_upper[0] += 1
             else:
@@ -224,7 +224,7 @@ class MyCTMP:
             theta_upper[index_upper] += alpha
             # print(theta_upper - theta_lower)
 
-            # ======== Decision ========
+            # ======== Decision ======== 50%
             x_l = np.dot(cts, np.log(np.dot(theta_lower, beta))) + (self.alpha - 1) * np.log(theta_lower) \
                   - 1 * (self.lamb / 2) * (np.linalg.norm((theta_lower - mu), ord=2)) ** 2
             x_u = np.dot(cts, np.log(np.dot(theta_upper, beta))) + (self.alpha - 1) * np.log(theta_upper) \
@@ -233,13 +233,14 @@ class MyCTMP:
             compare = np.array([x_l[0], x_u[0]])
             best = np.argmax(compare)
 
-            # ======== Update ========
+            # ======== Update ======== 10%
             if best == 0:
                 theta = np.copy(theta_lower)
                 x = x + alpha * (beta[index_lower, :] - x)
             else:
                 theta = np.copy(theta_upper)
                 x = x + alpha * (beta[index_upper, :] - x)
+
         return theta
 
     def m_step(self, wordids, wordcts):
