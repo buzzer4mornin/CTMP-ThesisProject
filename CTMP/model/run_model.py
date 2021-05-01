@@ -85,29 +85,59 @@ def main():
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
-    # rating_GroupForUser_train, rating_GroupForMovie_train, \
-    # rating_GroupForUser_test, rating_GroupForMovie_test = utilities.get_rating_group(rating_file, k_cross_val)
-    #
-    # with open(f"rating_GroupForUser_train.pkl", "wb") as f:
-    #     pickle.dump(rating_GroupForUser_train, f)
-    # with open(f"rating_GroupForMovie_train.pkl", "wb") as f:
-    #     pickle.dump(rating_GroupForMovie_train, f)
-    # with open(f"rating_GroupForUser_test.pkl", "wb") as f:
-    #     pickle.dump(rating_GroupForUser_test, f)
-    # with open(f"rating_GroupForMovie_test.pkl", "wb") as f:
-    #     pickle.dump(rating_GroupForMovie_test, f)
+    # Split Ratings into Train/Test with Stratified K-fold Cross-Validation.
+    # Save Folds Afterwards.
+    # train_folds, test_folds = utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
-    rating_GroupForUser_train = pickle.load(open("./input-data/rating_GroupForUser_train.pkl", "rb"))
-    rating_GroupForMovie_train = pickle.load(open("./input-data/rating_GroupForMovie_train.pkl", "rb"))
-    rating_GroupForUser_test = pickle.load(open("./input-data/rating_GroupForUser_test.pkl", "rb"))
-    rating_GroupForMovie_test = pickle.load(open("./input-data/rating_GroupForMovie_test.pkl", "rb"))
+    # Load saved Train/Test k-folds
+    print(f"load train/test {str(k_cross_val)}-folds ...")
+    train_folds = pickle.load(open("./input-data/train_5_folds.pkl", "rb"))
+    test_folds = pickle.load(open("./input-data/test_5_folds.pkl", "rb"))
 
-    # c_1 = 0
-    # for key in rating_GroupForMovie_train:
-    #     c_1 += len(rating_GroupForMovie_train[key])
-    # c_2 = 0
-    # for key in rating_GroupForMovie_test:
-    #     c_2 += len(rating_GroupForMovie_test[key])
+    # Inspect eligibility of folds
+    '''for train, test in zip(train_folds, test_folds):
+        rating_GroupForUser_train = train[0]
+        rating_GroupForUser_test = test[0]
+
+        rating_GroupForMovie_train = train[1]
+        rating_GroupForMovie_test = test[1]
+
+        u_test = 0
+        for key in rating_GroupForUser_test:
+            u_test += len(rating_GroupForUser_test[key])
+
+        u_train = 0
+        for key in rating_GroupForUser_train:
+            u_train += len(rating_GroupForUser_train[key])
+
+        # Correct is 0.2 --> 5-fold cross validation
+        print(u_test / (u_test + u_train))
+
+        m_test = 0
+        for key in rating_GroupForMovie_test:
+            m_test += len(rating_GroupForMovie_test[key])
+
+        m_train = 0
+        for key in rating_GroupForMovie_train:
+            m_train += len(rating_GroupForMovie_train[key])
+
+        print(m_test / (m_test + m_train))
+
+        less_test = 0
+        for key in rating_GroupForUser_test:
+            if len(rating_GroupForUser_test[key]) <= 5:
+                less_test += 1
+
+        less_train = 0
+        for key in rating_GroupForUser_train:
+            if len(rating_GroupForUser_train[key]) <= 5:
+                less_train += 1
+
+        # Badly distributed
+        print(less_test / len(rating_GroupForUser_test))
+        print(less_train / len(rating_GroupForUser_train))
+
+    exit()'''
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":

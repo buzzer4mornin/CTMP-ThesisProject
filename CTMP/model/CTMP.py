@@ -121,18 +121,24 @@ class MyCTMP:
         e = time.time()
         print("Users update:", e-s)
 
-        # UPDATE theta, mu
-        # norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
-        s = time.time()
+        # UPDATE theta, mu3
+        d_s = time.time()
+        a = 0
         for d in range(self.num_docs):
+            ts = time.time()
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
+            te = time.time()
 
+            ms = time.time()
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
             # print(f" ** UPDATE theta, mu over {d + 1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
-        e = time.time()
-        print("Docs update:", e - s)
+            me = time.time()
+            a += (me - ms) / ((me - ms) + (te - ts))
+        d_e = time.time()
+        print("doc time:", d_e - d_s)
+        print("avg movie proportion:", a / self.num_docs)
 
     def update_mu(self, norm_mu, d):
         # initiate new mu
@@ -153,8 +159,6 @@ class MyCTMP:
                 temp = -1 * norm_mu[k] + self.lamb * self.theta[d, k]
                 delta = temp ** 2 + 4 * self.lamb * rating_phi[k]  # added [k] to rating_phi.
                 mu[k] = (temp + np.sqrt(delta)) / (2 * self.lamb)
-            # for k in range(self.num_topics):
-            #    mu[k] = rating_phi[k] / norm_mu[k]
         return mu
 
     def update_theta(self, ids, cts, d):
