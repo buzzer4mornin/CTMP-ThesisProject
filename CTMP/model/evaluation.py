@@ -8,9 +8,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--sample_test", default=1000, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="Type of prediction - ['in-matrix', 'out-of-matrix', 'both']")
-parser.add_argument("--seed", default=44, type=int, help="Random seed.")
-parser.add_argument("--folder", default="0.003-50-split", type=str, help="Folder to take saved outputs from")
+parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--seed", default=42, type=int, help="Random seed.")
+parser.add_argument("--folder", default="0.003-100-50", type=str, help="Folder to take saved outputs from")
 
 class Evaluation:
     def __init__(self, args):
@@ -23,15 +23,6 @@ class Evaluation:
 
         with open(f"../{args.folder}/rating_GroupForMovie_test.pkl", "rb") as f:
             self.rating_GroupForMovie = pickle.load(f)
-
-        '''# self.ratings = np.load("../saved-outputs/df_rating", allow_pickle=True)
-        # self.rating_GroupForUser_TRAIN, self.rating_GroupForUser_TEST = self.train_test_split()
-        # TODO:
-        # 1) first run df_rating_UPDATED for training with e=f=0.003 to check the correctness --> CORRECT!
-        # 2) run run df_rating_UPDATED for training with e=f=0.3 --> RESULT IS BAD, 0.3 doesnt work, 0.003 works
-        # 3) modify rating_GroupForMovie into TRAIN, TEST accordingly
-        # 4) train run_model.py CTMP on self.rating_GroupForUser_TRAIN
-        # 5) edit this script: replace self.rating_GroupForUser with self.rating_GroupForUser_TEST ???'''
 
         self.mu = np.load(f"../{args.folder}/mu.npy")
         self.shp = np.load(f"../{args.folder}/shp.npy")
@@ -142,7 +133,7 @@ class Evaluation:
             ax.plot(range(args.TOP_M_start, args.TOP_M_end), r, label=f"{args.pred_type}")
         ax.set_xlabel('Top-M')
         ax.set_ylabel('Recall')
-        ax.set_title(f"Test size of {args.sample_test}")
+        ax.set_title(f"{args.folder}.. Sample size - {args.sample_test}")
         ax.legend()
         plt.grid()
         plt.show()
@@ -156,7 +147,7 @@ class Evaluation:
             ax.plot(range(args.TOP_M_start, args.TOP_M_end), p, label=f"{args.pred_type}")
         ax.set_xlabel('Top-M')
         ax.set_ylabel('Precision')
-        ax.set_title(f"Test size of {args.sample_test}")
+        ax.set_title(f"{args.folder}.. Sample size - {args.sample_test}")
         ax.legend()
         plt.grid()
         plt.show()
