@@ -5,12 +5,12 @@ import numpy as np
 from math import floor
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--sample_test", default=1000, type=int, help="Size of test set")
+parser.add_argument("--sample_test", default=200, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
-parser.add_argument("--folder", default="0.003-100-50", type=str, help="Folder to take saved outputs from")
+parser.add_argument("--folder", default="0.3-100-2", type=str, help="Folder of saved outputs")
 
 class Evaluation:
     def __init__(self, args):
