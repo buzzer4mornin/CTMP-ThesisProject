@@ -175,7 +175,7 @@ class MyCTMP:
     @njit
     def x_(cts, beta, alpha, lamb, mu, tt):
         return np.dot(cts, np.log(np.dot(tt, beta))) + (alpha - 1) * np.log(tt) \
-              - 1 * (lamb / 2) * (np.linalg.norm((tt - mu), ord=2)) ** 2
+               - 1 * (lamb / 2) * (np.linalg.norm((tt - mu), ord=2)) ** 2
 
     @staticmethod
     @njit
