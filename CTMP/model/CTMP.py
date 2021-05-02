@@ -94,30 +94,42 @@ class MyCTMP:
         # Normalization denominator for mu
         norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
 
-        # # --->> UPDATE phi, shp, rte
+        # --->> UPDATE phi, shp, rte
         s = time.time()
+        mf, pf, rf = 0, 0, 0
+        mu_sum = self.mu.sum(axis=0)
         for u in range(self.user_size):
+            ms = time.time()
             if len(self.rating_GroupForUser[u]) == 0:
                 # if user didnt like any movie, then dont update anything, continue!
                 continue
-
             movies_for_u = self.rating_GroupForUser[u]  # list of movie ids liked by user u
             phi_block = self.phi[u // 1000]  # access needed 3D matrix of phi list by index
             usr = u % 1000  # convert user id into interval 0-1000
+            me = time.time()
+            mf += (me - ms)
 
+            ps = time.time()
             phi_uj = np.exp(np.log(self.mu[[movies_for_u], :]) + special.psi(self.shp[u, :]) - np.log(self.rte[u, :]))
             phi_uj_sum = np.copy(phi_uj)[0].sum(axis=1)                 # DELETE np.copy and test
             phi_uj_norm = np.copy(phi_uj) / phi_uj_sum[:, np.newaxis]   # DELETE np.copy and test
-
             # update user's phi in phi_block with newly computed phi_uj_sum
             phi_block[usr, [movies_for_u], :] = phi_uj_norm
+            pe = time.time()
+            pf += (pe - ps)
 
+            rs = time.time()
             # update user's shp and rte
             self.shp[u, :] = self.e + phi_uj_norm[0].sum(axis=0)
-            self.rte[u, :] = self.f + self.mu.sum(axis=0)
+            self.rte[u, :] = self.f + mu_sum
+            re = time.time()
+            rf += (re-rs)
             # print(f" ** UPDATE phi, shp, rte over {u + 1}/{self.user_size} users |iter:{self.GLOB_ITER}| ** ")
         e = time.time()
         print("users time:", e - s)
+        # print(mf/(e-s))
+        # print(pf / (e - s))
+        # print(rf / (e - s))
 
         # --->> UPDATE theta, mu
         d_s = time.time()
@@ -136,7 +148,7 @@ class MyCTMP:
             a += (me - ms) / ((me - ms) + (te - ts))
         d_e = time.time()
         print("docs time:", d_e - d_s)
-        print("avg mu proportion on docs time:", a / self.num_docs)
+        # print("avg mu proportion on docs time:", a / self.num_docs)
 
     def update_mu(self, norm_mu, d):
         # initiate new mu
@@ -163,16 +175,16 @@ class MyCTMP:
     @njit
     def x_(cts, beta, alpha, lamb, mu, tt):
         return np.dot(cts, np.log(np.dot(tt, beta))) + (alpha - 1) * np.log(tt) \
-               - 1 * (lamb / 2) * (np.linalg.norm((tt - mu), ord=2)) ** 2
+              - 1 * (lamb / 2) * (np.linalg.norm((tt - mu), ord=2)) ** 2
 
     @staticmethod
     @njit
     def t_(cts, beta, theta, mu, x, p, T_lower, T_upper, alpha, lamb, t):
-        # ======== G's ========== 10%
+        # ======== G's ========== 30%
         G_1 = (np.dot(beta, cts / x) + (alpha - 1) / theta) / p
         G_2 = (-1 * lamb * (theta - mu)) / (1 - p)
 
-        # ======== Lower ========== 15%
+        # ======== Lower ========== 40%
         if np.random.rand() < p:
             T_lower[0] += 1
         else:
@@ -185,7 +197,7 @@ class MyCTMP:
         theta_lower *= 1 - alpha
         theta_lower[index_lower] += alpha
 
-        # ======== Upper ========== 15%
+        # ======== Upper ========== 30%
         if np.random.rand() < p:
             T_upper[0] += 1
         else:
@@ -235,29 +247,46 @@ class MyCTMP:
         T_upper = [0, 1]
 
         ts = time.time()
+        jf = 0
+        xf = 0
+        uf = 0
         for t in range(1, self.iter_infer):
             # ======== G's, Upper, Lower ======== 50%
             # JITed
+            js = time.time()
             theta_lower, theta_upper, index_lower, index_upper, alpha = self.t_(cts, beta, theta, mu, x, p, T_lower,
                                                                                 T_upper, self.alpha, self.lamb, t)
+            je = time.time()
+            jf += (je-js)
 
-            # ======== Decision ======== 50%
+            # ======== Decision ======== 30%
             # JITed
+            xs = time.time()
             x_l = self.x_(cts, beta, self.alpha, self.lamb, mu, theta_lower)
             x_u = self.x_(cts, beta, self.alpha, self.lamb, mu, theta_upper)
 
             compare = np.array([x_l[0], x_u[0]])
             best = np.argmax(compare)
+            xe = time.time()
+            xf += (xe-xs)
 
-            # ======== Update ======== 10%
+            # ======== Update ======== 20%
+            us = time.time()
             if best == 0:
                 theta = np.copy(theta_lower)
                 x = x + alpha * (beta[index_lower, :] - x)
             else:
                 theta = np.copy(theta_upper)
                 x = x + alpha * (beta[index_upper, :] - x)
+            ue = time.time()
+            uf += (ue-us)
+
         te = time.time()
         # print(te-ts)
+        # print(jf/(te-ts))
+        # print(xf / (te - ts))
+        # print(uf / (te - ts))
+        # print("-----")
 
         return theta
 
