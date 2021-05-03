@@ -114,10 +114,10 @@ def write_file(model_folder, list_tops, algo):
         if i != "phi":
             np.save(file_locator(i), getattr(algo, i))
         else:
-            #pass
+            pass
             # TODO: uncomment below in final version
-            with open(f"{model_folder}/phi.pkl", "wb") as f:
-                pickle.dump(getattr(algo, i), f, protocol=4)
+            #with open(f"{model_folder}/phi.pkl", "wb") as f:
+            #    pickle.dump(getattr(algo, i), f, protocol=4)
 
 
 def cv_train_test_split(rating_group_file, k_cv, seed):

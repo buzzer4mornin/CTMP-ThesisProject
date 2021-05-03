@@ -29,10 +29,16 @@ class MyCTMP:
         self.iter_infer = iter_infer
 
         # Get initial beta(topics) which was produced by LDA
-        self.beta = np.load('./input-data/CTMP_initial_beta.npy')
+        self.beta = np.load('./input-data/beta.npy')
+        # self.beta = np.random.rand(self.num_topics, self.num_words) + 1e-10
+        # beta_norm = self.beta.sum(axis=1)
+        # self.beta /= beta_norm[:, np.newaxis]
 
         # Get initial theta(topic proportions) which was produced by LDA
-        self.theta = np.load('./input-data/CTMP_initial_theta.npy')
+        self.theta = np.load('./input-data/theta.npy')
+        # self.theta = np.random.rand(self.num_docs, self.num_topics) + 1e-10
+        # theta_norm = self.theta.sum(axis=1)
+        # self.theta /= theta_norm[:, np.newaxis]
 
         # Initialize mu (topic offsets)
         self.mu = np.copy(self.theta)  # + np.random.normal(0, self.lamb, self.theta.shape)
@@ -240,7 +246,7 @@ class MyCTMP:
 
         # Parameter of Bernoulli distribution
         # Likelihood vs Prior
-        p = 0.5
+        p = 0.7
 
         # Number of times likelihood and prior are chosen
         T_lower = [1, 0]

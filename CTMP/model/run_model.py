@@ -90,8 +90,8 @@ def main():
 
     # Load saved Train/Test k-folds
     print(f"load train/test {str(k_cross_val)}-folds ...")
-    train_folds = pickle.load(open("./input-data/train_5_folds.pkl", "rb"))
-    test_folds = pickle.load(open("./input-data/test_5_folds.pkl", "rb"))
+    train_folds = pickle.load(open("./input-data/train_2_folds.pkl", "rb"))
+    test_folds = pickle.load(open("./input-data/test_2_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -145,7 +145,7 @@ def main():
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
         # with open(f"rating_GroupForUser_train.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForUser_train, f)
+        #       pickle.dump(rating_GroupForUser_train, f)
         # with open(f"rating_GroupForMovie_train.pkl", "wb") as f:
         #      pickle.dump(rating_GroupForMovie_train, f)
         # with open(f"rating_GroupForUser_test.pkl", "wb") as f:
@@ -175,6 +175,11 @@ def main():
         time.sleep(4)
         # run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
+
+        # if i % 10 == 0:
+        #    list_tops = utilities.list_top(algo.beta, ddict['tops'])
+        #    print("\nsaving the final results.. please wait..")
+        #    utilities.write_file(output_folder, list_tops, algo)
 
     print('DONE!')
 

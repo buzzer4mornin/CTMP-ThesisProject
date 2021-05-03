@@ -10,7 +10,7 @@ parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M 
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
-parser.add_argument("--folder", default="0.3-100-2", type=str, help="Folder of saved outputs")
+parser.add_argument("--folder", default=".test", type=str, help="Folder of saved outputs")
 
 class Evaluation:
     def __init__(self, args):
@@ -18,15 +18,18 @@ class Evaluation:
         np.random.seed(args.seed)
 
         # Read data
-        with open(f"../{args.folder}/rating_GroupForUser_test.pkl", "rb") as f:
+        with open(f"../rating_GroupForUser_test.pkl", "rb") as f:
             self.rating_GroupForUser = pickle.load(f)
 
-        with open(f"../{args.folder}/rating_GroupForMovie_test.pkl", "rb") as f:
+        with open(f"../rating_GroupForMovie_test.pkl", "rb") as f:
             self.rating_GroupForMovie = pickle.load(f)
 
         self.mu = np.load(f"../{args.folder}/mu.npy")
         self.shp = np.load(f"../{args.folder}/shp.npy")
         self.rte = np.load(f"../{args.folder}/rte.npy")
+
+        # self.shp = np.ones(shape=(138493, 50))
+        # self.rte = np.ones(shape=(138493, 50))
 
         # Group items separately
         self.cold_items, self.noncold_items = self.group_items()
