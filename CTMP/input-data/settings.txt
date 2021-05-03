@@ -6,6 +6,6 @@ tops: 10
 lamb: 1
 e: 0.3
 f: 0.3
-alpha: 0.1
+alpha: 1
 iter_infer: 50
-iter_train: 2
+iter_train: 50

@@ -6,12 +6,12 @@ import numpy as np
 from math import floor
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--sample_test", default=50, type=int, help="Size of test set")
+parser.add_argument("--sample_test", default=500, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
-parser.add_argument("--folder", default=".test", type=str, help="Folder of saved outputs")  #".results/0.3-100-2"
+parser.add_argument("--folder", default=".test", type=str, help="Folder of saved outputs")
 
 
 class Evaluation:
@@ -36,8 +36,8 @@ class Evaluation:
         self.shp = np.load(f"../{args.folder}/shp.npy")
         self.rte = np.load(f"../{args.folder}/rte.npy")
 
-        self.shp = np.ones(shape=(138493, 100))
-        self.rte = np.ones(shape=(138493, 100))
+        # self.shp = np.ones(shape=(138493, 100))
+        # self.rte = np.ones(shape=(138493, 100))
 
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
@@ -82,14 +82,10 @@ class Evaluation:
         # generator = np.random.RandomState(args.seed)
         # permutation = generator.permutation(len(self.rating_GroupForUser_TRAIN))
         sample = random.sample(list(self.rating_GroupForUser_TRAIN.keys()), args.sample_test)
-        c = 0
         test_set = []
-        for i in sample:
-            if len(self.rating_GroupForUser_TRAIN[i]) > 0:
-                test_set.append(i)
-                c += 1
-            if c == args.sample_test:
-                break
+        for u in sample:
+            if len(self.rating_GroupForUser_TRAIN[u]) > 0:
+                test_set.append(u)
         # avg = 0
         # for i in self.rating_GroupForUser_TRAIN:
         #       avg += len(self.rating_GroupForUser_TRAIN[i])
@@ -112,14 +108,31 @@ class Evaluation:
         self.recalls_in_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
         self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)
 
+    # TODO old one
+    # def predict_out_of_matrix(self, user_id, top_m) -> None:
+    #     """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
+    #     ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+    #     actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
+    #     actual_TEST = self.rating_GroupForUser_TEST[user_id]
+    #     predicted_top_M = np.argsort(-ratings)[:top_m]
+    #     top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M, actual_TRAIN) * 1)
+    #     top_m_correct_TEST = np.sum(np.in1d(predicted_top_M, actual_TEST) * 1)
+    #     self.recalls_out_of_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
+    #     self.precisions_out_of_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
+    #     self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
+    #     self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
+    # TODO new one
     def predict_out_of_matrix(self, user_id, top_m) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
         ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
-        predicted_top_M = np.argsort(-ratings)[:top_m]
-        top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M, actual_TRAIN) * 1)
-        top_m_correct_TEST = np.sum(np.in1d(predicted_top_M, actual_TEST) * 1)
+        sorted_ratings = np.argsort(-ratings)
+        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id],
+                                            assume_unique=True)[:top_m]
+        predicted_top_M_TRAIN = np.argsort(-ratings)[:top_m]
+        top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
+        top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_out_of_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
         self.precisions_out_of_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
         self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))

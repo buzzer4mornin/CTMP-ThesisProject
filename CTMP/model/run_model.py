@@ -89,9 +89,9 @@ def main():
     # train_folds, test_folds = utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
-    print(f"load train/test {str(k_cross_val)}-folds ...")
-    train_folds = pickle.load(open("./input-data/train_2_folds.pkl", "rb"))
-    test_folds = pickle.load(open("./input-data/test_2_folds.pkl", "rb"))
+    print(f"load train/test {k_cross_val}-folds ...")
+    train_folds = pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    test_folds = pickle.load(open(f"./input-data/test_{k_cross_val}_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -172,7 +172,7 @@ def main():
 
     for i in range(ddict['iter_train']):
         print(f'\n*** iteration: {i} ***\n')
-        time.sleep(4)
+        time.sleep(2)
         # run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
 
