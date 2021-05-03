@@ -98,7 +98,7 @@ class MyCTMP:
     def e_step(self, wordids, wordcts):
         """ Does e step. Updates theta, mu, pfi, shp, rte for all documents and users"""
         # Normalization denominator for mu
-        norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
+        # norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
 
         # --->> UPDATE phi, shp, rte
         s = time.time()
@@ -140,6 +140,7 @@ class MyCTMP:
         # --->> UPDATE theta, mu
         d_s = time.time()
         a = 0
+        norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
         for d in range(self.num_docs):
             ts = time.time()
             thetad = self.update_theta(wordids[d], wordcts[d], d)

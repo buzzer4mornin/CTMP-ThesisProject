@@ -144,13 +144,13 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
-        # with open(f"rating_GroupForUser_train.pkl", "wb") as f:
+        # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
         #       pickle.dump(rating_GroupForUser_train, f)
-        # with open(f"rating_GroupForMovie_train.pkl", "wb") as f:
+        # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
         #      pickle.dump(rating_GroupForMovie_train, f)
-        # with open(f"rating_GroupForUser_test.pkl", "wb") as f:
+        # with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
         #      pickle.dump(rating_GroupForUser_test, f)
-        # with open(f"rating_GroupForMovie_test.pkl", "wb") as f:
+        # with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
         #      pickle.dump(rating_GroupForMovie_test, f)
         break
 
