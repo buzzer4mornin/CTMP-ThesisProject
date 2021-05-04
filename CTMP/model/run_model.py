@@ -176,19 +176,20 @@ def main():
         # run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
 
-        # if i % 10 == 0:
-        #    list_tops = utilities.list_top(algo.beta, ddict['tops'])
-        #    print("\nsaving the final results.. please wait..")
-        #    utilities.write_file(output_folder, list_tops, algo)
+        #if i % 10 == 0:
+        os.makedirs(f"{output_folder}{i}")
+        list_tops = utilities.list_top(algo.beta, ddict['tops'])
+        print("\nsaving the final results.. please wait..")
+        utilities.write_file(output_folder, list_tops, algo, i)
 
     print('DONE!')
 
     # ----------------------------------------- Write Results ------------------------------------------------------
     # Search top words of each topics
-    list_tops = utilities.list_top(algo.beta, ddict['tops'])
+    # list_tops = utilities.list_top(algo.beta, ddict['tops'])
 
-    print("\nsaving the final results.. please wait..")
-    utilities.write_file(output_folder, list_tops, algo)
+    #print("\nsaving the final results.. please wait..")
+    #utilities.write_file(output_folder, list_tops, algo)
 
 
 if __name__ == '__main__':

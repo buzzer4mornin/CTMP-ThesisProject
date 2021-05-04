@@ -48,7 +48,7 @@ class MyLDA:
         for d in range(self.num_docs):
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
-            print(f" ** UPDATE theta over {d+1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
+            # print(f" ** UPDATE theta over {d+1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
 
     def update_theta(self, ids, cts, d):
         """ Click to read more
