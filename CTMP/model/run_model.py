@@ -183,7 +183,7 @@ def main():
             print("\nsaving the final results.. please wait..")
             utilities.write_file(output_folder, list_tops, algo, i)
             evaluate = MyEvaluation(rating_GroupForUser_train, rating_GroupForUser_test,
-                                    rating_GroupForMovie_train, rating_GroupForMovie_test, i)
+                                    rating_GroupForMovie_train, rating_GroupForMovie_test, i, sample_test=1000)
 
             evaluate.plot()
 

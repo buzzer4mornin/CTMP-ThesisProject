@@ -173,6 +173,7 @@ class MyEvaluation:
             r_TEST, p_TEST = self.avg_recalls_out_of_matrix_TEST, self.avg_precisions_out_of_matrix_TEST
 
         # PLOT recall graph
+        plt.ioff()  # Turn interactive plotting off
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4))
         if self.pred_type == "both":
             ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_i_TRAIN, label="in-matrix-train")
@@ -184,7 +185,7 @@ class MyEvaluation:
             ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_TEST, label="test")
         ax1.set_xlabel('Top-M', fontsize=11)
         ax1.set_ylabel('Recall', fontsize=11)
-        # ax1.set_title(f"IMPORT SOME NAME HERE")
+        ax1.set_title(f"Sample size: {self.sample_test}")
         ax1.legend()
 
         # PLOT precision graph
@@ -198,7 +199,7 @@ class MyEvaluation:
             ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_TEST, label="test")
         ax2.set_xlabel('Top-M', fontsize=11)
         ax2.set_ylabel('Precision', fontsize=11)
-        # ax2.set_title(f"IMPORT SOME NAME HERE")
+        ax2.set_title(f"Sample size: {self.sample_test}")
         ax2.legend()
 
         # plot configs
