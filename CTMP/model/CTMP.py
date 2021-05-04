@@ -30,15 +30,15 @@ class MyCTMP:
 
         # Get initial beta(topics) which was produced by LDA
         self.beta = np.load('./input-data/beta.npy')
-        # self.beta = np.random.rand(self.num_topics, self.num_words) + 1e-10
-        # beta_norm = self.beta.sum(axis=1)
-        # self.beta /= beta_norm[:, np.newaxis]
+        self.beta = np.random.rand(self.num_topics, self.num_words) + 1e-10
+        beta_norm = self.beta.sum(axis=1)
+        self.beta /= beta_norm[:, np.newaxis]
 
         # Get initial theta(topic proportions) which was produced by LDA
-        self.theta = np.load('./input-data/theta.npy')
-        # self.theta = np.random.rand(self.num_docs, self.num_topics) + 1e-10
-        # theta_norm = self.theta.sum(axis=1)
-        # self.theta /= theta_norm[:, np.newaxis]
+        # self.theta = np.load('./input-data/theta.npy')
+        self.theta = np.random.rand(self.num_docs, self.num_topics) + 1e-10
+        theta_norm = self.theta.sum(axis=1)
+        self.theta /= theta_norm[:, np.newaxis]
 
         # Initialize mu (topic offsets)
         self.mu = np.copy(self.theta)  # + np.random.normal(0, self.lamb, self.theta.shape)
@@ -98,7 +98,7 @@ class MyCTMP:
     def e_step(self, wordids, wordcts):
         """ Does e step. Updates theta, mu, pfi, shp, rte for all documents and users"""
         # Normalization denominator for mu
-        # norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
+        norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
 
         # --->> UPDATE phi, shp, rte
         s = time.time()
@@ -140,7 +140,7 @@ class MyCTMP:
         # --->> UPDATE theta, mu
         d_s = time.time()
         a = 0
-        norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
+        # norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
         for d in range(self.num_docs):
             ts = time.time()
             thetad = self.update_theta(wordids[d], wordcts[d], d)

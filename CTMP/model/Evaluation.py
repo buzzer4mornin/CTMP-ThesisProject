@@ -80,6 +80,9 @@ class MyEvaluation:
         # exit()
         return test_set
 
+    # TODO add new one
+    # here ...
+    #TODO old one
     def predict_in_matrix(self, user_id, top_m) -> None:
         """Compute in-matrix recall and precision for a given user, then add them to the sum"""
         ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)

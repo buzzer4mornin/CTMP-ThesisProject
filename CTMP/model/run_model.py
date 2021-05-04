@@ -177,7 +177,7 @@ def main():
         algo.run_EM(wordids, wordcts, i)
 
         # Save CheckPoints
-        if i % 4 == 0:
+        if i % 5 == 0:
             os.makedirs(f"{output_folder}{i}")
             list_tops = utilities.list_top(algo.beta, ddict['tops'])
             print("\nsaving the final results.. please wait..")
