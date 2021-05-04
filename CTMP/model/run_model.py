@@ -11,6 +11,7 @@ from math import floor
 import os
 from CTMP import MyCTMP
 from LDA import MyLDA
+from Evaluation import MyEvaluation
 
 sys.path.insert(0, './common')
 import utilities
@@ -84,8 +85,7 @@ def main():
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
-    # Split Ratings into Train/Test with Stratified K-fold Cross-Validation.
-    # Save Folds Afterwards.
+    # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
     # train_folds, test_folds = utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
@@ -144,6 +144,7 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
+
         # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
         #       pickle.dump(rating_GroupForUser_train, f)
         # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
@@ -169,27 +170,30 @@ def main():
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')
-
     for i in range(ddict['iter_train']):
         print(f'\n*** iteration: {i} ***\n')
         time.sleep(2)
-        # run single EM step and return attributes
+        # Run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
 
-        #if i % 10 == 0:
-        os.makedirs(f"{output_folder}{i}")
-        list_tops = utilities.list_top(algo.beta, ddict['tops'])
-        print("\nsaving the final results.. please wait..")
-        utilities.write_file(output_folder, list_tops, algo, i)
+        # Save CheckPoints
+        if i % 4 == 0:
+            os.makedirs(f"{output_folder}{i}")
+            list_tops = utilities.list_top(algo.beta, ddict['tops'])
+            print("\nsaving the final results.. please wait..")
+            utilities.write_file(output_folder, list_tops, algo, i)
+            evaluate = MyEvaluation(rating_GroupForUser_train, rating_GroupForUser_test,
+                                    rating_GroupForMovie_train, rating_GroupForMovie_test, i)
+
+            evaluate.plot()
 
     print('DONE!')
 
     # ----------------------------------------- Write Results ------------------------------------------------------
     # Search top words of each topics
     # list_tops = utilities.list_top(algo.beta, ddict['tops'])
-
-    #print("\nsaving the final results.. please wait..")
-    #utilities.write_file(output_folder, list_tops, algo)
+    # print("\nsaving the final results.. please wait..")
+    # utilities.write_file(output_folder, list_tops, algo)
 
 
 if __name__ == '__main__':

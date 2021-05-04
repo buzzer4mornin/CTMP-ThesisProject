@@ -5,39 +5,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import floor
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--sample_test", default=100, type=int, help="Size of test set")
-parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
-parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
-parser.add_argument("--seed", default=42, type=int, help="Random seed.")
-parser.add_argument("--folder", default=".results/0.003-100-100", type=str, help="Folder of saved outputs")
 
+class MyEvaluation:
+    def __init__(self, user_train, user_test, movie_train, movie_test, iteration,
+                 sample_test=50, TOP_M_start=10, TOP_M_end=100, pred_type='out-of-matrix', seed=42):
 
-class Evaluation:
-    def __init__(self, args):
+        assert pred_type in ['in-matrix', 'out-of-matrix', 'both']
+        self.folder = f"output-data/{iteration}"
+        self.sample_test = sample_test
+        self.TOP_M_start = TOP_M_start
+        self.TOP_M_end = TOP_M_end
+        self.pred_type = pred_type
+        self.seed = seed
+
         # Set seed
-        np.random.seed(args.seed)
+        np.random.seed(self.seed)
 
-        # Read data
-        with open(f"../{args.folder}/rating_GroupForUser_train.pkl", "rb") as f:
-            self.rating_GroupForUser_TRAIN = pickle.load(f)
+        self.rating_GroupForUser_TRAIN, self.rating_GroupForUser_TEST = user_train, user_test,
+        self.rating_GroupForMovie_TRAIN, self.rating_GroupForMovie_TEST = movie_train, movie_test
 
-        with open(f"../{args.folder}/rating_GroupForMovie_train.pkl", "rb") as f:
-            self.rating_GroupForMovie_TRAIN = pickle.load(f)
-
-        with open(f"../{args.folder}/rating_GroupForUser_test.pkl", "rb") as f:
-            self.rating_GroupForUser_TEST = pickle.load(f)
-
-        with open(f"../{args.folder}/rating_GroupForMovie_test.pkl", "rb") as f:
-            self.rating_GroupForMovie_TEST = pickle.load(f)
-
-        self.mu = np.load(f"../{args.folder}/mu.npy")
-        self.shp = np.load(f"../{args.folder}/shp.npy")
-        self.rte = np.load(f"../{args.folder}/rte.npy")
-
-        # self.shp = np.ones(shape=(138493, 100))
-        # self.rte = np.ones(shape=(138493, 100))
+        self.mu = np.load(f"./{self.folder}/mu.npy")
+        self.shp = np.load(f"./{self.folder}/shp.npy")
+        self.rte = np.load(f"./{self.folder}/rte.npy")
 
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
@@ -79,12 +68,10 @@ class Evaluation:
 
     def generate_test_set(self) -> list:
         # TODO: consider both TRAIN and TEST ??
-        # generator = np.random.RandomState(args.seed)
-        # permutation = generator.permutation(len(self.rating_GroupForUser_TRAIN))
-        sample = random.sample(list(self.rating_GroupForUser_TRAIN.keys()), args.sample_test)
+        sample = random.sample(list(self.rating_GroupForUser_TEST.keys()), self.sample_test)
         test_set = []
         for u in sample:
-            if len(self.rating_GroupForUser_TRAIN[u]) > 0:
+            if len(self.rating_GroupForUser_TEST[u]) > 0:
                 test_set.append(u)
         # avg = 0
         # for i in self.rating_GroupForUser_TRAIN:
@@ -139,7 +126,7 @@ class Evaluation:
         self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
 
     def avg_recall_precision(self) -> None:
-        for top in range(args.TOP_M_start, args.TOP_M_end):
+        for top in range(self.TOP_M_start, self.TOP_M_end):
             # make all metrics zero for new iteration
             print(f"Top-M: {top}")
             self.recalls_in_matrix_TRAIN, self.precisions_in_matrix_TRAIN = 0, 0
@@ -148,67 +135,67 @@ class Evaluation:
             self.recalls_in_matrix_TEST, self.precisions_in_matrix_TEST = 0, 0
             self.recalls_out_of_matrix_TEST, self.precisions_out_of_matrix_TEST = 0, 0
 
-            if args.pred_type == "both":
+            if self.pred_type == "both":
                 for usr in self.test_set:
                     self.predict_in_matrix(usr, top)
                     self.predict_out_of_matrix(usr, top)
-                self.avg_recalls_in_matrix_TRAIN.append(self.recalls_in_matrix_TRAIN / args.sample_test)
-                self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / args.sample_test)
-                self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / args.sample_test)
-                self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / args.sample_test)
-            elif args.pred_type == "in-matrix":
+                self.avg_recalls_in_matrix_TRAIN.append(self.recalls_in_matrix_TRAIN / self.sample_test)
+                self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / self.sample_test)
+                self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / self.sample_test)
+                self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / self.sample_test)
+            elif self.pred_type == "in-matrix":
                 for usr in self.test_set:
                     self.predict_in_matrix(usr, top)
-                self.avg_recalls_in_matrix_TRAIN.append(self.recalls_in_matrix_TRAIN / args.sample_test)
-                self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / args.sample_test)
-                self.avg_recalls_in_matrix_TEST.append(self.recalls_in_matrix_TEST / args.sample_test)
-                self.avg_precisions_in_matrix_TEST.append(self.precisions_in_matrix_TEST / args.sample_test)
+                self.avg_recalls_in_matrix_TRAIN.append(self.recalls_in_matrix_TRAIN / self.sample_test)
+                self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / self.sample_test)
+                self.avg_recalls_in_matrix_TEST.append(self.recalls_in_matrix_TEST / self.sample_test)
+                self.avg_precisions_in_matrix_TEST.append(self.precisions_in_matrix_TEST / self.sample_test)
 
-            elif args.pred_type == "out-of-matrix":
+            elif self.pred_type == "out-of-matrix":
                 for usr in self.test_set:
                     self.predict_out_of_matrix(usr, top)
-                self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / args.sample_test)
-                self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / args.sample_test)
-                self.avg_recalls_out_of_matrix_TEST.append(self.recalls_out_of_matrix_TEST / args.sample_test)
-                self.avg_precisions_out_of_matrix_TEST.append(self.precisions_out_of_matrix_TEST / args.sample_test)
+                self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / self.sample_test)
+                self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / self.sample_test)
+                self.avg_recalls_out_of_matrix_TEST.append(self.recalls_out_of_matrix_TEST / self.sample_test)
+                self.avg_precisions_out_of_matrix_TEST.append(self.precisions_out_of_matrix_TEST / self.sample_test)
 
     def plot(self) -> None:
-        if args.pred_type == "both":
+        if self.pred_type == "both":
             r_i_TRAIN, p_i_TRAIN = self.avg_recalls_in_matrix_TRAIN, self.avg_precisions_in_matrix_TRAIN
             r_o_TRAIN, p_o_TRAIN = self.avg_recalls_out_of_matrix_TRAIN, self.avg_precisions_out_of_matrix_TRAIN
             r_i_TEST, p_i_TEST = self.avg_recalls_in_matrix_TEST, self.avg_precisions_in_matrix_TEST
             r_o_TEST, p_o_TEST = self.avg_recalls_out_of_matrix_TEST, self.avg_precisions_out_of_matrix_TEST
-        elif args.pred_type == "in-matrix":
+        elif self.pred_type == "in-matrix":
             r_TRAIN, p_TRAIN = self.avg_recalls_in_matrix_TRAIN, self.avg_precisions_in_matrix_TRAIN
             r_TEST, p_TEST = self.avg_recalls_in_matrix_TEST, self.avg_precisions_in_matrix_TEST
-        elif args.pred_type == "out-of-matrix":
+        elif self.pred_type == "out-of-matrix":
             r_TRAIN, p_TRAIN = self.avg_recalls_out_of_matrix_TRAIN, self.avg_precisions_out_of_matrix_TRAIN
             r_TEST, p_TEST = self.avg_recalls_out_of_matrix_TEST, self.avg_precisions_out_of_matrix_TEST
 
         # PLOT recall graph
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4))
-        if args.pred_type == "both":
-            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_i_TRAIN, label="in-matrix-train")
-            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_o_TRAIN, label="out-of-matrix-train")
-            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_i_TEST, label="in-matrix-test")
-            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_o_TEST, label="out-of-matrix-test")
+        if self.pred_type == "both":
+            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_i_TRAIN, label="in-matrix-train")
+            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_o_TRAIN, label="out-of-matrix-train")
+            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_i_TEST, label="in-matrix-test")
+            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_o_TEST, label="out-of-matrix-test")
         else:
-            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_TRAIN, label="train")
-            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_TEST, label="test")
+            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_TRAIN, label="train")
+            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_TEST, label="test")
         ax1.set_xlabel('Top-M', fontsize=11)
         ax1.set_ylabel('Recall', fontsize=11)
         # ax1.set_title(f"IMPORT SOME NAME HERE")
         ax1.legend()
 
         # PLOT precision graph
-        if args.pred_type == "both":
-            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_i_TRAIN, label="in-matrix-train")
-            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_o_TRAIN, label="out-of-matrix-train")
-            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_i_TEST, label="in-matrix-test")
-            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_o_TEST, label="out-of-matrix-test")
+        if self.pred_type == "both":
+            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_i_TRAIN, label="in-matrix-train")
+            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_o_TRAIN, label="out-of-matrix-train")
+            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_i_TEST, label="in-matrix-test")
+            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_o_TEST, label="out-of-matrix-test")
         else:
-            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_TRAIN, label="train")
-            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_TEST, label="test")
+            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_TRAIN, label="train")
+            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_TEST, label="test")
         ax2.set_xlabel('Top-M', fontsize=11)
         ax2.set_ylabel('Precision', fontsize=11)
         # ax2.set_title(f"IMPORT SOME NAME HERE")
@@ -218,17 +205,6 @@ class Evaluation:
         ax1.grid()
         ax2.grid()
         plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
-        fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
-        plt.savefig('EXAMPLE.png')
-        plt.show()
-
-
-if __name__ == '__main__':
-    args = parser.parse_args([] if "__file__" not in globals() else None)
-    assert args.pred_type in ['in-matrix', 'out-of-matrix', 'both']
-    eval = Evaluation(args)
-    eval.plot()
-
-# =========== Saved Results ==============
-# --- Set size = 2,000, in-matrix ---
-# --- Set size = 2,000, out-of-matrix ---
+        fig.suptitle(f'{self.pred_type} predictions', fontsize=14)
+        plt.savefig(f'./{self.folder}/FIGURE.png')
+        # plt.show()
