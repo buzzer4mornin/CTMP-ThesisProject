@@ -7,5 +7,5 @@ lamb: 1
 e: 0.3
 f: 0.3
 alpha: 1
-iter_infer: 30
-iter_train: 100
+iter_infer: 25
+iter_train: 200
