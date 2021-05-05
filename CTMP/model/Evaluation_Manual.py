@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--sample_test", default=100, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='in-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
 # parser.add_argument("--folder", default=".test", type=str, help="Folder of saved outputs")
 
@@ -129,9 +129,11 @@ class Evaluation:
         sorted_ratings = np.argsort(-ratings)
         predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m] # make sure it is true
 
+        # TODO: implement XXXXXX
         # we cant know cold_items_TEST, because it contains ratings that we want to predict, and dont know yet. BUTTT, maybe we dont know ratings for specific user whenever we predict its ratings... But meanwhile, maybe we can know other other users ratings in test set.
         # chang below self.cold_items_TEST --> self.cold_items_TRAIN ??? because of the reason above ^^^
-        test_remaining = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)
+        # ANOTHER approcach, let us know other users ratings while predicting this users ratings. So, for current user we assume we dont have his/her info on ratings.
+        test_remaining = np.setdiff1d(sorted_ratings, XXXXXXX, assume_unique=True)
         predicted_top_M_TEST = np.setdiff1d(test_remaining, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
 
         top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
