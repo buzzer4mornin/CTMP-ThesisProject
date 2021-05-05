@@ -9,6 +9,7 @@ import math
 
 # blei topics: http://www.cs.columbia.edu/~blei/lda-c/ap-topics.pdf
 
+# TODO: move to ./common directory
 
 def print_topics(vocab_file, nwords, result_file):
     with open(vocab_file, 'r') as f:

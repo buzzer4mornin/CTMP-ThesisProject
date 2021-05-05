@@ -28,6 +28,11 @@ class MyEvaluation:
         self.shp = np.load(f"./{self.folder}/shp.npy")
         self.rte = np.load(f"./{self.folder}/rte.npy")
 
+        # TODO: maybe float64 -> float32? Compare results if changed!
+        # print(self.mu.dtype)
+        # print(self.shp.dtype)
+        # print(self.rte.dtype)
+
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
 
@@ -118,8 +123,7 @@ class MyEvaluation:
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
-        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id],
-                                            assume_unique=True)[:top_m]
+        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
         predicted_top_M_TRAIN = np.argsort(-ratings)[:top_m]
         top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
         top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
