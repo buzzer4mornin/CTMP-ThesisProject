@@ -16,6 +16,7 @@ from Evaluation import MyEvaluation
 sys.path.insert(0, './common')
 import utilities
 
+
 # ------------ RUN in terminal ------------
 # --> python ./model/run_model.py ctmp original 5
 # --> python ./model/run_model.py lda original 5
@@ -85,10 +86,11 @@ def main():
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
-    utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
+    # UNCOMMENT below if loading mode is needed
+    # utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
-    print(f"load train/test {k_cross_val}-folds ...")
+    print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
     train_folds = pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
     test_folds = pickle.load(open(f"./input-data/test_{k_cross_val}_folds.pkl", "rb"))
 
@@ -143,16 +145,15 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
-        with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
-              pickle.dump(rating_GroupForUser_train, f)
-        with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
-             pickle.dump(rating_GroupForMovie_train, f)
-        with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
-             pickle.dump(rating_GroupForUser_test, f)
-        with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
-             pickle.dump(rating_GroupForMovie_test, f)
+        # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
+        #       pickle.dump(rating_GroupForUser_train, f)
+        # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
+        #      pickle.dump(rating_GroupForMovie_train, f)
+        # with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
+        #      pickle.dump(rating_GroupForUser_test, f)
+        # with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
+        #      pickle.dump(rating_GroupForMovie_test, f)
         break
-    exit()
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
@@ -176,7 +177,7 @@ def main():
         algo.run_EM(wordids, wordcts, i)
 
         # Save CheckPoints
-        if i % 5 == 0:
+        if i % 5 == 0 and i != 0:
             os.makedirs(f"{output_folder}{i}")
             list_tops = utilities.list_top(algo.beta, ddict['tops'])
             print("\nsaving the final results.. please wait..")
