@@ -16,6 +16,7 @@ from Evaluation import MyEvaluation
 sys.path.insert(0, './common')
 import utilities
 
+#TEST
 
 # ------------ RUN in terminal ------------
 # --> python ./model/run_model.py ctmp original 5
