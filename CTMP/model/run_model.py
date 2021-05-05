@@ -86,7 +86,7 @@ def main():
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
-    # train_folds, test_folds = utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
+    utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
     print(f"load train/test {k_cross_val}-folds ...")
@@ -144,15 +144,16 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
-        # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
-        #       pickle.dump(rating_GroupForUser_train, f)
-        # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForMovie_train, f)
-        # with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForUser_test, f)
-        # with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForMovie_test, f)
+        with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
+              pickle.dump(rating_GroupForUser_train, f)
+        with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
+             pickle.dump(rating_GroupForMovie_train, f)
+        with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
+             pickle.dump(rating_GroupForUser_test, f)
+        with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
+             pickle.dump(rating_GroupForMovie_test, f)
         break
+    exit()
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":

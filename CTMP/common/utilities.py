@@ -123,7 +123,10 @@ def write_file(model_folder, list_tops, algo, iter):
 def cv_train_test_split(rating_group_file, k_cv, seed):
     print(f"split RATINGS into Train/Test using Stratified {str(k_cv)}-Fold CV ...")
     skf = StratifiedKFold(n_splits=k_cv, shuffle=True, random_state=seed)
-    ratings = np.array(pd.read_pickle(rating_group_file))
+    try:
+        ratings = np.array(pd.read_pickle(rating_group_file))
+    except OSError:
+        exit("---> ERROR! Please, upload 'df_rating_UPDATED' file for cross-validation split")
 
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     users = ratings_one[:, 0]
@@ -185,6 +188,4 @@ def cv_train_test_split(rating_group_file, k_cv, seed):
 
     with open(f"./input-data/test_{str(k_cv)}_folds.pkl", "wb") as f:
         pickle.dump(test_folds, f, protocol=4)
-
-    return train_folds, test_folds
 
