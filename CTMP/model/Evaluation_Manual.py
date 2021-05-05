@@ -7,13 +7,11 @@ import numpy as np
 from math import floor
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--sample_test", default=1000, type=int, help="Size of test set")
+parser.add_argument("--sample_test", default=100, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
-parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--pred_type", default='in-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
-
-
 # parser.add_argument("--folder", default=".test", type=str, help="Folder of saved outputs")
 
 
@@ -107,14 +105,35 @@ class Evaluation:
         # exit()
         return test_set
 
-    def predict_in_matrix(self, user_id, top_m) -> None:
+    # TODO old one
+    # def predict_in_matrix(self, user_id, top_m) -> None:
+    #     """Compute in-matrix recall and precision for a given user, then add them to the sum"""
+    #     ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+    #     actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
+    #     actual_TEST = self.rating_GroupForUser_TEST[user_id]
+    #     sorted_ratings = np.argsort(-ratings)
+    #     predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m]
+    #     predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)[:top_m]
+    #     top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
+    #     top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
+    #     self.recalls_in_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
+    #     self.precisions_in_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
+    #     self.recalls_in_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
+    #     self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)
+    # TODO new one
+    def predict_in_matrix(self, user_id, top_m, ratings) -> None:
         """Compute in-matrix recall and precision for a given user, then add them to the sum"""
-        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+        # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
-        predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m]
-        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)[:top_m]
+        predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m] # make sure it is true
+
+        # we cant know cold_items_TEST, because it contains ratings that we want to predict, and dont know yet. BUTTT, maybe we dont know ratings for specific user whenever we predict its ratings... But meanwhile, maybe we can know other other users ratings in test set.
+        # chang below self.cold_items_TEST --> self.cold_items_TRAIN ??? because of the reason above ^^^
+        test_remaining = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)
+        predicted_top_M_TEST = np.setdiff1d(test_remaining, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
+
         top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
         top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_in_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
@@ -162,7 +181,7 @@ class Evaluation:
 
             self.recalls_in_matrix_TEST, self.precisions_in_matrix_TEST = 0, 0
             self.recalls_out_of_matrix_TEST, self.precisions_out_of_matrix_TEST = 0, 0
-
+            #TODO: only this is left! encorporate "whole_ratings" into this as you did in in-matrix, out-of-matrix
             if args.pred_type == "both":
                 for usr in self.test_set:
                     self.predict_in_matrix(usr, top)
@@ -172,8 +191,14 @@ class Evaluation:
                 self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / len(self.test_set))
             elif args.pred_type == "in-matrix":
-                for usr in self.test_set:
-                    self.predict_in_matrix(usr, top)
+                # 1st method
+                # for usr in self.test_set:
+                #     self.predict_in_matrix(usr, top)
+
+                # 2nd method
+                for i in range(len(self.test_set)):
+                    self.predict_in_matrix(self.test_set[i], top, whole_rating[i])
+
                 self.avg_recalls_in_matrix_TRAIN.append(self.recalls_in_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / len(self.test_set))
                 self.avg_recalls_in_matrix_TEST.append(self.recalls_in_matrix_TEST / len(self.test_set))
@@ -239,7 +264,7 @@ class Evaluation:
         ax2.grid()
         plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
         fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
-        plt.savefig('./eval/EXAMPLE.png')
+        plt.savefig('../input-data/eval/EXAMPLE.png')
         plt.show()
 
 
