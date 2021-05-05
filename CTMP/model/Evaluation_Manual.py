@@ -138,7 +138,7 @@ class Evaluation:
     # TODO new one
     def predict_out_of_matrix(self, user_id, top_m, ratings) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
-        # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+        # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T) # UNCOMMENT if 1st method
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
@@ -153,7 +153,7 @@ class Evaluation:
 
     def avg_recall_precision(self) -> None:
         self.test_set = sorted(self.test_set)
-        whole = np.dot(self.shp[self.test_set] / self.rte[self.test_set], self.mu.T)
+        whole_rating = np.dot(self.shp[self.test_set] / self.rte[self.test_set], self.mu.T)
         for top in range(args.TOP_M_start, args.TOP_M_end):
             # make all metrics zero for new iteration
             print(f"Top-M: {top}")
@@ -180,12 +180,12 @@ class Evaluation:
                 self.avg_precisions_in_matrix_TEST.append(self.precisions_in_matrix_TEST / len(self.test_set))
 
             elif args.pred_type == "out-of-matrix":
-                # 1)
+                # 1st method
                 # for usr in self.test_set:
                 #     self.predict_out_of_matrix(usr, top)
-                # 2)
+                # 2nd method
                 for i in range(len(self.test_set)):
-                    self.predict_out_of_matrix(self.test_set[i], top, whole[i])
+                    self.predict_out_of_matrix(self.test_set[i], top, whole_rating[i])
 
                 self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / len(self.test_set))
