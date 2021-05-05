@@ -29,7 +29,7 @@ class MyCTMP:
         self.iter_infer = iter_infer
 
         # Get initial beta(topics) which was produced by LDA
-        self.beta = np.load('./input-data/beta.npy')
+        # self.beta = np.load('./input-data/beta.npy')
         self.beta = np.random.rand(self.num_topics, self.num_words) + 1e-10
         beta_norm = self.beta.sum(axis=1)
         self.beta /= beta_norm[:, np.newaxis]

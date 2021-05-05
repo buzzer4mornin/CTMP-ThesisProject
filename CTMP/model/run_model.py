@@ -144,7 +144,6 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
-
         # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
         #       pickle.dump(rating_GroupForUser_train, f)
         # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
