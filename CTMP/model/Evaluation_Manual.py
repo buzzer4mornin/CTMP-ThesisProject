@@ -7,7 +7,7 @@ import numpy as np
 from math import floor
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--sample_test", default=100, type=int, help="Size of test set")
+parser.add_argument("--sample_test", default=14000, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
@@ -30,9 +30,9 @@ class Evaluation:
             self.rating_GroupForMovie_TRAIN = train[1]
             self.rating_GroupForMovie_TEST = test[1]
 
-        self.mu = np.load(f"../input-data/eval/mu.npy")
-        self.shp = np.load(f"../input-data/eval/shp.npy")
-        self.rte = np.load(f"../input-data/eval/rte.npy")
+        self.mu = np.load(f"../input-data/eval/mu-70.npy")
+        self.shp = np.load(f"../input-data/eval/shp-70.npy")
+        self.rte = np.load(f"../input-data/eval/rte-70.npy")
 
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
@@ -159,6 +159,7 @@ class Evaluation:
     # TODO new one
     def predict_out_of_matrix(self, user_id, top_m, ratings) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
+        # TODO: vectorize as in tables.py
         # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T) # UNCOMMENT if 1st method
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
@@ -266,7 +267,7 @@ class Evaluation:
         ax2.grid()
         plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
         fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
-        plt.savefig('../input-data/eval/EXAMPLE.png')
+        plt.savefig('../input-data/eval/EXAMPLE-70.png')
         plt.show()
 
 
@@ -277,7 +278,3 @@ if __name__ == '__main__':
     eval = Evaluation(args)
     eval.plot()
     print("SECONDS:", time.time() - s)
-
-# =========== Saved Results ==============
-# --- Set size = 2,000, in-matrix ---
-# --- Set size = 2,000, out-of-matrix ---
