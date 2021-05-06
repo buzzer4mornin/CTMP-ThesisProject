@@ -257,6 +257,7 @@ class Evaluation:
         else:
             ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_TRAIN, label="train")
             ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_TEST, label="test")
+
         ax2.set_xlabel('Top-M', fontsize=11)
         ax2.set_ylabel('Precision', fontsize=11)
         # ax2.set_title(f"IMPORT SOME NAME HERE")
@@ -276,5 +277,6 @@ if __name__ == '__main__':
     assert args.pred_type in ['in-matrix', 'out-of-matrix', 'both']
     s = time.time()
     eval = Evaluation(args)
-    eval.plot()
     print("SECONDS:", time.time() - s)
+    eval.plot()
+
