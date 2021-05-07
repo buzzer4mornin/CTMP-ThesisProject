@@ -30,9 +30,9 @@ class Evaluation:
             self.rating_GroupForMovie_TRAIN = train[1]
             self.rating_GroupForMovie_TEST = test[1]
 
-        self.mu = np.load(f"../input-data/eval/mu-70.npy")
-        self.shp = np.load(f"../input-data/eval/shp-70.npy")
-        self.rte = np.load(f"../input-data/eval/rte-70.npy")
+        self.mu = np.load(f"../input-data/eval/mu-90.npy")
+        self.shp = np.load(f"../input-data/eval/shp-90.npy")
+        self.rte = np.load(f"../input-data/eval/rte-90.npy")
 
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
@@ -268,7 +268,7 @@ class Evaluation:
         ax2.grid()
         plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
         fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
-        plt.savefig('../input-data/eval/EXAMPLE-70.png')
+        plt.savefig('../input-data/eval/EXAMPLE-90.png')
         plt.show()
 
 

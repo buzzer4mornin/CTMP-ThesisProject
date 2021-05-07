@@ -182,10 +182,9 @@ def main():
             list_tops = utilities.list_top(algo.beta, ddict['tops'])
             print("\nsaving the final results.. please wait..")
             utilities.write_file(output_folder, list_tops, algo, i)
-            evaluate = MyEvaluation(rating_GroupForUser_train, rating_GroupForUser_test,
-                                    rating_GroupForMovie_train, rating_GroupForMovie_test, i, sample_test=1000)
-
-            evaluate.plot()
+            # evaluate = MyEvaluation(rating_GroupForUser_train, rating_GroupForUser_test,
+            #                        rating_GroupForMovie_train, rating_GroupForMovie_test, i, sample_test=1000)
+            # evaluate.plot()
 
     print('DONE!')
 
