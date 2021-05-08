@@ -307,7 +307,7 @@ class MyCTMP:
         """ Does m step: update global variables beta """
 
         # Compute intermediate beta which is denoted as "unit beta"
-        beta = np.zeros((self.num_topics, self.num_words), dtype=float)
+        beta = np.zeros((self.num_topics, self.num_words))
         for d in range(self.num_docs):
             beta[:, wordids[d]] += np.outer(self.theta[d], wordcts[d])
         # Check zeros index
@@ -318,5 +318,5 @@ class MyCTMP:
         unit_beta_norm = unit_beta.sum(axis=1)
         unit_beta /= unit_beta_norm[:, np.newaxis]
         # Update beta
-        self.beta = np.zeros((self.num_topics, self.num_words), dtype=float)
+        self.beta = np.zeros((self.num_topics, self.num_words))
         self.beta[:, ids] += unit_beta
