@@ -196,4 +196,25 @@ def main():
 
 
 if __name__ == '__main__':
+    import os
+    NUM_THREADS = "1"
+    os.environ["OMP_NUM_THREADS"] = NUM_THREADS
+    os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS
+    os.environ["MKL_NUM_THREADS"] = NUM_THREADS
+    os.environ["VECLIB_MAXIMUM_THREADS"] = NUM_THREADS
+    os.environ["NUMEXPR_NUM_THREADS"] = NUM_THREADS
+    import numpy as np
+    import shutil
+    import sys
+    import time
+    import pickle
+    import pandas as pd
+    from math import floor
+    from CTMP import MyCTMP
+    # from LDA import MyLDA
+    from Evaluation import MyEvaluation
+
+    sys.path.insert(0, './common')
+    import utilities
+
     main()

@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import time
+import os
+NUM_THREADS = "1"
+os.environ["OMP_NUM_THREADS"] = NUM_THREADS
+os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS
+os.environ["MKL_NUM_THREADS"] = NUM_THREADS
+os.environ["VECLIB_MAXIMUM_THREADS"] = NUM_THREADS
+os.environ["NUMEXPR_NUM_THREADS"] = NUM_THREADS
 import numpy as np
 from scipy import special
 from numba import njit
-
 
 class MyCTMP:
     def __init__(self, rating_GroupForUser, rating_GroupForMovie,
@@ -67,7 +73,7 @@ class MyCTMP:
 
         # Create small 3D matrices and add them into list
         thousand_block_size = self.user_size // 1000
-        phi = np.empty(shape=(1000, self.num_docs, self.num_topics))
+        phi = np.empty(shape=(1000, self.num_docs, self.num_topics), dtype="float16")
         for i in range(1000):
             phi[i, :, :] = block_2D
         for i in range(thousand_block_size):
@@ -75,7 +81,7 @@ class MyCTMP:
 
         # Create last remaining 3D matrix and add it into list
         remaining_block_size = self.user_size % 1000
-        phi = np.empty(shape=(remaining_block_size, self.num_docs, self.num_topics))
+        phi = np.empty(shape=(remaining_block_size, self.num_docs, self.num_topics), dtype="float16")
         for i in range(remaining_block_size):
             phi[i, :, :] = block_2D
         phi_matrices.append(phi)
