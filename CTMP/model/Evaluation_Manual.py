@@ -30,9 +30,9 @@ class Evaluation:
             self.rating_GroupForMovie_TRAIN = train[1]
             self.rating_GroupForMovie_TEST = test[1]
 
-        self.mu = np.load(f"../input-data/eval/mu-90.npy")
-        self.shp = np.load(f"../input-data/eval/shp-90.npy")
-        self.rte = np.load(f"../input-data/eval/rte-90.npy")
+        self.mu = np.load(f"../input-data/eval/mu-50.npy")
+        self.shp = np.load(f"../input-data/eval/shp-50.npy")
+        self.rte = np.load(f"../input-data/eval/rte-50.npy")
 
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
