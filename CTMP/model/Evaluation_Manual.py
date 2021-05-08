@@ -1,37 +1,38 @@
 import pickle
 import argparse
 import random
+import time
 import matplotlib.pyplot as plt
 import numpy as np
 from math import floor
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--sample_test", default=14000, type=int, help="Size of test set")
+parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
+parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
+parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
+parser.add_argument("--seed", default=42, type=int, help="Random seed.")
+# parser.add_argument("--folder", default=".test", type=str, help="Folder of saved outputs")
 
-class MyEvaluation:
-    def __init__(self, user_train, user_test, movie_train, movie_test, iteration,
-                 sample_test=50, TOP_M_start=10, TOP_M_end=100, pred_type='out-of-matrix', seed=42):
 
-        assert pred_type in ['in-matrix', 'out-of-matrix', 'both']
-        self.folder = f"output-data/{iteration}"
-        self.sample_test = sample_test
-        self.TOP_M_start = TOP_M_start
-        self.TOP_M_end = TOP_M_end
-        self.pred_type = pred_type
-        self.seed = seed
+class Evaluation:
+    def __init__(self, args):
 
         # Set seed
-        np.random.seed(self.seed)
+        np.random.seed(args.seed)
 
-        self.rating_GroupForUser_TRAIN, self.rating_GroupForUser_TEST = user_train, user_test,
-        self.rating_GroupForMovie_TRAIN, self.rating_GroupForMovie_TEST = movie_train, movie_test
+        train_folds = pickle.load(open("../input-data/train_5_folds.pkl", "rb"))
+        test_folds = pickle.load(open("../input-data/test_5_folds.pkl", "rb"))
 
-        self.mu = np.load(f"./{self.folder}/mu.npy")
-        self.shp = np.load(f"./{self.folder}/shp.npy")
-        self.rte = np.load(f"./{self.folder}/rte.npy")
+        for train, test in zip(train_folds, test_folds):
+            self.rating_GroupForUser_TRAIN = train[0]
+            self.rating_GroupForUser_TEST = test[0]
+            self.rating_GroupForMovie_TRAIN = train[1]
+            self.rating_GroupForMovie_TEST = test[1]
 
-        # TODO: maybe float64 -> float32? Compare results if changed!
-        # print(self.mu.dtype)
-        # print(self.shp.dtype)
-        # print(self.rte.dtype)
+        self.mu = np.load(f"../input-data/eval/mu-50.npy")
+        self.shp = np.load(f"../input-data/eval/shp-50.npy")
+        self.rte = np.load(f"../input-data/eval/rte-50.npy")
 
         # Group items separately
         self.cold_items_TRAIN, self.cold_items_TEST, self.noncold_items_TRAIN, self.noncold_items_TEST = self.group_items()
@@ -71,12 +72,32 @@ class MyEvaluation:
         print(f"Testing set: cold-{len(cold_items_TEST)}, noncold-{len(noncold_items_TEST)}")
         return cold_items_TRAIN, cold_items_TEST, noncold_items_TRAIN, noncold_items_TEST
 
+    def distributions_on_ratings(self):
+        # ORIGINAL SET
+        data = []
+        for key in self.rating_GroupForUser_TEST:
+            data.append(len(self.rating_GroupForUser_TEST[key]))
+
+        # SAMPLE SET
+        # data = []
+        # sample = random.sample(list(self.rating_GroupForUser_TEST.keys()), args.sample_test)
+        # for usr in sample:
+        #     data.append(len(self.rating_GroupForUser_TEST[usr]))
+
+        bins = np.arange(0, 700, 5)
+        plt.xlim([min(data) - 5, max(data) + 5])
+        plt.hist(data, bins=bins, alpha=0.5)
+        plt.title('Random Gaussian data (fixed bin size)')
+        plt.xlabel('variable X (bin size = 5)')
+        plt.ylabel('count')
+        plt.show()
+
     def generate_test_set(self) -> list:
-        sample = random.sample(list(self.rating_GroupForUser_TEST.keys()), self.sample_test)
+        sample = random.sample(list(self.rating_GroupForUser_TEST.keys()), args.sample_test)
         test_set = []
-        for u in sample:
-            if len(self.rating_GroupForUser_TEST[u]) > 0 and len(self.rating_GroupForUser_TRAIN[u]) > 0:
-                test_set.append(u)
+        for usr in sample:
+            if len(self.rating_GroupForUser_TEST[usr]) > 0 and len(self.rating_GroupForUser_TRAIN[usr]) > 0:
+                test_set.append(usr)
         # avg = 0
         # for i in self.rating_GroupForUser_TRAIN:
         #       avg += len(self.rating_GroupForUser_TRAIN[i])
@@ -84,17 +105,37 @@ class MyEvaluation:
         # exit()
         return test_set
 
-    # TODO add new one
-    # here ...
-    #TODO old one
-    def predict_in_matrix(self, user_id, top_m) -> None:
+    # TODO old one
+    # def predict_in_matrix(self, user_id, top_m) -> None:
+    #     """Compute in-matrix recall and precision for a given user, then add them to the sum"""
+    #     ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+    #     actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
+    #     actual_TEST = self.rating_GroupForUser_TEST[user_id]
+    #     sorted_ratings = np.argsort(-ratings)
+    #     predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m]
+    #     predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)[:top_m]
+    #     top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
+    #     top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
+    #     self.recalls_in_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
+    #     self.precisions_in_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
+    #     self.recalls_in_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
+    #     self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)
+    # TODO new one
+    def predict_in_matrix(self, user_id, top_m, ratings) -> None:
         """Compute in-matrix recall and precision for a given user, then add them to the sum"""
-        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+        # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
-        predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m]
-        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)[:top_m]
+        predicted_top_M_TRAIN = np.setdiff1d(sorted_ratings, self.cold_items_TRAIN, assume_unique=True)[:top_m] # make sure it is true
+
+        # TODO: implement XXXXXX
+        # we cant know cold_items_TEST, because it contains ratings that we want to predict, and dont know yet. BUTTT, maybe we dont know ratings for specific user whenever we predict its ratings... But meanwhile, maybe we can know other other users ratings in test set.
+        # chang below self.cold_items_TEST --> self.cold_items_TRAIN ??? because of the reason above ^^^
+        # ANOTHER approcach, let us know other users ratings while predicting this users ratings. So, for current user we assume we dont have his/her info on ratings.
+        test_remaining = np.setdiff1d(sorted_ratings, XXXXXXX, assume_unique=True)
+        predicted_top_M_TEST = np.setdiff1d(test_remaining, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
+
         top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
         top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_in_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
@@ -116,14 +157,15 @@ class MyEvaluation:
     #     self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
     #     self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
     # TODO new one
-    def predict_out_of_matrix(self, user_id, top_m) -> None:
+    def predict_out_of_matrix(self, user_id, top_m, ratings) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
-        ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
+        # TODO: vectorize as in tables.py
+        # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T) # UNCOMMENT if 1st method
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
         predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
-        predicted_top_M_TRAIN = np.argsort(-ratings)[:top_m]
+        predicted_top_M_TRAIN = sorted_ratings[:top_m]
         top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
         top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_out_of_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
@@ -132,7 +174,9 @@ class MyEvaluation:
         self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
 
     def avg_recall_precision(self) -> None:
-        for top in range(self.TOP_M_start, self.TOP_M_end):
+        self.test_set = sorted(self.test_set)
+        whole_rating = np.dot(self.shp[self.test_set] / self.rte[self.test_set], self.mu.T)
+        for top in range(args.TOP_M_start, args.TOP_M_end):
             # make all metrics zero for new iteration
             print(f"Top-M: {top}")
             self.recalls_in_matrix_TRAIN, self.precisions_in_matrix_TRAIN = 0, 0
@@ -140,8 +184,8 @@ class MyEvaluation:
 
             self.recalls_in_matrix_TEST, self.precisions_in_matrix_TEST = 0, 0
             self.recalls_out_of_matrix_TEST, self.precisions_out_of_matrix_TEST = 0, 0
-
-            if self.pred_type == "both":
+            #TODO: only this is left! encorporate "whole_ratings" into this as you did in in-matrix, out-of-matrix
+            if args.pred_type == "both":
                 for usr in self.test_set:
                     self.predict_in_matrix(usr, top)
                     self.predict_out_of_matrix(usr, top)
@@ -149,69 +193,90 @@ class MyEvaluation:
                 self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / len(self.test_set))
                 self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / len(self.test_set))
-            elif self.pred_type == "in-matrix":
-                for usr in self.test_set:
-                    self.predict_in_matrix(usr, top)
+            elif args.pred_type == "in-matrix":
+                # 1st method
+                # for usr in self.test_set:
+                #     self.predict_in_matrix(usr, top)
+
+                # 2nd method
+                for i in range(len(self.test_set)):
+                    self.predict_in_matrix(self.test_set[i], top, whole_rating[i])
+
                 self.avg_recalls_in_matrix_TRAIN.append(self.recalls_in_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_in_matrix_TRAIN.append(self.precisions_in_matrix_TRAIN / len(self.test_set))
                 self.avg_recalls_in_matrix_TEST.append(self.recalls_in_matrix_TEST / len(self.test_set))
                 self.avg_precisions_in_matrix_TEST.append(self.precisions_in_matrix_TEST / len(self.test_set))
 
-            elif self.pred_type == "out-of-matrix":
-                for usr in self.test_set:
-                    self.predict_out_of_matrix(usr, top)
+            elif args.pred_type == "out-of-matrix":
+                # 1st method
+                # for usr in self.test_set:
+                #     self.predict_out_of_matrix(usr, top)
+                # 2nd method
+                for i in range(len(self.test_set)):
+                    self.predict_out_of_matrix(self.test_set[i], top, whole_rating[i])
+
                 self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / len(self.test_set))
                 self.avg_recalls_out_of_matrix_TEST.append(self.recalls_out_of_matrix_TEST / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TEST.append(self.precisions_out_of_matrix_TEST / len(self.test_set))
 
     def plot(self) -> None:
-        if self.pred_type == "both":
+        if args.pred_type == "both":
             r_i_TRAIN, p_i_TRAIN = self.avg_recalls_in_matrix_TRAIN, self.avg_precisions_in_matrix_TRAIN
             r_o_TRAIN, p_o_TRAIN = self.avg_recalls_out_of_matrix_TRAIN, self.avg_precisions_out_of_matrix_TRAIN
             r_i_TEST, p_i_TEST = self.avg_recalls_in_matrix_TEST, self.avg_precisions_in_matrix_TEST
             r_o_TEST, p_o_TEST = self.avg_recalls_out_of_matrix_TEST, self.avg_precisions_out_of_matrix_TEST
-        elif self.pred_type == "in-matrix":
+        elif args.pred_type == "in-matrix":
             r_TRAIN, p_TRAIN = self.avg_recalls_in_matrix_TRAIN, self.avg_precisions_in_matrix_TRAIN
             r_TEST, p_TEST = self.avg_recalls_in_matrix_TEST, self.avg_precisions_in_matrix_TEST
-        elif self.pred_type == "out-of-matrix":
+        elif args.pred_type == "out-of-matrix":
             r_TRAIN, p_TRAIN = self.avg_recalls_out_of_matrix_TRAIN, self.avg_precisions_out_of_matrix_TRAIN
             r_TEST, p_TEST = self.avg_recalls_out_of_matrix_TEST, self.avg_precisions_out_of_matrix_TEST
 
         # PLOT recall graph
-        plt.ioff()  # Turn interactive plotting off
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4))
-        if self.pred_type == "both":
-            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_i_TRAIN, label="in-matrix-train")
-            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_o_TRAIN, label="out-of-matrix-train")
-            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_i_TEST, label="in-matrix-test")
-            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_o_TEST, label="out-of-matrix-test")
+        if args.pred_type == "both":
+            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_i_TRAIN, label="in-matrix-train")
+            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_o_TRAIN, label="out-of-matrix-train")
+            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_i_TEST, label="in-matrix-test")
+            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_o_TEST, label="out-of-matrix-test")
         else:
-            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_TRAIN, label="train")
-            ax1.plot(range(self.TOP_M_start, self.TOP_M_end), r_TEST, label="test")
+            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_TRAIN, label="train")
+            ax1.plot(range(args.TOP_M_start, args.TOP_M_end), r_TEST, label="test")
         ax1.set_xlabel('Top-M', fontsize=11)
         ax1.set_ylabel('Recall', fontsize=11)
-        ax1.set_title(f"Sample size: {self.sample_test}")
+        # ax1.set_title(f"IMPORT SOME NAME HERE")
         ax1.legend()
 
         # PLOT precision graph
-        if self.pred_type == "both":
-            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_i_TRAIN, label="in-matrix-train")
-            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_o_TRAIN, label="out-of-matrix-train")
-            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_i_TEST, label="in-matrix-test")
-            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_o_TEST, label="out-of-matrix-test")
+        if args.pred_type == "both":
+            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_i_TRAIN, label="in-matrix-train")
+            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_o_TRAIN, label="out-of-matrix-train")
+            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_i_TEST, label="in-matrix-test")
+            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_o_TEST, label="out-of-matrix-test")
         else:
-            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_TRAIN, label="train")
-            ax2.plot(range(self.TOP_M_start, self.TOP_M_end), p_TEST, label="test")
+            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_TRAIN, label="train")
+            ax2.plot(range(args.TOP_M_start, args.TOP_M_end), p_TEST, label="test")
+
         ax2.set_xlabel('Top-M', fontsize=11)
         ax2.set_ylabel('Precision', fontsize=11)
-        ax2.set_title(f"Sample size: {self.sample_test}")
+        # ax2.set_title(f"IMPORT SOME NAME HERE")
         ax2.legend()
 
         # plot configs
         ax1.grid()
         ax2.grid()
         plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
-        fig.suptitle(f'{self.pred_type} predictions', fontsize=14)
-        plt.savefig(f'./{self.folder}/FIGURE.png')
-        # plt.show()
+        fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
+        plt.savefig('../input-data/eval/EXAMPLE-90.png')
+        plt.show()
+
+
+if __name__ == '__main__':
+    args = parser.parse_args([] if "__file__" not in globals() else None)
+    assert args.pred_type in ['in-matrix', 'out-of-matrix', 'both']
+    s = time.time()
+    eval = Evaluation(args)
+    print("SECONDS:", time.time() - s)
+    eval.plot()
+
