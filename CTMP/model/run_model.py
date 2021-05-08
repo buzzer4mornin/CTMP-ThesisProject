@@ -170,7 +170,6 @@ def main():
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')
-
     for i in range(ddict['iter_train']):
         print(f'\n*** iteration: {i} ***\n')
         time.sleep(2)

@@ -253,7 +253,7 @@ class MyCTMP:
 
         # Parameter of Bernoulli distribution
         # Likelihood vs Prior
-        p = 0.5
+        p = 0.7
 
         # Number of times likelihood and prior are chosen
         T_lower = [1, 0]
