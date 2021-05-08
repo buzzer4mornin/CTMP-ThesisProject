@@ -105,25 +105,28 @@ def print_diff_list_tops(list_tops, prev_list_tops, i):
         print("Difference:", diff_count)
 
 
-def write_file(model_folder, list_tops, algo):
-    list_tops_file_name = f'{model_folder}/list_tops.txt'
+def write_file(model_folder, list_tops, algo, iter):
+    list_tops_file_name = f'{model_folder}{iter}/list_tops.txt'
     write_topic_top(list_tops, list_tops_file_name)
-    def file_locator(x): return f'{model_folder}/{str(x)}'
+    def file_locator(x): return f'{model_folder}{iter}/{str(x)}'                                       # added iter !!
     files = [attr for attr in dir(algo) if attr in ["theta", "mu", "phi", "shp", "rte", "beta"]]
-    for i in files:
-        if i != "phi":
-            np.save(file_locator(i), getattr(algo, i))
+    for f in files:
+        if f != "phi":
+            np.save(file_locator(f), getattr(algo, f))
         else:
-            #pass
+            pass
             # TODO: uncomment below in final version
-            with open(f"{model_folder}/phi.pkl", "wb") as f:
-                pickle.dump(getattr(algo, i), f, protocol=4)
+            # with open(f"{model_folder}/phi.pkl", "wb") as f:
+            #    pickle.dump(getattr(algo, i), f, protocol=4)
 
 
 def cv_train_test_split(rating_group_file, k_cv, seed):
-    print(f"split RATINGS into Train/Test using Stratified {str(k_cv)}-Fold CV ...")
+    print(f"SPLITTING MODE --> Split ratings into Train/Test using Stratified {str(k_cv)}-Fold CV ...")
     skf = StratifiedKFold(n_splits=k_cv, shuffle=True, random_state=seed)
-    ratings = np.array(pd.read_pickle(rating_group_file))
+    try:
+        ratings = np.array(pd.read_pickle(rating_group_file))
+    except OSError:
+        exit("ERROR! --> Please, upload 'df_rating_UPDATED' file for cross-validation split")
 
     ratings_one = ratings[np.where(ratings[:, 2] == 1)]
     users = ratings_one[:, 0]
@@ -185,6 +188,4 @@ def cv_train_test_split(rating_group_file, k_cv, seed):
 
     with open(f"./input-data/test_{str(k_cv)}_folds.pkl", "wb") as f:
         pickle.dump(test_folds, f, protocol=4)
-
-    return train_folds, test_folds
 

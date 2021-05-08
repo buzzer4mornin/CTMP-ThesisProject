@@ -11,6 +11,7 @@ from math import floor
 import os
 from CTMP import MyCTMP
 from LDA import MyLDA
+from Evaluation import MyEvaluation
 
 sys.path.insert(0, './common')
 import utilities
@@ -84,14 +85,14 @@ def main():
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
-    # Split Ratings into Train/Test with Stratified K-fold Cross-Validation.
-    # Save Folds Afterwards.
-    # train_folds, test_folds = utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
+    # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
+    # UNCOMMENT below if loading mode is needed
+    # utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
-    print(f"load train/test {str(k_cross_val)}-folds ...")
-    train_folds = pickle.load(open("./input-data/train_5_folds.pkl", "rb"))
-    test_folds = pickle.load(open("./input-data/test_5_folds.pkl", "rb"))
+    print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
+    train_folds = pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    test_folds = pickle.load(open(f"./input-data/test_{k_cross_val}_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -144,8 +145,16 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
-
+        # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
+        #       pickle.dump(rating_GroupForUser_train, f)
+        # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
+        #      pickle.dump(rating_GroupForMovie_train, f)
+        # with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
+        #      pickle.dump(rating_GroupForUser_test, f)
+        # with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
+        #      pickle.dump(rating_GroupForMovie_test, f)
         break
+
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')
@@ -164,19 +173,49 @@ def main():
 
     for i in range(ddict['iter_train']):
         print(f'\n*** iteration: {i} ***\n')
-        time.sleep(4)
-        # run single EM step and return attributes
+        time.sleep(2)
+        # Run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
+
+        # Save CheckPoints
+        if i % 5 == 0 and i != 0:
+            os.makedirs(f"{output_folder}{i}")
+            list_tops = utilities.list_top(algo.beta, ddict['tops'])
+            print("\nsaving the final results.. please wait..")
+            utilities.write_file(output_folder, list_tops, algo, i)
+            # evaluate = MyEvaluation(rating_GroupForUser_train, rating_GroupForUser_test,
+            #                        rating_GroupForMovie_train, rating_GroupForMovie_test, i, sample_test=1000)
+            # evaluate.plot()
 
     print('DONE!')
 
     # ----------------------------------------- Write Results ------------------------------------------------------
     # Search top words of each topics
-    list_tops = utilities.list_top(algo.beta, ddict['tops'])
-
-    print("\nsaving the final results.. please wait..")
-    utilities.write_file(output_folder, list_tops, algo)
+    # list_tops = utilities.list_top(algo.beta, ddict['tops'])
+    # print("\nsaving the final results.. please wait..")
+    # utilities.write_file(output_folder, list_tops, algo)
 
 
 if __name__ == '__main__':
+    import os
+    NUM_THREADS = "1"
+    os.environ["OMP_NUM_THREADS"] = NUM_THREADS
+    os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS
+    os.environ["MKL_NUM_THREADS"] = NUM_THREADS
+    os.environ["VECLIB_MAXIMUM_THREADS"] = NUM_THREADS
+    os.environ["NUMEXPR_NUM_THREADS"] = NUM_THREADS
+    import numpy as np
+    import shutil
+    import sys
+    import time
+    import pickle
+    import pandas as pd
+    from math import floor
+    from CTMP import MyCTMP
+    # from LDA import MyLDA
+    from Evaluation import MyEvaluation
+
+    sys.path.insert(0, './common')
+    import utilities
+
     main()
