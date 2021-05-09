@@ -106,8 +106,8 @@ class Evaluation:
         return test_set
 
     # TODO old one
-    # def predict_in_matrix(self, user_id, top_m) -> None:
-    #     """Compute in-matrix recall and precision for a given user, then add them to the sum"""
+    """# def predict_in_matrix(self, user_id, top_m) -> None:
+    #     '''Compute in-matrix recall and precision for a given user, then add them to the sum'''
     #     ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
     #     actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
     #     actual_TEST = self.rating_GroupForUser_TEST[user_id]
@@ -119,7 +119,7 @@ class Evaluation:
     #     self.recalls_in_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
     #     self.precisions_in_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
     #     self.recalls_in_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
-    #     self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)
+    #     self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)"""
     # TODO new one
     def predict_in_matrix(self, user_id, top_m, ratings) -> None:
         """Compute in-matrix recall and precision for a given user, then add them to the sum"""
