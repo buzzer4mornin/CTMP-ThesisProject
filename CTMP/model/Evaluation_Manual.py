@@ -7,7 +7,7 @@ import numpy as np
 from math import floor
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--sample_test", default=1000, type=int, help="Size of test set")
+parser.add_argument("--sample_test", default=500, type=int, help="Size of test set")
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix', 'both']")
@@ -144,8 +144,8 @@ class Evaluation:
         self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)
 
     # TODO old one
-    # def predict_out_of_matrix(self, user_id, top_m) -> None:
-    #     """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
+    """# def predict_out_of_matrix(self, user_id, top_m) -> None:
+    #     '''Compute out-of-matrix recall and precision for a given user, then add them to the sum'''
     #     ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
     #     actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
     #     actual_TEST = self.rating_GroupForUser_TEST[user_id]
@@ -155,8 +155,24 @@ class Evaluation:
     #     self.recalls_out_of_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
     #     self.precisions_out_of_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
     #     self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
-    #     self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
+    #     self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)"""
     # TODO new one
+    """# def predict_out_of_matrix(self, user_id, top_m, ratings) -> None:
+    #     '''Compute out-of-matrix recall and precision for a given user, then add them to the sum'''
+    #     # TODO: vectorize as in tables.py
+    #     # ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T) # UNCOMMENT if 1st method
+    #     actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
+    #     actual_TEST = self.rating_GroupForUser_TEST[user_id]
+    #     sorted_ratings = np.argsort(-ratings)
+    #     predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
+    #     predicted_top_M_TRAIN = sorted_ratings[:top_m]
+    #     top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
+    #     top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
+    #     self.recalls_out_of_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
+    #     self.precisions_out_of_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
+    #     self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
+    #     self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)"""
+    # TODO supernew Anar's Approach
     def predict_out_of_matrix(self, user_id, top_m, ratings) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
         # TODO: vectorize as in tables.py
@@ -164,14 +180,18 @@ class Evaluation:
         actual_TRAIN = self.rating_GroupForUser_TRAIN[user_id]
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
-        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
+        predicted_top_M_TEST = sorted_ratings[:top_m]
+        predicted_top_M_TEST = np.setdiff1d(predicted_top_M_TEST, self.rating_GroupForUser_TRAIN[user_id],assume_unique=True)
         predicted_top_M_TRAIN = sorted_ratings[:top_m]
         top_m_correct_TRAIN = np.sum(np.in1d(predicted_top_M_TRAIN, actual_TRAIN) * 1)
-        top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_out_of_matrix_TRAIN += (top_m_correct_TRAIN / len(self.rating_GroupForUser_TRAIN[user_id]))
         self.precisions_out_of_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
-        self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
-        self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
+        if len(predicted_top_M_TEST) == 0:
+            self.zero_place += 1
+        else:
+            top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
+            self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
+            self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / len(predicted_top_M_TEST))
 
     def avg_recall_precision(self) -> None:
         self.test_set = sorted(self.test_set)
@@ -212,13 +232,14 @@ class Evaluation:
                 # for usr in self.test_set:
                 #     self.predict_out_of_matrix(usr, top)
                 # 2nd method
+                self.zero_place = 0
                 for i in range(len(self.test_set)):
                     self.predict_out_of_matrix(self.test_set[i], top, whole_rating[i])
 
                 self.avg_recalls_out_of_matrix_TRAIN.append(self.recalls_out_of_matrix_TRAIN / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TRAIN.append(self.precisions_out_of_matrix_TRAIN / len(self.test_set))
-                self.avg_recalls_out_of_matrix_TEST.append(self.recalls_out_of_matrix_TEST / len(self.test_set))
-                self.avg_precisions_out_of_matrix_TEST.append(self.precisions_out_of_matrix_TEST / len(self.test_set))
+                self.avg_recalls_out_of_matrix_TEST.append(self.recalls_out_of_matrix_TEST / (len(self.test_set) - self.zero_place))         # MINUS self.zero_place is for SUPERNEW Approach ONLY!
+                self.avg_precisions_out_of_matrix_TEST.append(self.precisions_out_of_matrix_TEST / (len(self.test_set) - self.zero_place))   # MINUS self.zero_place is for SUPERNEW Approach ONLY!
 
     def plot(self) -> None:
         if args.pred_type == "both":
@@ -268,7 +289,7 @@ class Evaluation:
         ax2.grid()
         plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
         fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
-        plt.savefig('../input-data/eval/EXAMPLE-90.png')
+        plt.savefig('../input-data/eval/original.png')
         plt.show()
 
 
