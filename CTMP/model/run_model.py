@@ -58,7 +58,7 @@ def main():
     print('reading setting ...')
     ddict = utilities.read_setting(setting_file)
     print('write setting ...')
-    file_name = f'{output_folder}/setting.txt'
+    file_name = f'{output_folder}/settings_NFLX.txt' if which_size == "nflx" else f'{output_folder}/settings.txt'
     utilities.write_setting(ddict, file_name)
 
     """
@@ -90,6 +90,8 @@ def main():
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
     # UNCOMMENT below if loading mode is needed
     utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
+
+    exit()
 
     # Load saved Train/Test k-folds
     print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")

@@ -183,9 +183,12 @@ def cv_train_test_split(rating_group_file, k_cv, seed):
 
     print("split DONE, saving Train/Test folds ...")
 
-    with open(f"./input-data/train_{str(k_cv)}_folds.pkl", "wb") as f:
+    train_dir = f"./input-data/train_NFLX_{str(k_cv)}_folds.pkl" if rating_group_file == "./input-data/df_rating_NFLX_UPDATED" else f"./input-data/train_{str(k_cv)}_folds.pkl"
+    test_dir = f"./input-data/test_NFLX_{str(k_cv)}_folds.pkl" if rating_group_file == "./input-data/df_rating_NFLX_UPDATED" else f"./input-data/test_{str(k_cv)}_folds.pkl"
+
+    with open(train_dir, "wb") as f:
         pickle.dump(train_folds, f, protocol=4)
 
-    with open(f"./input-data/test_{str(k_cv)}_folds.pkl", "wb") as f:
+    with open(test_dir, "wb") as f:
         pickle.dump(test_folds, f, protocol=4)
 
