@@ -87,7 +87,7 @@ def main():
 
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
     # UNCOMMENT below if loading mode is needed
-    # utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
+    utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
     print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
