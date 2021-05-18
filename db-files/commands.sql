@@ -1,10 +1,27 @@
+-- ****************************************************************************************************************** --
+------------------------------------------------ NETFLIX -------------------------------------------------------------
+-- ****************************************************************************************************************** --
+SELECT * FROM USER_SYNONYMS;
+SELECT * FROM ALL_SYNONYMS;
+
+--CREATE synonym A_FMOVIES for ruleml.FMOVIES;
+--CREATE synonym A_FUSERS for ruleml.FUSERS;
+--CREATE synonym A_FRATINGS for ruleml.FRATINGS;
+
+select * from A_FMOVIES;
+select * from A_FUSERS;
+select * from A_FRATINGS;
+
+
+-- ****************************************************************************************************************** --
+------------------------------------------------ MOVIELENS -------------------------------------------------------------
+-- ****************************************************************************************************************** --
+
 SELECT * FROM USER_SYNONYMS;
 SELECT * FROM ALL_SYNONYMS;
 --DROP synonym syn_name;
 --CREATE synonym A_MRATINGS for ruleml.MRATINGS;
 -- !! My synonyms -> A_MMOVIES, A_MUSERS, A_MRATINGS
-
-
 -------------------------------------------------  BASICS ---------------------------------------------------------------
 select * from A_MRATINGS;
 select * from A_MMOVIES;
