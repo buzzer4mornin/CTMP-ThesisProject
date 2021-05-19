@@ -29,8 +29,10 @@ print("\n********************* DATA CLEANER *********************")
 # ======== Load df_user ========
 user_df = pd.read_pickle("./original-files/df_user_NFLX")
 
+
 # ======== Load df_movie =========
 movie_df = pd.read_pickle("./original-files/df_movie_NFLX")
+
 
 # Count of Movies without Plots ==> [870 / ~27k]
 # print(df_movie[df_movie.MOVIEPLOT == 'N/A'].shape[0])
@@ -62,6 +64,7 @@ print("SAVING... CLEANED -> | df_user_CLEANED | df_movie_CLEANED | df_rating_CLE
 user_df.to_pickle(currdir + '/df_user_NFLX_CLEANED')
 movie_df.to_pickle(currdir + '/df_movie_NFLX_CLEANED')
 rating_df.to_pickle(currdir + '/df_rating_NFLX_CLEANED')
+
 
 # ======================================================================================================================
 # ======================================================================================================================
@@ -106,12 +109,14 @@ user_np = np.array(user_df)
 movie_np = np.array(movie_df[["MOVIEID", "new_MOVIEID"]])
 rating_np = np.array(rating_df)
 
+
 # Save Updated User and Movie tables
 print("SAVING... updated df_user_UPDATED & df_movie_UPDATED")
 user_df = user_df.drop(["USERID"], axis=1)
 movie_df = movie_df.drop(["MOVIEID"], axis=1)
 user_df.to_pickle(currdir + '/df_user_NFLX_UPDATED')
 movie_df.to_pickle(currdir + '/df_movie_NFLX_UPDATED')
+
 
 # Save Updated Rating table
 print(rating_np)
@@ -125,7 +130,7 @@ v_movie = np.vectorize(second)
 rating_np[:, 0] = v_user(rating_np[:, 0])
 rating_np[:, 1] = v_movie(rating_np[:, 1])
 e = time.time()
-print("SAVING... updated df_rating_UPDATED || exec.time : {:.4g} min".format((e - s) / 60))
+print("SAVING... updated df_rating_UPDATED || exec.time : {:.4g} min".format((e-s)/60))
 print(rating_np)
 rating_df = pd.DataFrame(rating_np)
 rating_df.columns = ["new_USERID", "new_MOVIEID", "RATING"]
