@@ -34,7 +34,8 @@ import utilities
 # TODO: convert sys.argv into ArgParser
 
 def main():
-    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["nflx", "original", "reduced", "diminished"]:
+    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["nflx", "original", "reduced",
+                                                                                       "diminished"]:
         print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [nflx, original, reduced or diminished]")
         exit()
 
@@ -88,15 +89,17 @@ def main():
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
-    # UNCOMMENT below if loading mode is needed
-    utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
-
-    exit()
+    # UNCOMMENT --> SPLITTING MODE
+    # utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
     print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
-    train_folds = pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
-    test_folds = pickle.load(open(f"./input-data/test_{k_cross_val}_folds.pkl", "rb"))
+    train_folds = pickle.load(
+        open(f"./input-data/train_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(
+        open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    test_folds = pickle.load(
+        open(f"./input-data/test_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(
+        open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -140,8 +143,7 @@ def main():
         # Badly distributed
         print(less_test / len(rating_GroupForUser_test))
         print(less_train / len(rating_GroupForUser_train))
-
-    exit()'''
+        exit()'''
 
     for train, test in zip(train_folds, test_folds):
         rating_GroupForUser_train = train[0]
@@ -149,6 +151,14 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
+
+        if which_size == "nflx":
+            for u in range(479870):
+                try:
+                    rating_GroupForUser_train[u]
+                except:
+                    rating_GroupForUser_train[u] = []
+
         # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
         #       pickle.dump(rating_GroupForUser_train, f)
         # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
@@ -201,6 +211,7 @@ def main():
 
 if __name__ == '__main__':
     import os
+
     NUM_THREADS = "1"
     os.environ["OMP_NUM_THREADS"] = NUM_THREADS
     os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS
