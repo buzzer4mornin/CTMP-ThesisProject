@@ -156,6 +156,7 @@ class Evaluation:
     #     self.precisions_out_of_matrix_TRAIN += (top_m_correct_TRAIN / top_m)
     #     self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
     #     self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
+
     # TODO new one
     def predict_out_of_matrix(self, user_id, top_m, ratings) -> None:
         """Compute out-of-matrix recall and precision for a given user, then add them to the sum"""
