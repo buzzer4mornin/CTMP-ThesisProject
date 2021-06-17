@@ -23,7 +23,7 @@ def print_topics(vocab_file, nwords, result_file):
                 r.write(converts + "\n")
 
 if __name__ == '__main__':
-    os.chdir('../experimentation/sparsity&topn')
+    os.chdir('../experimentation/topn')
     list_tops = "./list_tops.txt"
     vocab_file = "vocab_NFLX.txt"
     result_file = "topn_output.txt"
