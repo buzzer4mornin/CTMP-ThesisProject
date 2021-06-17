@@ -180,14 +180,13 @@ def main():
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')
-    for i in range(ddict['iter_train']):
+    for i in range(1, ddict['iter_train']+1):
         print(f'\n*** iteration: {i} ***\n')
         time.sleep(2)
         # Run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
 
-        # Save CheckPoints
-        if i % 5 == 0 and i != 0:
+        if i == 50:
             os.makedirs(f"{output_folder}{i}")
             list_tops = utilities.list_top(algo.beta, ddict['tops'])
             print("\nsaving the final results.. please wait..")
