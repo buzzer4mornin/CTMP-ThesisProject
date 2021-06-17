@@ -25,6 +25,7 @@ for i, ax in enumerate(axs.reshape(-1)):
     ax.set_xticks([])
     ax.set_xticklabels([])
 
+
 plt.show()
 
 # """fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(9, 4))
