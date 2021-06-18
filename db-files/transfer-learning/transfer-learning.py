@@ -20,6 +20,13 @@ import matplotlib.pyplot as plt
 import time
 import os
 
+
+movie = pd.read_pickle("./processed-files/df_movie_NFLX_CLEANED")
+user = pd.read_pickle("./processed-files/df_user_NFLX_CLEANED")
+rating = pd.read_pickle("./processed-files/df_rating_NFLX_CLEANED")
+
+print(rating)
+exit()
 movie_df_M = pd.read_pickle("./processed-files/df_movie_CLEANED")
 movie_df_F = pd.read_pickle("./processed-files/df_movie_NFLX_CLEANED")
 movie_df_M["MOVIEID_MVLNS"] = np.arange(len(movie_df_M))
