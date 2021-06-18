@@ -6,7 +6,7 @@ parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M 
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix']")
 parser.add_argument("--k", default=100, type=int, help="K-fold Cross Validation which was used")
-parser.add_argument("--folder", default=7, type=int, help="Which fold of K-fold Cross Validation to test")
+parser.add_argument("--folder", default=8, type=int, help="Which fold of K-fold Cross Validation to test")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
 
 
