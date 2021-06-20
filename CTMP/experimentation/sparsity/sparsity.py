@@ -7,12 +7,16 @@ nflx_p07_k100 = np.array([[98.3988,  95.8885, 80.2701],
                          [98.9981,  98.9496, 95.9888],
                          [98.9975,  98.9480, 96.1034]])
 
+nflx_p07_k50 = np.array([[96.3344, 91.3271, 61.0266],
+                         [97.9888, 97.8130, 91.3925],
+                         [97.9878, 97.8059, 91.3563]])
+
 fig = plt.figure(figsize=(9, 4))
 
 
 ax = fig.add_subplot(111)
 ax.set_title('p=0.7; k=100')
-plt.imshow(nflx_p07_k100)
+plt.imshow(nflx_p07_k100, cmap='viridis', interpolation='antialiased')
 
 cax = fig.add_axes([0.5, 0.16, 0.235, 0.7])
 cax.get_xaxis().set_visible(False)
@@ -29,11 +33,15 @@ ax.set_yticklabels(y)
 # ax.set_xlabel("something")
 
 plt.colorbar(orientation='vertical')
-plt.subplots_adjust(wspace=1, left=0.1, right=0.95, bottom=0.15)
+plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
+
+for i in t:
+    for j in t:
+        ax.text(i, j, round(nflx_p07_k100[j][i], 2), color='black', ha='center', va='center')
+
 plt.show()
-
-
 exit()
+
 theta = np.load("./theta.npy")
 
 def compute_sparsity(doc_tp, batch_size, num_topics, _type):
@@ -46,8 +54,8 @@ def compute_sparsity(doc_tp, batch_size, num_topics, _type):
 
 s = compute_sparsity(theta, theta.shape[0], theta.shape[1], 't')
 print("Sparse dimensions - {:.4f}%".format(s * 100))
-
 exit()
+
 # TODO
 # PUT one example for above 95%
 #    another example for 80% (lamb=100)
