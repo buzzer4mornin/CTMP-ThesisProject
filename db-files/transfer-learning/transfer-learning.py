@@ -21,9 +21,7 @@ import time
 import os
 
 
-movie = pd.read_pickle("./processed-files/df_movie_NFLX_CLEANED")
-user = pd.read_pickle("./processed-files/df_user_NFLX_CLEANED")
-rating = pd.read_pickle("./processed-files/df_rating_NFLX_CLEANED")
+rating = pd.read_pickle("./original-files/df_rating_NFLX")
 
 print(rating)
 exit()
