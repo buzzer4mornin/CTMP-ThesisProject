@@ -1,6 +1,6 @@
 num_docs: 7882
 num_terms: 34177
-num_topics: 50
+num_topics: 100
 user_size: 479870
 tops: 10
 lamb: 1
