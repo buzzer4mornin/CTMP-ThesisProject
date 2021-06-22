@@ -5,9 +5,13 @@ parser.add_argument("--dataset", default='nflx', type=str, help="['nflx', 'origi
 parser.add_argument("--TOP_M_start", default=10, type=int, help="Start of Top-M recommendation")
 parser.add_argument("--TOP_M_end", default=100, type=int, help="End of Top-M recommendation")
 parser.add_argument("--pred_type", default='out-of-matrix', type=str, help="['in-matrix', 'out-of-matrix']")
-parser.add_argument("--k", default=100, type=int, help="K-fold Cross Validation which was used")
-parser.add_argument("--folder", default=8, type=int, help="Which fold of K-fold Cross Validation to test")
 parser.add_argument("--seed", default=42, type=int, help="Random seed.")
+
+parser.add_argument("--p", default=0.9, type=float, help="K-fold Cross Validation which was used")
+parser.add_argument("--k", default=100, type=int, help="K-fold Cross Validation which was used")
+parser.add_argument("--folder", default=7, type=int, help="Which fold of K-fold Cross Validation to test")
+parser.add_argument("--fold", default=5, type=int, help="Which fold of K-fold Cross Validation to test")
+
 
 
 def plot(args):
@@ -17,10 +21,13 @@ def plot(args):
         r_mean = np.empty(shape=(90,))
         p_mean = np.empty(shape=(90,))
         for i in range(1, 6):
-            with open(f"./NFLX/k={args.k};iter=50/{args.folder}/Recall-out-of-matrix-50000sample-_{i}fold-50th.pkl", "rb") as f:
-                r_TEST = pickle.load(f)
-            with open(f"./NFLX/k={args.k};iter=50/{args.folder}/Precision-out-of-matrix-50000sample-_{i}fold-50th.pkl", "rb") as f:
-                p_TEST = pickle.load(f)
+            try:
+                with open(f"./NFLX/p={args.p}/k={args.k}/{args.folder}/Recall-out-of-matrix-50000sample-p={args.p}-k={args.k}-folder={args.folder}-fold={args.fold}.pkl", "rb") as f:
+                    r_TEST = pickle.load(f)
+                with open(f"./NFLX/p={args.p}/k={args.k}/{args.folder}/Precision-out-of-matrix-50000sample-p={args.p}-k={args.k}-folder={args.folder}-fold={args.fold}.pkl", "rb") as f:
+                    p_TEST = pickle.load(f)
+            except:
+                continue
             r_mean += np.array(r_TEST)
             p_mean += np.array(p_TEST)
         r_mean /= 5
@@ -54,8 +61,8 @@ def plot(args):
     fig.suptitle(f'{args.pred_type} predictions', fontsize=14)
 
     # Save results
-    plt.savefig(f"./NFLX/k={args.k};iter=50/{args.folder}/mean.png")
-    plt.show()
+    plt.savefig(f"./NFLX/p={args.p}/k={args.k}/{args.folder}/{args.pred_type}-mean.png")
+    # plt.show()
 
 if __name__ == '__main__':
     import pickle

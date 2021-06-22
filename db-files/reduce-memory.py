@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
 
-ratings = pd.DataFrame(np.load("./original-files/df_rating", allow_pickle=True))
+
+#ratings = pd.DataFrame(np.load("./original-files/df_rating", allow_pickle=True))
+ratings = pd.DataFrame(np.load("./rte.npy"))
 
 
 def reduce_mem_usage(df):
@@ -44,3 +46,6 @@ def reduce_mem_usage(df):
 
 
 new_ratings = reduce_mem_usage(ratings)
+
+with open('rte.npy', 'wb') as f:
+    np.save(f, np.array(new_ratings))
