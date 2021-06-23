@@ -4,7 +4,7 @@ import math
 import numpy as np
 import os
 
-os.chdir('../common/')
+
 
 def print_topics(vocab_file, nwords, result_file):
     with open(vocab_file, 'r') as f:
@@ -23,7 +23,6 @@ def print_topics(vocab_file, nwords, result_file):
                 r.write(converts + "\n")
 
 if __name__ == '__main__':
-    os.chdir('../experimentation/topn')
     list_tops = "./list_tops.txt"
     vocab_file = "vocab_NFLX.txt"
     result_file = "topn_output.txt"
