@@ -9,6 +9,10 @@ os.chdir(os.path.dirname(__file__))
 # Get Current File Directory
 currdir = str(os.path.dirname(os.path.abspath(__file__)))
 
+
+user_df = pd.read_pickle("./original-files/df_rating_NFLX")
+print(user_df)
+exit()
 # ======================================================================================================================
 # ======================================================================================================================
 # ============================================== DATA CLEANER ==========================================================
@@ -58,13 +62,11 @@ rating_df = pd.merge(rating_df, joint, how='inner', on='MOVIEID')
 print("unique MOVIEIDs after dropping NAs    [movie] --", movie_unique.shape[0])
 print("unique MOVIEIDs in 20M               [rating] --", rating_unique.shape[0])
 print("unique MOVIEIDS jointly by   [movie & rating] --", joint.shape[0])
-
 print("\nDONE... FINAL TEST: ", pd.merge(rating_df, movie_df, how='inner', on="MOVIEID")["MOVIEID"].nunique())
 print("SAVING... CLEANED -> | df_user_CLEANED | df_movie_CLEANED | df_rating_CLEANED | \n")
 user_df.to_pickle(currdir + '/df_user_CLEANED')
 movie_df.to_pickle(currdir + '/df_movie_CLEANED')
 rating_df.to_pickle(currdir + '/df_rating_CLEANED')
-
 
 # ======================================================================================================================
 # ======================================================================================================================

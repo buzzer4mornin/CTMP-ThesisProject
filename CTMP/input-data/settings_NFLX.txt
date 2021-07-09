@@ -1,0 +1,11 @@
+num_docs: 7882
+num_terms: 34177
+num_topics: 50
+user_size: 479870
+tops: 10
+lamb: 1
+e: 0.3
+f: 0.3
+alpha: 1
+iter_infer: 100
+iter_train: 50

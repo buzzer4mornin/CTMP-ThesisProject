@@ -18,6 +18,9 @@ import utilities
 
 
 # ------------ RUN in terminal ------------
+# --> python ./model/run_model.py ctmp nflx 5
+# --> python ./model/run_model.py lda nflx 5
+
 # --> python ./model/run_model.py ctmp original 5
 # --> python ./model/run_model.py lda original 5
 
@@ -31,9 +34,9 @@ import utilities
 # TODO: convert sys.argv into ArgParser
 
 def main():
-    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["original", "reduced",
+    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["nflx", "original", "reduced",
                                                                                        "diminished"]:
-        print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [original, reduced or diminished]")
+        print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [nflx, original, reduced or diminished]")
         exit()
 
     # Get environment variables
@@ -41,9 +44,9 @@ def main():
     which_size = sys.argv[2]
     k_cross_val = int(sys.argv[3])
 
-    docs_file = "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt" if which_size == "reduced" else "./input-data/docs_DIMINISHED.txt"
-    rating_file = "./input-data/df_rating_UPDATED" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
-    setting_file = "./input-data/settings.txt" if which_size == "original" else "./input-data/settings_REDUCED.txt" if which_size == "reduced" else "./input-data/settings_DIMINISHED.txt"
+    docs_file = "./input-data/docs_NFLX.txt" if which_size == "nflx" else "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt" if which_size == "reduced" else "./input-data/docs_DIMINISHED.txt"
+    rating_file = "./input-data/df_rating_NFLX_UPDATED" if which_size == "nflx" else "./input-data/df_rating_UPDATED" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
+    setting_file = "./input-data/settings_NFLX.txt" if which_size == "nflx" else "./input-data/settings.txt" if which_size == "original" else "./input-data/settings_REDUCED.txt" if which_size == "reduced" else "./input-data/settings_DIMINISHED.txt"
     output_folder = "./output-data/"
 
     # Create model folder if it doesn't exist
@@ -56,7 +59,7 @@ def main():
     print('reading setting ...')
     ddict = utilities.read_setting(setting_file)
     print('write setting ...')
-    file_name = f'{output_folder}/setting.txt'
+    file_name = f'{output_folder}/settings_NFLX.txt' if which_size == "nflx" else f'{output_folder}/settings.txt'
     utilities.write_setting(ddict, file_name)
 
     """
@@ -86,13 +89,13 @@ def main():
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
-    # UNCOMMENT below if loading mode is needed
+    # UNCOMMENT --> SPLITTING MODE
     # utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
     print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
-    train_folds = pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
-    test_folds = pickle.load(open(f"./input-data/test_{k_cross_val}_folds.pkl", "rb"))
+    train_folds = pickle.load(open(f"./input-data/train_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    test_folds = pickle.load(open(f"./input-data/test_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -136,7 +139,6 @@ def main():
         # Badly distributed
         print(less_test / len(rating_GroupForUser_test))
         print(less_train / len(rating_GroupForUser_train))
-
     exit()'''
 
     for train, test in zip(train_folds, test_folds):
@@ -145,6 +147,14 @@ def main():
 
         rating_GroupForMovie_train = train[1]
         rating_GroupForMovie_test = test[1]
+
+        if which_size == "nflx":
+            for u in range(479870):
+                try:
+                    rating_GroupForUser_train[u]
+                except:
+                    rating_GroupForUser_train[u] = []
+
         # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
         #       pickle.dump(rating_GroupForUser_train, f)
         # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
@@ -170,14 +180,13 @@ def main():
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')
-    for i in range(ddict['iter_train']):
+    for i in range(1, ddict['iter_train']+1):
         print(f'\n*** iteration: {i} ***\n')
         time.sleep(2)
         # Run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
 
-        # Save CheckPoints
-        if i % 5 == 0 and i != 0:
+        if i == 50:
             os.makedirs(f"{output_folder}{i}")
             list_tops = utilities.list_top(algo.beta, ddict['tops'])
             print("\nsaving the final results.. please wait..")
@@ -197,6 +206,7 @@ def main():
 
 if __name__ == '__main__':
     import os
+
     NUM_THREADS = "1"
     os.environ["OMP_NUM_THREADS"] = NUM_THREADS
     os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS

@@ -10,8 +10,9 @@ METU https://www.researchgate.net/publication/333429437_A_Content_Boosted_Hybrid
 Adaptive Collaborative Topic Modeling http://www2.agroparistech.fr/ufr-info/membres/cornuejols/Papers/PUBLIES/2018-RecSys-adaptive-collaborative-topic.pdf
 MF Techniques for Recommendation Systems https://datajobs.com/data-science-repo/Recommender-Systems-[Netflix].pdf
 PMF - Probabistic Matrix Factorization https://papers.nips.cc/paper/2007/file/d7322ed717dedf1eb4e6e52a37ea7bcd-Paper.pdf
-Bayesian NMF https://www.ime.usp.br/~jstern/miscellanea/seminario/Schmidt09.pdf
+Probabilistic NFM https://pubmed.ncbi.nlm.nih.gov/24467759/
 Bayesian PMF https://www.cs.toronto.edu/~amnih/papers/bpmf.pdf
+Bayesian NMF https://www.ime.usp.br/~jstern/miscellanea/seminario/Schmidt09.pdf
 Generalized PMF for Collaborative Filtering https://www-users.cs.umn.edu/~baner029/papers/10/gpmf.pdf
 Tag-informed CTP https://www.sciencedirect.com/science/article/pii/S0950705120303816#b15
 CTR  with Social Matrix Factorization for Recommendation Systems https://arxiv.org/pdf/1206.4684.pdf
