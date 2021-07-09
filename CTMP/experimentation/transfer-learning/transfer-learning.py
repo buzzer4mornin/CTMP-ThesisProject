@@ -21,8 +21,8 @@ import time
 import os
 
 
-movie_df_M = pd.read_pickle("./processed-files/df_movie_CLEANED")
-movie_df_F = pd.read_pickle("./processed-files/df_movie_NFLX_CLEANED")
+movie_df_M = pd.read_pickle("../../../db-files/processed-files/df_movie_CLEANED")
+movie_df_F = pd.read_pickle("../../../db-files/processed-files/df_movie_NFLX_CLEANED")
 movie_df_M["MOVIEID_MVLNS"] = np.arange(len(movie_df_M))
 movie_df_F["MOVIEID_NFLX"] = np.arange(len(movie_df_F))
 
@@ -30,8 +30,8 @@ joint = pd.merge(movie_df_M, movie_df_F, how='inner', on='TT')
 joint = joint.drop(["MOVIEPLOT_y", "TT", "MOVIEID_x", "MOVIEID_y"], axis=1)
 #print("-- Total # of Joint Movies from MovieLens and NFLX:", joint.shape[0])
 
-theta_mv = np.load("./transfer-learning/theta_MVLNS.npy")
-theta_nf = np.load("./transfer-learning/theta_NFLX.npy")
+theta_mv = np.load("theta_MVLNS.npy")
+theta_nf = np.load("theta_NFLX.npy")
 
 # Compute Sparsity
 """def compute_sparsity(doc_tp, batch_size, num_topics, _type):
@@ -51,9 +51,9 @@ row = np.array(joint)[i]
 plot, mv, nf = row
 y_mv = theta_mv[mv]
 y_nf = theta_nf[nf]
-tops_mv = open("./transfer-learning/topn_output_MVLNS.txt", "r")
+tops_mv = open("topn_output_MVLNS.txt", "r")
 topics_mv = tops_mv.readlines()
-tops_nf = open("./transfer-learning/topn_output_NFLX_k=50.txt", "r")
+tops_nf = open("topn_output_NFLX_k=50.txt", "r")
 topics_nf = tops_nf.readlines()
 
 print(i)
@@ -97,20 +97,3 @@ ax2.set_xticklabels([])
 plt.subplots_adjust(wspace=0.3, left=0.1, right=0.95, bottom=0.15)
 fig.suptitle(f'The Naked City (1948)', fontsize=14)
 plt.show()
-
-
-# fig, axs = plt.subplots(2, 2, figsize=(9, 4))
-# for i, ax in enumerate(axs.reshape(-1)):
-#     if i in range(0, 2):
-#         y = theta_mv[mv[i]]
-#         x = np.arange(100)
-#         ax.set_xticks(np.arange(0, 101, 1))
-#     else:
-#         y = theta_nf[nf[i-2]]
-#         x = np.arange(50)
-#         ax.set_xticks(np.arange(0, 51, 1))
-#
-#     ax.bar(x, y, color="black")
-#     ax.set_ylim([0, 1])
-#     ax.set_xlabel('Topics')
-# plt.show()

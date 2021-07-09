@@ -5,7 +5,6 @@ import numpy as np
 import os
 
 
-
 def print_topics(vocab_file, nwords, result_file):
     with open(vocab_file, 'r') as f:
         vocab = f.readlines()

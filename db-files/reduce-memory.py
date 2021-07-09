@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 
 
-#ratings = pd.DataFrame(np.load("./original-files/df_rating", allow_pickle=True))
 ratings = pd.DataFrame(np.load("./rte.npy"))
 
 
