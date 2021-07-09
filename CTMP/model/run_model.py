@@ -8,12 +8,6 @@
 # --> python ./model/run_model.py ctmp original 5
 # --> python ./model/run_model.py lda original 5
 
-# --> python ./model/run_model.py ctmp reduced 5
-# --> python ./model/run_model.py lda reduced 5
-
-# --> python ./model/run_model.py ctmp diminished 5
-# --> python ./model/run_model.py lda diminished 5
-
 # TODO: when writing settings.txt into "/model" directory, correct some floats into int (e.g, num_topics, user_size...)
 # TODO: convert sys.argv into ArgParser
 
