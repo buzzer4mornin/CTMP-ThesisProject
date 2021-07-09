@@ -84,7 +84,7 @@ def main():
     """
     rating_GroupForUser: dictionary where keys are users, values are movies those users liked
     e.g, {48: array([25, 99, 138]), .. } ---> user_id = 48 LIKED movie_id = 25, movie_id = 99, movie_id = 138
-    
+
     rating_GroupForMovie: dictionary where keys are movies, values are users who liked those movies
     e.g, {24: array([13, 55]), .. } ---> movie_id = 24 is LIKED by user_id = 13 and user_id = 55"""
 
@@ -139,7 +139,7 @@ def main():
         # Badly distributed
         print(less_test / len(rating_GroupForUser_test))
         print(less_train / len(rating_GroupForUser_train))
-    exit()'''
+        exit()'''
 
     for train, test in zip(train_folds, test_folds):
         rating_GroupForUser_train = train[0]
