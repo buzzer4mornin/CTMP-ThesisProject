@@ -9,4 +9,3 @@ f: 0.3
 alpha: 1
 iter_infer: 100
 iter_train: 50
-p: 0.7
