@@ -63,7 +63,7 @@ plt.show()
 exit()"""
 
 # ================================================ MERGE PHOTOS ========================================================
-import sys
+"""import sys
 from PIL import Image
 
 images = [Image.open(x) for x in ['07s.jpg', '09s.jpg']]
@@ -92,8 +92,11 @@ else:
 new_im.save('xx.jpg')
 
 exit()
+"""
 
+# ================================================== Sparsity ==========================================================
 theta = np.load("./theta.npy")
+
 
 def compute_sparsity(doc_tp, batch_size, num_topics, _type):
     sparsity = np.zeros(batch_size, dtype=np.float)
@@ -107,7 +110,8 @@ s = compute_sparsity(theta, theta.shape[0], theta.shape[1], 't')
 print("Sparse dimensions - {:.4f}%".format(s * 100))
 exit()
 
-# TODO
+# ================================================ Sparsity Examples ===================================================
+"""# TODO
 # PUT one example for above 95%
 #    another example for 80% (lamb=100)
 # TODO: Examples of “sparse” estimates.
@@ -125,7 +129,7 @@ for i, ax in enumerate(axs.reshape(-1)):
 
 plt.show()
 
-# """fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(9, 4))
+# fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(9, 4))
 #
 # y = theta[11]
 # x = np.arange(100)
@@ -180,4 +184,5 @@ plt.show()
 # ax6.set_xticks([])
 # ax6.set_xticklabels([])
 #
-# plt.show()"""
+# plt.show()
+"""
