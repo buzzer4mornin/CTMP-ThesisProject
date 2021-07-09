@@ -78,8 +78,12 @@ def main():
 
     # Load saved Train/Test k-folds
     print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
-    train_folds = pickle.load(open(f"./input-data/train_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
-    test_folds = pickle.load(open(f"./input-data/test_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    train_folds = pickle.load(
+        open(f"./input-data/train_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(
+        open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    test_folds = pickle.load(
+        open(f"./input-data/test_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(
+        open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -164,7 +168,7 @@ def main():
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')
-    for i in range(1, ddict['iter_train']+1):
+    for i in range(1, ddict['iter_train'] + 1):
         print(f'\n*** iteration: {i} ***\n')
         time.sleep(2)
         # Run single EM step and return attributes
@@ -190,6 +194,7 @@ def main():
 
 if __name__ == '__main__':
     import os
+
     NUM_THREADS = "1"
     os.environ["OMP_NUM_THREADS"] = NUM_THREADS
     os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS
