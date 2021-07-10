@@ -39,7 +39,7 @@ If you want to check the main code where the model is implemented, visit;<br/>
 
 
 
-### **Some results from experimental studies:**
+## **Some results from experimental studies:**
 
 - Recall & Precision graph and Sparsity Graph <br/>
 <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/recall%26precision/NFLX/p%3D0.7/k%3D50/1/result.png" width="240" height="300" /> <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/sparsity/xx.jpg" width="330" height="300" /> 
