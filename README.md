@@ -31,6 +31,11 @@ Short Explanation:
 CTMP     -> model implementation and experimental studies.
 df-files -> data fetch from Oracle Database and first phase of pre-processing.
 pre-CTMP -> second phase of pre-processing, i.e. Vocabulary Extraction, Document Representation.
-papers   -> papers regarding the models along with the techniques used in the field of recommender systems (e.g, CTPF, CTR, Variational Inference)   
+papers   -> papers regarding the models along with the techniques used in the field of recommender systems (e.g, CTPF, CTR, Variational Inference)
+ 
 ```
+If you want to check the main code where the model is implemented, visit;
+[./CTMP/model/CTMP.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/CTMP.py)
+[./CTMP/model/run_model.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/run_model.py)
+[./CTMP/model/Evaluation.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/Evaluation.py)
 
