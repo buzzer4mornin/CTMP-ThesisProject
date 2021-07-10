@@ -46,20 +46,20 @@ If you want to check the main code where the model is implemented, visit;<br/>
 - Topics extracted from corpus
 ```
 killer murder police detective one man case young find serial
-life new love one young singer old career family york
-prison life man years one two young story new time
+band rock music life one new love singer world young
+ship gold find two one captain island treasure young get
 school high one friends life students college student new girl
-war german world army soldiers one british men american story
+king evil world young must one princess prince queen love
 film documentary life one world new films story first interviews
 husband wife married life tom one love two get marriage
 ...
 ...
 ...
-police drug gang one crime new cop man two life
-band rock music life one new love singer world young
+life new love one young singer old career family york
+war german world army soldiers one british men american story
 love film young movie falls life man director one world
-king evil world young must one princess prince queen love
-ship gold find two one captain island treasure young get
+prison life man years one two young story new time
 christmas one new life get time boy young find santa
 president war one political film government american life man country
+police drug gang one crime new cop man two life
 ```
