@@ -36,6 +36,8 @@ papers   -> papers regarding the models along with the techniques used in the fi
 ```
 If you want to check the main code where the model is implemented, visit;
 [./CTMP/model/CTMP.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/CTMP.py)
+
 [./CTMP/model/run_model.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/run_model.py)
+
 [./CTMP/model/Evaluation.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/Evaluation.py)
 
