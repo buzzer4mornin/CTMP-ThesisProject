@@ -21,7 +21,7 @@ Below, the most important directories are illustrated for the purpose of overvie
 │   ├── original-files
 │   ├── processed-files
 ├── pre-CTMP
-├── supplementary-materials
+├── papers
 │   ├── others
 │   ├── variational-inference
 
@@ -29,6 +29,6 @@ Short Explanation:
 CTMP     -> model implementation and experimental studies.
 df-files -> data fetch from Oracle Database and first phase of pre-processing.
 pre-CTMP -> second phase of pre-processing, i.e. Vocabulary Extraction, Document Representation.
-supplementary-materials -> papers regarding the models along with the techniques used in the field of recommender systems (e.g, CTPF, CTR, Variational Inference)   
+papers   -> papers regarding the models along with the techniques used in the field of recommender systems (e.g, CTPF, CTR, Variational Inference)   
 ```
 
