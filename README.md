@@ -11,6 +11,9 @@ Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google
 
 The most attention is put on Time & Space complexity of the model, thus scientific computing libraries such as Numpy and Scipy are used in nearly all operations along with Numba libray which boosts the computational speed by parallelizing the numpy-heavy functions with JIT(just-in-time compilation). After the model implementation is completed, it is then deployed to Google Cloud's Virtual Machine with high performance CPUs considering that Numpy/Scipy environments are based on BLAST - a high-performance computing architecture for CPU.   
 
+Some results from experimental studies.
+![Recall&Precision](./CTMP/experimentation/recall&precision/NFLX/p=0.7/k=50/1/result.png)
+
 Below, the most important directories are illustrated for the purpose of overview:
 ```
 ├── CTMP
