@@ -9,7 +9,7 @@ I have implemented CTMP model augmented with BOPE from scratch in Python and stu
 
 Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google Cloud 
 
-
+```
 ├── CTMP
 │   ├── common
 │   ├── experimentation
@@ -27,5 +27,5 @@ Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google
 ├── supplementary-materials
 |   ├── others
 |   ├── variational-inference
-
+```
 
