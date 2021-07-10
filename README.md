@@ -8,6 +8,7 @@ BOPE is the inference method used in MAP problems which are non-convex and intra
 I have implemented CTMP model augmented with BOPE from scratch in Python and studied its behaviour on MovieLens 20M and NETFLIX datasets regarding the movie recommendations. Experimental studies have been carried out for evaluating the ability of model on Recall, Precision, Perplexity, Sparsity, Topic Interpretation and Transfer Learning between datasets. For more details, please refer to [paper in this link.](https://docdro.id/8c4Ze1M)
 
 Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google Cloud 
+Note: The most attention is put on Time & Space complexity of the model, thus scientific computing libraries such as Numpy and Scipy are used in nearly all operations along with Numba libray which boosts the computation speed by parallelizing the numpy-heavy functions with JIT(just-in-time compilation).  
 
 Below, the most important directories are illustrated for the purpose of overview:
 ```
