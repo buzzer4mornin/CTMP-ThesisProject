@@ -13,7 +13,7 @@ The most attention is put on Time & Space complexity of the model, thus scientif
 
 Some results from experimental studies.
 
-<img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/recall%26precision/NFLX/p%3D0.7/k%3D50/1/result.png" width="350" height="430" /> <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/sparsity/xx.jpg" width="490" height="430" />
+<img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/recall%26precision/NFLX/p%3D0.7/k%3D50/1/result.png" width="350" height="430" /> <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/sparsity/xx.jpg" width="480" height="430" />
 
 Below, the most important directories are illustrated for the purpose of overview:
 ```
