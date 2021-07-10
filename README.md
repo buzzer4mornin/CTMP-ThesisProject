@@ -9,7 +9,7 @@ I have implemented CTMP model augmented with BOPE from scratch in Python and stu
 
 Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google Cloud 
 
-The most attention is put on Time & Space complexity of the model, thus scientific computing libraries such as Numpy and Scipy are used in nearly all operations along with Numba libray which boosts the computational speed by parallelizing the numpy-heavy functions with JIT(just-in-time compilation). After the model implementation is complete, it is then deployed to Google Cloud's Virtual Machine with high performance CPUs considering that Numpy/Scipy environments are based on BLAS - a high-performance computing architecture for CPU.   
+The most attention is put on Time & Space complexity of the model, thus scientific computing libraries such as Numpy and Scipy are used in nearly all operations along with Numba libray which boosts the computational speed by parallelizing the numpy-heavy functions with JIT(just-in-time compilation). After the model implementation is completed, it is then deployed to Google Cloud's Virtual Machine with high performance CPUs considering that Numpy/Scipy environments are based on BLAS - a high-performance computing architecture for CPU.   
 
 Below, the most important directories are illustrated for the purpose of overview:
 ```
