@@ -37,9 +37,9 @@ papers   -> papers regarding the models along with the techniques used in the fi
 If you want to check the main code where the model is implemented, visit;<br/>
 [./CTMP/model/CTMP.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/CTMP.py)<br/>  [./CTMP/model/run_model.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/run_model.py) <br/> [./CTMP/model/Evaluation.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/Evaluation.py)
 
-<br/>
 
-### *Some results from experimental studies:*
+
+### **Some results from experimental studies:**
 
 - Recall & Precision graph and Sparsity Graph <br/>
 <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/recall%26precision/NFLX/p%3D0.7/k%3D50/1/result.png" width="240" height="300" /> <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/sparsity/xx.jpg" width="330" height="300" /> 
