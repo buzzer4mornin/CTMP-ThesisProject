@@ -43,3 +43,23 @@ Some results from experimental studies:
 
 - Recall & Precision graph and Sparsity Graph <br/>
 <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/recall%26precision/NFLX/p%3D0.7/k%3D50/1/result.png" width="240" height="300" /> <img src="https://raw.githubusercontent.com/buzzer4mornin/CTMP-ThesisProject/main/CTMP/experimentation/sparsity/xx.jpg" width="330" height="300" /> 
+- Topic examples extracted from corpus
+```
+killer murder police detective one man case young find serial
+life new love one young singer old career family york
+prison life man years one two young story new time
+school high one friends life students college student new girl
+war german world army soldiers one british men american story
+film documentary life one world new films story first interviews
+husband wife married life tom one love two get marriage
+...
+...
+...
+police drug gang one crime new cop man two life
+band rock music life one new love singer world young
+love film young movie falls life man director one world
+king evil world young must one princess prince queen love
+ship gold find two one captain island treasure young get
+christmas one new life get time boy young find santa
+president war one political film government american life man country
+```
