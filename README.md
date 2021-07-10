@@ -14,11 +14,6 @@ Below, the most important directories are illustrated for the purpose of overvie
 ├── CTMP
 │   ├── common
 │   ├── experimentation
-│       ├── perplexity
-│       ├── recall&precision
-│       ├── sparsity
-│       ├── topn
-│       ├── transfer-learning
 │   ├── input-data
 │   ├── model
 │   ├── output-data
@@ -29,5 +24,11 @@ Below, the most important directories are illustrated for the purpose of overvie
 ├── supplementary-materials
 │   ├── others
 │   ├── variational-inference
+
+Short Explanation:
+CTMP     -> model implementation and experimental studies.
+df-files -> data fetch from Oracle Database and first phase of pre-processing.
+pre-CTMP -> second phase of pre-processing, i.e. Vocabulary Extraction, Document Representation.
+supplementary-materials -> papers regarding the models along with the techniques used in the field of recommender systems (e.g, CTPF, CTR, Variational Inference)   
 ```
 
