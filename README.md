@@ -20,12 +20,12 @@ Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google
 │       ├── transfer-learning
 │   ├── input-data
 │   ├── model
-|   ├── output-data
+│   ├── output-data
 ├── db-files
 │   ├── original-files
-|   ├── processed-files
+│   ├── processed-files
 ├── supplementary-materials
-|   ├── others
-|   ├── variational-inference
+│   ├── others
+│   ├── variational-inference
 ```
 
