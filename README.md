@@ -13,7 +13,7 @@ The most attention is put on Time & Space complexity of the model, thus scientif
 
 Some results from experimental studies.
 
-![Recall&Precision](./CTMP/experimentation/recall&precision/NFLX/p=0.7/k=50/1/result.png)
+![Recall&Precision](./CTMP/experimentation/recall&precision/NFLX/p=0.7/k=50/1/result.png) ![Sparsity](./CTMP/experimentation/sparsity/xx.jpg)
 
 Below, the most important directories are illustrated for the purpose of overview:
 ```
