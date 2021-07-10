@@ -9,6 +9,7 @@ I have implemented CTMP model augmented with BOPE from scratch in Python and stu
 
 Technologies: Python(Numpy, Scipy, Numba, Pandas, Matplotlib, NLTK), SQL, Google Cloud 
 
+Below, the most important directories are illustrated for the purpose of overview:
 ```
 ├── CTMP
 │   ├── common
