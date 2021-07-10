@@ -38,6 +38,6 @@ pre-CTMP -> second phase of pre-processing, i.e. Vocabulary Extraction, Document
 papers   -> papers regarding the models along with the techniques used in the field of recommender systems (e.g, CTPF, CTR, Variational Inference)
  
 ```
-If you want to check the main code where the model is implemented, visit;
+If you want to check the main code where the model is implemented, visit;<br/>
 [./CTMP/model/CTMP.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/CTMP.py)<br/>  [./CTMP/model/run_model.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/run_model.py) <br/> [./CTMP/model/Evaluation.py](https://github.com/buzzer4mornin/CTMP-ThesisProject/blob/main/CTMP/model/Evaluation.py)
 
