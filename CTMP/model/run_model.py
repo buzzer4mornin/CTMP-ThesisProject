@@ -148,13 +148,13 @@ def main():
         print('initializing CTMP algorithm ...\n')
         algo = MyCTMP(rating_GroupForUser_train, rating_GroupForMovie_train,
                       ddict['num_docs'], ddict['num_terms'], ddict['num_topics'],
-                      ddict["user_size"], ddict["lamb"], ddict["e"], ddict["f"], ddict['alpha'],
-                      ddict['iter_infer'])
+                      ddict["user_size"], ddict["lamb"], ddict["e"], ddict["f"], ddict['alpha'], 
+                      ddict['tau'], ddict['kappa'], ddict['iter_infer'])
 
     else:
+        # TODO: include tau/kappa into both LDA.py and below
         print('initializing LDA algorithm ...\n')
-        algo = MyLDA(ddict['num_docs'], ddict['num_terms'], ddict['num_topics'], ddict['alpha'],
-                     ddict['iter_infer'])
+        algo = MyLDA(ddict['num_docs'], ddict['num_terms'], ddict['num_topics'], ddict['alpha'], ddict['iter_infer'])
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')

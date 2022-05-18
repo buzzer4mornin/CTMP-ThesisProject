@@ -14,7 +14,7 @@ from numba import njit
 
 class MyCTMP:
     def __init__(self, rating_GroupForUser, rating_GroupForMovie,
-                 num_docs, num_words, num_topics, user_size, lamb, e, f, alpha, iter_infer):
+                 num_docs, num_words, num_topics, user_size, lamb, e, f, alpha, tau, kappa, iter_infer):
         """
         Arguments:
             num_words: Number of unique words in the corpus (length of the vocabulary).
@@ -32,6 +32,9 @@ class MyCTMP:
         self.e = e
         self.f = f
         self.alpha = alpha
+        self.tau = tau
+        self.kappa = kappa
+        self.updatect = 1
         self.iter_infer = iter_infer
 
         # Get initial beta(topics) which was produced by LDA
@@ -317,6 +320,14 @@ class MyCTMP:
         # Normalize the intermediate beta
         unit_beta_norm = unit_beta.sum(axis=1)
         unit_beta /= unit_beta_norm[:, np.newaxis]
+        
+        # OLD Update beta
+        # self.beta = np.zeros((self.num_topics, self.num_words))
+        # self.beta[:, ids] += unit_beta
+        
+        # NEW Update beta
         # Update beta
-        self.beta = np.zeros((self.num_topics, self.num_words))
-        self.beta[:, ids] += unit_beta
+        rhot = pow(self.tau + self.updatect, -self.kappa)
+        self.beta *= (1 - rhot)
+        self.beta[:, ids] += unit_beta * rhot
+        self.updatect += 1
