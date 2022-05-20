@@ -14,17 +14,17 @@ from numba import njit
 
 class MyCTMP:
     def __init__(self, rating_GroupForUser, rating_GroupForMovie,
-                 num_docs, num_words, num_topics, user_size, lamb, e, f, alpha, tau, kappa, iter_infer):
+                 num_movies, num_words, num_topics, user_size, lamb, e, f, alpha, tau, kappa, bernoulli_p, iter_infer):
         """
         Arguments:
-            num_words: Number of unique words in the corpus (length of the vocabulary).
+            num_movies: Number of unique words in the corpus (length of the vocabulary).
             num_topics: Number of topics shared by the whole corpus.
             alpha: Hyperparameter for prior on topic mixture theta.
             iter_infer: Number of iterations of FW algorithm
           """
         self.rating_GroupForUser = rating_GroupForUser
         self.rating_GroupForMovie = rating_GroupForMovie
-        self.num_docs = num_docs
+        self.num_movies = num_movies
         self.num_words = num_words
         self.num_topics = num_topics
         self.user_size = user_size
@@ -34,6 +34,7 @@ class MyCTMP:
         self.alpha = alpha
         self.tau = tau
         self.kappa = kappa
+        self.bernoulli_p = bernoulli_p
         self.updatect = 1
         self.iter_infer = iter_infer
 
@@ -45,7 +46,7 @@ class MyCTMP:
 
         # Get initial theta(topic proportions) which was produced by LDA
         # self.theta = np.load('./input-data/theta.npy')
-        self.theta = np.random.rand(self.num_docs, self.num_topics) + 1e-10
+        self.theta = np.random.rand(self.num_movies, self.num_topics) + 1e-10
         theta_norm = self.theta.sum(axis=1)
         self.theta /= theta_norm[:, np.newaxis]
 
@@ -62,21 +63,21 @@ class MyCTMP:
     def get_phi(self):
         """ Click to read description
 
-        As we know Φ(phi) has shape of (user_size, num_docs, num_topics)
+        As we know Φ(phi) has shape of (user_size, num_movies, num_topics)
         which is 3D matrix of shape=(138493, 25900, 50) for ORIGINAL || (1915, 639, 50) for REDUCED
 
         For ORIGINAL data, it is not possible(memory-wise) to store 3D matrix of shape=(138493, 25900, 50) into single numpy array.
         Therefore, we cut the whole 3D matrix into small chunks of 3D matrix and put them into list and set it as our self.phi
         """
 
-        block_2D = np.zeros(shape=(self.num_docs, self.num_topics))
+        block_2D = np.zeros(shape=(self.num_movies, self.num_topics))
 
         # Initiate matrix
         phi_matrices = list()
 
         # Create small 3D matrices and add them into list
         thousand_block_size = self.user_size // 1000
-        phi = np.empty(shape=(1000, self.num_docs, self.num_topics))
+        phi = np.empty(shape=(1000, self.num_movies, self.num_topics))
         for i in range(1000):
             phi[i, :, :] = block_2D
         for i in range(thousand_block_size):
@@ -84,7 +85,7 @@ class MyCTMP:
 
         # Create last remaining 3D matrix and add it into list
         remaining_block_size = self.user_size % 1000
-        phi = np.empty(shape=(remaining_block_size, self.num_docs, self.num_topics))
+        phi = np.empty(shape=(remaining_block_size, self.num_movies, self.num_topics))
         for i in range(remaining_block_size):
             phi[i, :, :] = block_2D
         phi_matrices.append(phi)
@@ -150,7 +151,7 @@ class MyCTMP:
         d_s = time.time()
         a = 0
         norm_mu = np.copy((self.shp / self.rte).sum(axis=0))
-        for d in range(self.num_docs):
+        for d in range(self.num_movies):
             ts = time.time()
             thetad = self.update_theta(wordids[d], wordcts[d], d)
             self.theta[d, :] = thetad
@@ -159,12 +160,12 @@ class MyCTMP:
             ms = time.time()
             mud = self.update_mu(norm_mu, d)
             self.mu[d, :] = mud
-            # print(f" ** UPDATE theta, mu over {d + 1}/{self.num_docs} documents |iter:{self.GLOB_ITER}| ** ")
+            # print(f" ** UPDATE theta, mu over {d + 1}/{self.num_movies} documents |iter:{self.GLOB_ITER}| ** ")
             me = time.time()
             a += (me - ms) / ((me - ms) + (te - ts))
         d_e = time.time()
-        print("docs time:", d_e - d_s)
-        # print("avg mu proportion on docs time:", a / self.num_docs)
+        print("movies time:", d_e - d_s)
+        # print("avg mu proportion on movies time:", a / self.num_movies)
 
     def update_mu(self, norm_mu, d):
         # initiate new mu
@@ -256,7 +257,7 @@ class MyCTMP:
 
         # Parameter of Bernoulli distribution
         # Likelihood vs Prior
-        p = 0.9
+        p = self.bernoulli_p
 
         # Number of times likelihood and prior are chosen
         T_lower = [1, 0]
@@ -311,7 +312,7 @@ class MyCTMP:
 
         # Compute intermediate beta which is denoted as "unit beta"
         beta = np.zeros((self.num_topics, self.num_words))
-        for d in range(self.num_docs):
+        for d in range(self.num_movies):
             beta[:, wordids[d]] += np.outer(self.theta[d], wordcts[d])
         # Check zeros index
         beta_sum = beta.sum(axis=0)

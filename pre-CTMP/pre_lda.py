@@ -46,10 +46,10 @@ def get_vocabulary(plots):
     return vocab
 
 
-def get_input_docs(vocab, plots):
+def get_input_movies(vocab, plots):
     """ Create input text file for LDA """
-    if os.path.exists("docs.txt"):
-        os.remove("docs.txt")
+    if os.path.exists("movies.txt"):
+        os.remove("movies.txt")
     # TODO write separate def for below section??
     start = time.time()
     term_vs_index = {v_term: v_index for v_term, v_index in zip(vocab, range(len(vocab)))}
@@ -73,11 +73,11 @@ def get_input_docs(vocab, plots):
         if unique_terms == 0:
             continue
         term_counts = str(term_counts).replace("{", "").replace("}", "").replace(" ", "").replace(",", " ")
-        with open("docs.txt", 'a', encoding='utf-8') as f:
+        with open("movies.txt", 'a', encoding='utf-8') as f:
             f.write(str(unique_terms) + " " + term_counts + "\n")
     end = time.time()
     print("Execution time: {:.2f} seconds".format(end - start))
-    print('-*-*-* Successfully Created "docs.txt" *-*-*-')
+    print('-*-*-* Successfully Created "movies.txt" *-*-*-')
 
 
 if __name__ == '__main__':
@@ -86,4 +86,4 @@ if __name__ == '__main__':
 
     # Run Experiment
     vocab = get_vocabulary(movie_plt)
-    get_input_docs(vocab, movie_plt)
+    get_input_movies(vocab, movie_plt)

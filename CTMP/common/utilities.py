@@ -44,8 +44,8 @@ def read_setting(file_name):
         sets.append(set_val[0])
         vals.append(float(set_val[1]))
     ddict = dict(zip(sets, vals))
-    ddict['num_docs'] = int(ddict['num_docs'])
-    ddict['num_terms'] = int(ddict['num_terms'])
+    ddict['num_movies'] = int(ddict['num_movies'])
+    ddict['num_words'] = int(ddict['num_words'])
     ddict['num_topics'] = int(ddict['num_topics'])
     ddict['user_size'] = int(ddict['user_size'])
     ddict['tops'] = int(ddict['tops'])
@@ -158,7 +158,7 @@ def cv_train_test_split(rating_group_file, k_cv, seed):
         rating_GroupForMovie_train = dict(zip(mov_id, usr_id))
         diff = np.setdiff1d(all_mov_ids, mov_id)
         for i in diff: rating_GroupForMovie_train[i] = []
-
+        
         train_folds.append([rating_GroupForUser_train, rating_GroupForMovie_train])
 
         # --------------- TEST ---------------

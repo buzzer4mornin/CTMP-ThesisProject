@@ -2,44 +2,46 @@
 # -*- coding: utf-8 -*-
 
 # ------------ RUN in terminal ------------
-# --> python ./model/run_model.py ctmp nflx 5
-# --> python ./model/run_model.py lda nflx 5
+# --> python ./model/run_model.py ctmp nflx 5 1
+# --> python ./model/run_model.py lda nflx 5 1
 
-# --> python ./model/run_model.py ctmp original 5
-# --> python ./model/run_model.py lda original 5
+# --> python ./model/run_model.py ctmp movielens20m 5 1
+# --> python ./model/run_model.py lda movielens20m 5 1
 
 # TODO: when writing settings.txt into "/model" directory, correct some floats into int (e.g, num_topics, user_size...)
 # TODO: convert sys.argv into ArgParser
 
 def main():
-    if len(sys.argv) != 4 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["nflx", "original", "reduced",
+    if len(sys.argv) != 5 or sys.argv[1] not in ["ctmp", "lda"] or sys.argv[2] not in ["nflx", "movielens20m", "reduced",
                                                                                        "diminished"]:
-        print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [nflx, original, reduced or diminished]")
+        print("WRONG USAGE! TRY --> python ./model/run_model.py  [ctmp or lda] [nflx, movielens20m, reduced or diminished]")
         exit()
 
     # Get environment variables
     which_model = sys.argv[1]
-    which_size = sys.argv[2]
+    which_dataset = sys.argv[2]
     k_cross_val = int(sys.argv[3])
+    which_k_cross_fold = int(sys.argv[4])
 
-    docs_file = "./input-data/docs_NFLX.txt" if which_size == "nflx" else "./input-data/docs.txt" if which_size == "original" else "./input-data/docs_REDUCED.txt" if which_size == "reduced" else "./input-data/docs_DIMINISHED.txt"
-    rating_file = "./input-data/df_rating_NFLX_UPDATED" if which_size == "nflx" else "./input-data/df_rating_UPDATED" if which_size == "original" else "./input-data/df_rating_REDUCED" if which_size == "reduced" else "./input-data/df_rating_DIMINISHED"
-    setting_file = "./input-data/settings_NFLX.txt" if which_size == "nflx" else "./input-data/settings.txt" if which_size == "original" else "./input-data/settings_REDUCED.txt" if which_size == "reduced" else "./input-data/settings_DIMINISHED.txt"
+    movies_file = "./input-data/movies_NFLX.txt" if which_dataset == "nflx" else "./input-data/movies.txt" if which_dataset == "movielens20m" else "./input-data/movies_REDUCED.txt" if which_dataset == "reduced" else "./input-data/movies_DIMINISHED.txt"
+    ratings_file = "./input-data/df_rating_NFLX_UPDATED" if which_dataset == "nflx" else "./input-data/df_rating_UPDATED" if which_dataset == "movielens20m" else "./input-data/df_rating_REDUCED" if which_dataset == "reduced" else "./input-data/df_rating_DIMINISHED"
+    settings_file = "./input-data/settings_NFLX.txt" if which_dataset == "nflx" else "./input-data/settings.txt" if which_dataset == "movielens20m" else "./input-data/settings_REDUCED.txt" if which_dataset == "reduced" else "./input-data/settings_DIMINISHED.txt"
     output_folder = "./output-data/"
+
+
+    # -------------------------------------------- Get Data --------------------------------------------------------
+    # Read & write settings into model folder
+    print('reading setting ...')
+    ddict = utilities.read_setting(settings_file)
+    print('write setting ...')
+    file_name = f'{output_folder}/settings_NFLX.txt' if which_dataset == "nflx" else f'{output_folder}/settings.txt'
+    utilities.write_setting(ddict, file_name)
 
     # Create model folder if it doesn't exist
     if os.path.exists(output_folder):
         shutil.rmtree(output_folder)
     os.makedirs(output_folder)
-
-    # -------------------------------------------- Get Data --------------------------------------------------------
-    # Read & write settings into model folder
-    print('reading setting ...')
-    ddict = utilities.read_setting(setting_file)
-    print('write setting ...')
-    file_name = f'{output_folder}/settings_NFLX.txt' if which_size == "nflx" else f'{output_folder}/settings.txt'
-    utilities.write_setting(ddict, file_name)
-
+    
     """
     wordids: A list whose each element is an array (words ids), corresponding to a document.
              Each element of the array is index of a unique word in the vocabulary.
@@ -57,7 +59,7 @@ def main():
     wordcts[0] = array([1, 1, 1, 1, 1], dtype=int32)
     in first document, words whose indexes are 127, 55, 284, 36, 47 appears 1, 1, 1, 1, 1 times respectively.
      """
-    wordids, wordcts = utilities.read_data(docs_file)
+    wordids, wordcts = utilities.read_data(movies_file)
 
     """
     rating_GroupForUser: dictionary where keys are users, values are movies those users liked
@@ -68,12 +70,12 @@ def main():
 
     # Split Ratings into Train/Test with Stratified K-fold Cross-Validation. Save Folds Afterwards.
     # UNCOMMENT --> SPLITTING MODE
-    # utilities.cv_train_test_split(rating_file, k_cross_val, seed=42)
+    # utilities.cv_train_test_split(ratings_file, k_cross_val, seed=42)
 
     # Load saved Train/Test k-folds
     print(f"LOADING MODE --> Load Train/Test {k_cross_val}-folds ...")
-    train_folds = pickle.load(open(f"./input-data/train_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
-    test_folds = pickle.load(open(f"./input-data/test_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_size == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    train_folds = pickle.load(open(f"./input-data/train_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_dataset == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
+    test_folds = pickle.load(open(f"./input-data/test_NFLX_{k_cross_val}_folds.pkl", "rb")) if which_dataset == "nflx" else pickle.load(open(f"./input-data/train_{k_cross_val}_folds.pkl", "rb"))
 
     # Inspect eligibility of folds
     '''for train, test in zip(train_folds, test_folds):
@@ -119,42 +121,39 @@ def main():
         print(less_train / len(rating_GroupForUser_train))
         exit()'''
 
-    for train, test in zip(train_folds, test_folds):
-        rating_GroupForUser_train = train[0]
-        rating_GroupForUser_test = test[0]
+    rating_GroupForUser_train = train_folds[which_k_cross_fold - 1][0]
+    rating_GroupForUser_test = test_folds[which_k_cross_fold - 1][0]
+    rating_GroupForMovie_train = train_folds[which_k_cross_fold - 1][1]
+    rating_GroupForMovie_test = test_folds[which_k_cross_fold - 1][1]
+    
+    if which_dataset == "nflx":
+        for u in range(479870):
+            try:
+                rating_GroupForUser_train[u]
+            except:
+                rating_GroupForUser_train[u] = []
 
-        rating_GroupForMovie_train = train[1]
-        rating_GroupForMovie_test = test[1]
-
-        if which_size == "nflx":
-            for u in range(479870):
-                try:
-                    rating_GroupForUser_train[u]
-                except:
-                    rating_GroupForUser_train[u] = []
-
-        # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
-        #       pickle.dump(rating_GroupForUser_train, f)
-        # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForMovie_train, f)
-        # with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForUser_test, f)
-        # with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
-        #      pickle.dump(rating_GroupForMovie_test, f)
-        break
+    # with open(f"./.test/rating_GroupForUser_train.pkl", "wb") as f:
+    #       pickle.dump(rating_GroupForUser_train, f)
+    # with open(f"./.test/rating_GroupForMovie_train.pkl", "wb") as f:
+    #      pickle.dump(rating_GroupForMovie_train, f)
+    # with open(f"./.test/rating_GroupForUser_test.pkl", "wb") as f:
+    #      pickle.dump(rating_GroupForUser_test, f)
+    # with open(f"./.test/rating_GroupForMovie_test.pkl", "wb") as f:
+    #      pickle.dump(rating_GroupForMovie_test, f)
 
     # -------------------------------------- Initialize Algorithm --------------------------------------------------
     if which_model == "ctmp":
         print('initializing CTMP algorithm ...\n')
         algo = MyCTMP(rating_GroupForUser_train, rating_GroupForMovie_train,
-                      ddict['num_docs'], ddict['num_terms'], ddict['num_topics'],
+                      ddict['num_movies'], ddict['num_words'], ddict['num_topics'],
                       ddict["user_size"], ddict["lamb"], ddict["e"], ddict["f"], ddict['alpha'], 
-                      ddict['tau'], ddict['kappa'], ddict['iter_infer'])
+                      ddict['tau'], ddict['kappa'], ddict['bernoulli_p'], ddict['iter_infer'])
 
     else:
         # TODO: include tau/kappa into both LDA.py and below
         print('initializing LDA algorithm ...\n')
-        algo = MyLDA(ddict['num_docs'], ddict['num_terms'], ddict['num_topics'], ddict['alpha'], ddict['iter_infer'])
+        algo = MyLDA(ddict['num_movies'], ddict['num_words'], ddict['num_topics'], ddict['alpha'], ddict['iter_infer'])
 
     # ----------------------------------------- Run Algorithm ------------------------------------------------------
     print('START!')
@@ -164,7 +163,7 @@ def main():
         # Run single EM step and return attributes
         algo.run_EM(wordids, wordcts, i)
 
-        if i == 50:
+        if i == ddict['iter_train']:
             os.makedirs(f"{output_folder}{i}")
             list_tops = utilities.list_top(algo.beta, ddict['tops'])
             print("\nsaving the final results.. please wait..")
