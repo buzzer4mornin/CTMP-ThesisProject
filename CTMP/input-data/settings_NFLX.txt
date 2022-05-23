@@ -6,22 +6,6 @@ tops: 10
 lamb: 1
 e: 0.3
 f: 0.3
-alpha: 1
-bernoulli_p: 0.9
-iter_infer: 50
-iter_train: 50
-
-
-
-
-num_movies: 7882
-num_words: 34177
-num_topics: 100
-user_size: 479870
-tops: 10
-lamb: 1
-e: 0.3
-f: 0.3
 alpha: 0.01
 tau: 1
 kappa: 0.75
