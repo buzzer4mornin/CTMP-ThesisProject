@@ -183,7 +183,7 @@ if __name__ == '__main__':
     which_dataset = sys.argv[1]
     k_cross_val = int(sys.argv[2])
     which_k_cross_fold = int(sys.argv[3])
-    iteration = int(sys.argv[4])
+    iteration = sys.argv[4]
     sample_test = int(sys.argv[5])
     TOP_M_start = int(sys.argv[6])
     TOP_M_end = int(sys.argv[7])

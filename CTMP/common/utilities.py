@@ -106,9 +106,9 @@ def print_diff_list_tops(list_tops, prev_list_tops, i):
 
 
 def write_file(model_folder, list_tops, algo, iter):
-    list_tops_file_name = f'{model_folder}{iter}/list_tops.txt'
+    list_tops_file_name = f'{model_folder}/{iter}/list_tops.txt'
     write_topic_top(list_tops, list_tops_file_name)
-    def file_locator(x): return f'{model_folder}{iter}/{str(x)}'                                       # added iter !!
+    def file_locator(x): return f'{model_folder}/{iter}/{str(x)}'                                       # added iter !!
     files = [attr for attr in dir(algo) if attr in ["theta", "mu", "phi", "shp", "rte", "beta"]]
     for f in files:
         if f != "phi":
