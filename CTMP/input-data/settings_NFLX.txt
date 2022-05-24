@@ -3,7 +3,7 @@ num_words: 34177
 num_topics: 100
 user_size: 479870
 tops: 10
-lamb: 100
+lamb: 1
 e: 0.3
 f: 0.3
 alpha: 0.01
