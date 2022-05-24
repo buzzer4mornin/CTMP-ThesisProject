@@ -67,12 +67,14 @@ def plot(args):
     ax2.grid()
     plt.subplots_adjust(hspace=0.3, left=0.18, right=0.94, bottom=0.1, top=0.9)
 
-    fig.suptitle(f'alpha=1', fontsize=14)
+    fig.suptitle(f'{{K=100, lamb=1, alpha=1, p=0.9}}', fontsize=12)
 
     # Save results
-    #plt.savefig(f"./{args.dataset}/p={args.p}/k={args.k}/{args.folder}/{args.pred_type}-mean.png")
-    plt.savefig(f"./{args.dataset}/p={args.p}/k={args.k}/{args.folder}/result.png")
-    #plt.show()
+    # plt.savefig(f"./{args.dataset}/p={args.p}/k={args.k}/{args.folder}/{args.pred_type}-mean.png")
+    # plt.savefig(f"./{args.dataset}/p={args.p}/k={args.k}/{args.folder}/result.png")
+    plt.savefig(f"./result.png")
+    plt.show()
+
 
 if __name__ == '__main__':
     import pickle

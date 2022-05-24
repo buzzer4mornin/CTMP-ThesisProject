@@ -86,29 +86,30 @@ class MyEvaluation:
         ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)
+        # s = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)
         predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.cold_items_TEST, assume_unique=True)[:top_m]
         top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_in_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
         self.precisions_in_matrix_TEST += (top_m_correct_TEST / top_m)
 
-    """def predict_out_of_matrix(self, user_id, top_m) -> None:
-        #Compute out-of-matrix recall and precision for a given user, then add them to the sum
+    def predict_out_of_matrix(self, user_id, top_m) -> None:
+        # Compute out-of-matrix recall and precision for a given user, then add them to the sum
         ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
-        sorted_ratings = np.argsort(-ratings)
-        predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
+        predicted_top_M_TEST = np.argsort(-ratings)[:top_m]
+        # predicted_top_M_TEST = np.setdiff1d(sorted_ratings, self.rating_GroupForUser_TRAIN[user_id], assume_unique=True)[:top_m]
         top_m_correct_TEST = np.sum(np.in1d(predicted_top_M_TEST, actual_TEST) * 1)
         self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
-        self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)"""
+        self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
 
-    def predict_out_of_matrix(self, user_id, top_m) -> None:
+    """def predict_out_of_matrix(self, user_id, top_m) -> None:
         #Compute out-of-matrix recall and precision for a given user, then add them to the sum
         ratings = np.dot((self.shp[user_id] / self.rte[user_id]), self.mu.T)
         actual_TEST = self.rating_GroupForUser_TEST[user_id]
         sorted_ratings = np.argsort(-ratings)[:top_m]
         top_m_correct_TEST = np.sum(np.in1d(sorted_ratings, actual_TEST) * 1)
         self.recalls_out_of_matrix_TEST += (top_m_correct_TEST / len(self.rating_GroupForUser_TEST[user_id]))
-        self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)
+        self.precisions_out_of_matrix_TEST += (top_m_correct_TEST / top_m)"""
         
     def avg_recall_precision(self) -> None:
         for top in range(self.TOP_M_start, self.TOP_M_end):

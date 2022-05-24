@@ -1,12 +1,12 @@
 num_movies: 25900
 num_words: 59910
-num_topics: 100
+num_topics: 50
 user_size: 138493
 tops: 10
 lamb: 1
 e: 0.3
 f: 0.3
-alpha: 0.01
+alpha: 1
 tau: 1
 kappa: 0.75
 bernoulli_p: 0.9
