@@ -135,6 +135,9 @@ class MyEvaluation:
                     self.predict_out_of_matrix(usr, top)
                 self.avg_recalls_out_of_matrix_TEST.append(self.recalls_out_of_matrix_TEST / len(self.test_set))
                 self.avg_precisions_out_of_matrix_TEST.append(self.precisions_out_of_matrix_TEST / len(self.test_set))
+    # def save(self) -> None:
+    #     self.avg_recalls_in_matrix_TEST, self.avg_precisions_in_matrix_TEST
+    #     self.avg_recalls_out_of_matrix_TEST, self.avg_precisions_out_of_matrix_TEST
 
     def plot(self) -> None:
         if self.pred_type == "both":
@@ -201,6 +204,7 @@ if __name__ == '__main__':
     eval = MyEvaluation(rating_GroupForUser_train, rating_GroupForUser_test, 
                         rating_GroupForMovie_train, rating_GroupForMovie_test,
                         iteration, sample_test, TOP_M_start, TOP_M_end, pred_type)
-    
+
+
     eval.plot()
     
