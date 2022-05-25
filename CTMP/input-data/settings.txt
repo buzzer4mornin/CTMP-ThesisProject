@@ -9,6 +9,6 @@ f: 0.3
 alpha: 1
 tau: 1
 kappa: 0.75
-bernoulli_p: 0.9
+bernoulli_p: 0.7
 iter_infer: 50
 iter_train: 50

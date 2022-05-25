@@ -3,33 +3,35 @@ import numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import warnings
+warnings.filterwarnings("ignore")
 
 # ======================================== Joint Matrix Heat MAP =======================================================
 
-"""nflx_p07_k50 = np.array([[96.3344, 91.3271, 61.0266],
-                         [97.9888, 97.8130, 91.3925],
-                         [97.9878, 97.8059, 91.3563]])
+"""nflx_p07_k50 = np.array([[93.9395, 90.2419, 66.3825],
+                         [97.9460, 97.4862, 92.3768],
+                         [97.9464, 97.4624, 92.3967]])
 
 
-nflx_p07_k100 = np.array([[98.3988,  95.8885, 80.2701],
-                         [98.9981,  98.9496, 95.9888],
-                         [98.9975,  98.9480, 96.1034]])
+nflx_p07_k100 = np.array([[97.1312, 94.9307, 82.0474],
+                         [98.9878, 98.8174, 96.2750],
+                         [98.9873,  98.8286, 96.3212]])
 
-nflx_p09_k50 = np.array([[95.8686,  89.9838, 56.2083],
-                         [97.9947, 97.8990,  91.8691],
-                         [97.9952, 97.9076,  92.3017]])
+nflx_p09_k50 = np.array([[93.7492, 89.2140, 63.4297],
+                         [97.9834, 97.6863, 92.7979],
+                         [97.9792, 97.6967, 92.8476]])
 
 
-nflx_p09_k100 = np.array([[98.2607, 95.1714, 77.6233],
-                         [98.9992, 98.9796, 96.4929],
-                         [98.9995, 98.9480, 96.1034]])
+nflx_p09_k100 = np.array([[96.9735, 94.4133, 80.2497],
+                         [98.9960, 98.9113, 96.6508],
+                         [98.9960, 98.9095, 96.6926]])
 
 
 fig = plt.figure(figsize=(9, 4))
 
 
 ax = fig.add_subplot(111)
-ax.set_title('k=100', fontsize=16)#, color="blue")
+ax.set_title('k=50', fontsize=16) #, color="blue")
 plt.imshow(nflx_p09_k100, cmap='viridis', interpolation='antialiased')
 
 cax = fig.add_axes([0.5, 0.16, 0.235, 0.7])
@@ -55,18 +57,18 @@ plt.subplots_adjust(wspace=0.5, left=0.1, right=0.95, bottom=0.18, top=0.82)
 for i in t:
     for j in t:
         if i==2 and j==0:
-            ax.text(i, j, f"{round(nflx_p09_k100[j][i], 2)}%", color='white', ha='center', va='center')
+            ax.text(i, j, f"{round(nflx_p07_k50[j][i], 2)}%", color='white', ha='center', va='center')
         else:
-            ax.text(i, j, f"{round(nflx_p09_k100[j][i], 2)}%", color='black', ha='center', va='center')
+            ax.text(i, j, f"{round(nflx_p07_k50[j][i], 2)}%", color='black', ha='center', va='center')
 
 plt.show()
 exit()"""
 
 # ================================================ MERGE PHOTOS ========================================================
-"""import sys
+import sys
 from PIL import Image
 
-images = [Image.open(x) for x in ['07s.jpg', '09s.jpg']]
+images = [Image.open(x) for x in ['mvl-07100.png', 'mvl-09100.png']]
 widths, heights = zip(*(i.size for i in images))
 
 horiz = False
@@ -92,10 +94,10 @@ else:
 new_im.save('xx.jpg')
 
 exit()
-"""
+
 
 # ================================================== Sparsity ==========================================================
-theta = np.load("./theta.npy")
+"""theta = np.load("./theta.npy")
 
 
 def compute_sparsity(doc_tp, batch_size, num_topics, _type):
@@ -108,7 +110,7 @@ def compute_sparsity(doc_tp, batch_size, num_topics, _type):
 
 s = compute_sparsity(theta, theta.shape[0], theta.shape[1], 't')
 print("Sparse dimensions - {:.4f}%".format(s * 100))
-exit()
+exit()"""
 
 # ================================================ Sparsity Examples ===================================================
 """# TODO

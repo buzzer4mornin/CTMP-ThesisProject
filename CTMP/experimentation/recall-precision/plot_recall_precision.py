@@ -170,7 +170,7 @@ class MyEvaluation:
         ax2.grid()
         plt.subplots_adjust(hspace=0.3, left=0.18, right=0.94, bottom=0.1, top=0.9)
 
-        fig.suptitle(f'{{K=100, lamb=1, alpha=0.01, p=0.9}}', fontsize=12)
+        fig.suptitle(f'{{K=50, lamb=1, alpha=1, p=0.9}}', fontsize=12)
 
         # Save results
         plt.savefig(f'./{self.folder}/FIGURE.png')
