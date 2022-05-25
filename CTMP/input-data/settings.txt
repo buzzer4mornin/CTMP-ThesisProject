@@ -1,6 +1,6 @@
 num_movies: 25900
 num_words: 59910
-num_topics: 50
+num_topics: 100
 user_size: 138493
 tops: 10
 lamb: 1
@@ -10,5 +10,5 @@ alpha: 1
 tau: 1
 kappa: 0.75
 bernoulli_p: 0.7
-iter_infer: 50
-iter_train: 50
+iter_infer: 100
+iter_train: 100
