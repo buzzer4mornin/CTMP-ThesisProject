@@ -65,7 +65,7 @@ plt.show()
 exit()"""
 
 # ================================================ MERGE PHOTOS ========================================================
-import sys
+"""import sys
 from PIL import Image
 
 images = [Image.open(x) for x in ['mvl-07100.png', 'mvl-09100.png']]
@@ -93,11 +93,11 @@ else:
 
 new_im.save('xx.jpg')
 
-exit()
+exit()"""
 
 
 # ================================================== Sparsity ==========================================================
-"""theta = np.load("./theta.npy")
+theta = np.load("./theta.npy")
 
 
 def compute_sparsity(doc_tp, batch_size, num_topics, _type):
@@ -110,7 +110,7 @@ def compute_sparsity(doc_tp, batch_size, num_topics, _type):
 
 s = compute_sparsity(theta, theta.shape[0], theta.shape[1], 't')
 print("Sparse dimensions - {:.4f}%".format(s * 100))
-exit()"""
+exit()
 
 # ================================================ Sparsity Examples ===================================================
 """# TODO
