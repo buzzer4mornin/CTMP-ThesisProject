@@ -6,7 +6,7 @@ import numpy as np
 from math import floor
 
 
-# Run Evaluation @@
+# Run Evaluation
 # python ./model/Evaluation.py nflx 5 1 NFX_50_50_100_1.0_1.0_0.9 1000 10 100 out-of-matrix
 
 
@@ -164,8 +164,8 @@ class MyEvaluation:
         ax2.set_xlim([10, 100])
         ax1.set_xticks(np.arange(10, 101, 10))
         ax2.set_xticks(np.arange(10, 101, 10))
-        ax1.set_yticks(np.arange(5, 56, 5))
-        ax2.set_yticks(np.arange(15, 41, 5))
+        ax1.set_yticks(np.arange(5, 46, 5))
+        ax2.set_yticks(np.arange(4, 11, 1))
         ax1.grid()
         ax2.grid()
         plt.subplots_adjust(hspace=0.3, left=0.18, right=0.94, bottom=0.1, top=0.9)
