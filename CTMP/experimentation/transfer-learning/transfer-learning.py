@@ -28,7 +28,7 @@ movie_df_F["MOVIEID_NFLX"] = np.arange(len(movie_df_F))
 
 joint = pd.merge(movie_df_M, movie_df_F, how='inner', on='TT')
 joint = joint.drop(["MOVIEPLOT_y", "TT", "MOVIEID_x", "MOVIEID_y"], axis=1)
-#print("-- Total # of Joint Movies from MovieLens and NFLX:", joint.shape[0])
+# print("-- Total # of Joint Movies from MovieLens and NFLX:", joint.shape[0])
 
 theta_mv = np.load("theta_MVLNS.npy")
 theta_nf = np.load("theta_NFLX.npy")
@@ -46,7 +46,7 @@ print("-- Sparse dimensions: {:.1f}%".format(s*100))"""
 
 # BESTS: 573, 3754, 6318, 2188, 340, 1060, 3788, 4125
 i = np.random.randint(6756)
-i = 573
+# i = 573 Naked City
 row = np.array(joint)[i]
 plot, mv, nf = row
 y_mv = theta_mv[mv]
